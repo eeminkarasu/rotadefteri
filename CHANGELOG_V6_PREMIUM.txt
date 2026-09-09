@@ -1,0 +1,21 @@
+RotaDefteri v6 Premium Navigasyon
+
+- Koyu mavi premium arayüz tüm ana sayfalarda yenilendi.
+- Tam ekran navigasyon, anlık hız ve akıcı konum oku eklendi.
+- GPS noktaları arasında yumuşak animasyon ve heading/yön dönüşü eklendi.
+- Kalan km/süre mevcut konuma göre düşecek şekilde geliştirildi.
+- 100 m otomatik durak tamamlama korunup güçlendirildi.
+- Rota tamamlandığında progress snapshot ve tamamlanma bilgisi anında Firestore senkronuna gönderilir.
+- Sonraki açık rotaya geçerken geolocation watch kapatılmaz; canlı takip devam eder.
+- Duraklar yeşil gidildi / kırmızı gidilmedi işaretleriyle solgunlaştırılır.
+- Güzergah çizgisi daha kalın ve renk seçilebilir hale getirildi.
+- Rota duraklarında km + tahmini varış kutuları geliştirildi.
+- Mobilde basılı tut + sürükle sıralaması eklendi.
+- Rota bazlı teslimat notu (ataç) eklendi.
+- Durak işlem menüsüne rotadan kaldır / düzenle / ara eklendi.
+- Navigasyonda kişi adı + telefon arama paneli eklendi.
+- Destekleyen Android tarayıcılarda Contact Picker ile rehberden seçim; diğer cihazlarda manuel giriş.
+- Ayarlara açılış ekranı, rota rengi ve çizgi kalınlığı eklendi.
+- Adres defteri ve rota listeleri yeniden tasarlandı ve sıralama kontrolleri eklendi.
+
+Firebase/Firestore kullanıcı koleksiyon yapısı değiştirilmemiştir. Yeni rota alanları mevcut belgeler içinde ek alan olarak saklanır.

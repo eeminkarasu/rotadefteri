@@ -1,0 +1,15 @@
+RotaDefteri v5 - Görsel Yenilenmiş + Google Maps
+
+Google Maps API anahtarı bu pakette index.html ve rotadefteri.html içine tanımlanmıştır.
+Google Cloud tarafında önerilen API kısıtlamaları:
+- Maps JavaScript API
+- Places API (New)
+- Routes API (trafik tabanlı rota özelliği eklendiğinde kullanılacaktır)
+- Geocoding API (adres/koordinat dönüşümü gerektiğinde)
+
+Website (HTTP referrer) kısıtlaması için GitHub Pages alan adınızı kullanın.
+Örnek:
+https://eeminkarasu.github.io/*
+https://eeminkarasu.github.io/rotadefteri/*
+
+Not: API anahtarı web uygulamasında tarayıcı tarafından görülebilir. Güvenlik için Google Cloud'da HTTP referrer ve API restrictions zorunlu tutulmalıdır.

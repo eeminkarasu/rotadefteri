@@ -1,0 +1,11 @@
+RotaDefteri v6.4 — Firebase Google Auth temizliği
+
+- Google Identity Services initTokenClient kaldırıldı.
+- HTML/JS içinde ayrı OAuth Web Client ID tutulmuyor.
+- Google girişi Firebase Authentication signInWithPopup + GoogleAuthProvider ile yapılıyor.
+- signInWithRedirect/getRedirectResult kullanılmıyor; Safari storage-partition sorununa geri dönülmüyor.
+- Firebase projesi: rotadefteri-1a9d1
+- Firebase Authorized domains içinde eeminkarasu.github.io bulunmalıdır.
+- Authentication > Sign-in method > Google Enabled olmalıdır.
+- Farklı Gmail kullanıcıları kullanacaksa Google Auth Platform Audience ayarı External olmalı; Testing modunda gerekli hesaplar Test users'a eklenmelidir.
+- Client secret hiçbir HTML/JS dosyasına konmamalıdır.

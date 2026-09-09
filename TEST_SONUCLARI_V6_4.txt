@@ -1,0 +1,28 @@
+RotaDefteri v6.4 AUTH CLEAN - STATIK DENETIM SONUCLARI
+========================================================
+
+[OK] index.html ve rotadefteri.html birebir ayni
+[OK] Firebase proje yapilandirmasi: rotadefteri-1a9d1 / 214905775203
+[OK] Manuel Google OAuth Client ID HTML/JS kodundan kaldirildi: True
+[OK] Google Identity Services initTokenClient kaldirildi: True
+[OK] Firebase signInWithPopup + GoogleAuthProvider aktif: True
+[OK] signInWithRedirect/getRedirectResult aktif kodda yok: True
+[OK] Firestore kullanici UID izolasyonu kurallarda mevcut: True
+[OK] HTML duplicate id sayisi: 0
+[OK] Firestore senkronizasyon blogu v6.3 ile birebir hash eslesiyor: True
+      Sync SHA-256: e6f1e1cf215e3351643cd10e2887a9464934f1501db3a1e6a38b87db82fe360b
+[OK] Service Worker cache surumu v6.4'e yukseltildi
+[OK] Service Worker registration updateViaCache=none ile guncelleme kontrolu zorluyor
+[OK] OAuth client secret / private key paket icine eklenmedi
+
+ONEMLI CANLI TEST
+-----------------
+Google/Firebase oturum acma gercek accounts.google.com + Firebase Authentication servislerine
+bagli oldugu icin statik ZIP testi tek basina hesapla gercek girisi kanitlayamaz. GitHub Pages'e
+yuklendikten sonra Safari/Chrome'da canli test edilmelidir.
+
+Firebase Console gereksinimleri:
+- Authentication > Sign-in method > Google = Enabled
+- Authentication > Settings > Authorized domains icinde eeminkarasu.github.io
+- Firestore aktif ve rules yayinlanmis olmali
+- Baska Gmail hesaplari da kullanacaksa Google Auth Platform Audience = External; Testing ise gerekli kullanicilar Test users listesinde olmali

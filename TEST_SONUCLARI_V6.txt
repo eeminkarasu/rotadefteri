@@ -1,0 +1,18 @@
+RotaDefteri v6 Premium Navigasyon - Son Kontroller
+===================================================
+
+[OK] index.html ve rotadefteri.html birebir aynı.
+[OK] Tüm inline JavaScript blokları Node.js --check sözdizimi kontrolünden geçti.
+[OK] HTML içinde yinelenen id bulunmadı.
+[OK] HTML'nin referans verdiği tüm yerel dosyalar mevcut.
+[OK] manifest.webmanifest geçerli JSON.
+[OK] sw.js sözdizimi geçerli.
+[OK] Firebase/Firestore bulut senkronizasyon scripti kaynak görsel sürümle byte-bazında aynıdır.
+[OK] Service Worker cache sürümü v6-premium-nav1 olarak artırıldı.
+[OK] Mobil basılı tut + sürükle sıralama eventleri eklendi.
+[OK] Navigasyon rota değişiminde aktif geolocation watch yeniden kullanılacak şekilde düzenlendi.
+[OK] GPS marker yumuşatma/heading dönüşü ve anlık kalan mesafe hesabı eklendi.
+[OK] Rota bazlı teslimat notları, kişi/telefon arama paneli ve rota işlem menüsü eklendi.
+
+Not: Gerçek GPS doğruluğu, rehber seçicisi ve telefon araması cihaz/tarayıcı izinlerine bağlıdır.
+Contact Picker API desteklenmeyen cihazlarda manuel kişi/telefon girişi otomatik yedek yöntemdir.

@@ -1,0 +1,12 @@
+RotaDefteri v6.4 - Aktif Firebase Projesi
+
+Project ID: rotadefteri-1a9d1
+Project Number / messagingSenderId: 214905775203
+Auth Domain: rotadefteri-1a9d1.firebaseapp.com
+
+Google Authentication:
+- Authentication > Sign-in method > Google: Enabled
+- Authentication > Settings > Authorized domains: eeminkarasu.github.io
+- Uygulama kodunda manuel OAuth Client ID kullanılmaz.
+- Google girişi Firebase signInWithPopup üzerinden yürür.
+- Client secret hiçbir web dosyasına eklenmez.

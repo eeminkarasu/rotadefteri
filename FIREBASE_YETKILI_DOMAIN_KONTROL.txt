@@ -1,0 +1,19 @@
+GOOGLE GİRİŞİ — AUTHORIZED DOMAIN KONTROLÜ
+=========================================
+
+Firebase Console > Authentication > Settings > Authorized domains
+
+Burada uygulamanızı açtığınız alan adı bulunmalıdır.
+
+Firebase Hosting ile bu paket için beklenen alan adları:
+- rotadefteri-1a9d1.web.app
+- rotadefteri-1a9d1.firebaseapp.com
+
+GitHub Pages için ayrıca mutlaka:
+- eeminkarasu.github.io
+
+Başka bir alan adı kullanıyorsanız onu da ekleyin.
+Yerel test yapıyorsanız gerekirse "localhost" ekleyin.
+
+Uygulama auth/unauthorized-domain hatası aldığında artık hangi alan adının
+eksik olduğunu giriş ekranında açıkça gösterir.

@@ -1,0 +1,27 @@
+ROTADEFTERİ v5 — SON KONTROL SONUÇLARI
+=====================================
+
+Paket oluşturulmadan önce uygulanan kontroller:
+
+[PASS] index.html içindeki tüm inline JavaScript blokları Node.js sözdizimi kontrolünden geçti.
+[PASS] rotadefteri.html içindeki tüm inline JavaScript blokları Node.js sözdizimi kontrolünden geçti.
+[PASS] firebase-config.js sözdizimi kontrolü geçti.
+[PASS] sw.js sözdizimi kontrolü geçti.
+[PASS] manifest.webmanifest geçerli JSON.
+[PASS] firebase.json geçerli JSON.
+[PASS] Rotalar.json geçerli JSON.
+[PASS] index.html ve rotadefteri.html birebir aynı güncel uygulama sürümüdür.
+[PASS] Yinelenen HTML id bulunmadı.
+[PASS] Kodun getElementById ile istediği eksik bir HTML id bulunmadı.
+[PASS] Yinelenen global function bildirimi bulunmadı.
+[PASS] CSS ayrıştırma kontrolünde sözdizimi hatası bulunmadı.
+[PASS] Excel/CSV satır normalizasyonu ve Durak ID / koordinat üzerinden güncelleme birim testleri geçti.
+[PASS] Rota mesafe tahmini ve gidildi/gidilmedi durum geçişleri birim testleri geçti.
+[PASS] Yerel PWA/manifest/icon/config dosya referansları paket içinde mevcut.
+
+CANLI ENTEGRASYON NOTU
+----------------------
+Firebase Google OAuth, Firestore ve Google Maps/Places canlı testleri gerçek dağıtım alan adı,
+internet erişimi, Firebase Console Authorized Domains ayarı ve ilgili Google API izinlerine bağlıdır.
+Bu nedenle paket içi otomatik kontroller bunların Console tarafındaki yetkilendirmesinin yerine geçmez.
+Uygulama auth/unauthorized-domain hatasında eklenmesi gereken alan adını ekranda gösterir.
