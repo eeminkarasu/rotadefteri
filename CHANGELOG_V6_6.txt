@@ -1,0 +1,17 @@
+RotaDefteri v6.6 — CLEAN ROUTE / PLANLA / NAV
+
+- Yeni rota artık tüm aktif durakları otomatik seçmiyor; seçim boş başlıyor.
+- Planla sistemi geri getirildi ve genişletildi:
+  * Mevcut konumdan yakından uzağa
+  * Başlangıç durağına göre
+  * Bitiş durağına göre
+  * Başlangıç + bitiş sabit, aradaki durakları optimize et
+- Planlama yakınlık tabanlı greedy + sınırlı 2-opt iyileştirmesi kullanır; son yol geometrisi OSRM üzerinden hesaplanır.
+- Mobil/masaüstü sıralama tek Pointer Events motoruna geçirildi; native HTML5 drag ghost/klon görüntüsü kaldırıldı.
+- Navigasyon ekranı sadeleştirildi; haritayı kaplayan kartlar küçültüldü.
+- Mavi konum oku ilk GPS konumunda görünür, hareket yönüne; düşük hızda hedef durağa doğru yönlenir.
+- Mevcut konumdan hedef durağa yaklaşım güzergahı başlangıçta/target değişiminde yol üzerinden hesaplanır.
+- Rota tamamlandıktan sonra sıradaki rotaya geçişte canlı GPS watcher korunur.
+- v6.5'te üst üste çalışan rota/navigasyon script katmanları tek v6.6 motorunda birleştirildi.
+- Firebase/Firestore authentication ve kullanıcıya özel senkronizasyon scripti değiştirilmedi.
+- Email/Password + Misafir modu + yedek tema koruması aynen devam eder.
