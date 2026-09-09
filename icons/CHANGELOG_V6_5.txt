@@ -1,0 +1,18 @@
+RotaDefteri v6.5 — EMAIL + GUEST + BACKUP FIX
+==============================================
+
+- Google giriş akışı kaldırıldı.
+- Firebase Email/Password giriş sistemi eklendi.
+- Hesap oluşturma eklendi.
+- Şifre sıfırlama e-postası eklendi.
+- Beni hatırla / oturumluk giriş seçeneği eklendi.
+- Misafir olarak devam et eklendi.
+- Misafir verileri yalnız localStorage'a yazılır; Firestore'a gönderilmez.
+- Hesap açılmamışsa her uygulama açılışında giriş ekranı tekrar gösterilir.
+- Misafir kullanımında uygulama içinde uyarı bandı gösterilir.
+- Hesap oluştururken misafir verilerini yeni hesaba aktarma seçeneği eklendi.
+- Giriş yapan kullanıcıların UID tabanlı Firestore senkronizasyonu korunmuştur.
+- Eski yedek geri yüklemede tema/görünüm bozulması giderildi.
+- Eski yedekler mevcut tema, harita görünümü, rota rengi/kalınlığı ve Maps anahtarını artık ezmez.
+- Yedek formatı v2'ye çıkarıldı.
+- PWA cache sürümü v6.5'e yükseltildi.

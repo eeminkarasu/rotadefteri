@@ -1,0 +1,10 @@
+RotaDefteri v6.9 - Google Maps + Varsayılan Mevcut Konum Planlama
+
+- Harita görünümü seçeneklerine gerçek Google Maps eklendi.
+- OpenStreetMap ve OSM HOT yedek seçenek olarak korunur.
+- Google Maps seçildiğinde ana durak haritası Google Maps ile açılır.
+- Google Maps seçildiğinde navigasyon haritası Google Maps tabanında açılır ve trafik katmanı gösterilir.
+- Google Maps yüklenemezse uygulama otomatik OSM yedeğine düşer.
+- Planlama yöntemi varsayılan olarak Mevcut konumdan yakından uzağa ayarlandı.
+- Yeni rota ve mevcut rota planlama ekranı Mevcut konum modunda açılır.
+- Firebase/Firestore veri modeli ve senkronizasyon akışı değiştirilmedi.

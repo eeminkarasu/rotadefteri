@@ -1,0 +1,22 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "README*.txt",
+      "CHANGELOG*.txt",
+      "index.original-v4.html",
+      "DEPLOY_FIREBASE.bat",
+      "START_LOCAL.bat"
+    ],
+    "headers": [
+      {"source":"**/*.@(js|css|png|webmanifest)","headers":[{"key":"Cache-Control","value":"public,max-age=3600"}]},
+      {"source":"**/*.html","headers":[{"key":"Cache-Control","value":"no-cache"}]}
+    ]
+  }
+}

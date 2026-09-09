@@ -1,0 +1,13 @@
+RotaDefteri v6.7 - Kompakt Rota Detayı
+
+- Rota detay başlığındaki sağ üst yeşil oynat butonu kaldırıldı.
+- Rota durumu kartında Navigasyon butonunun soluna Planla eklendi.
+- Planla mevcut rota duraklarıyla planlama ekranını açar ve konum bazlı planlama moduna hazır gelir.
+- Gidildi/tamamlandı olarak işaretlenen duraklar tamamlanmamış durakların altına ayrıldı ve varsayılan olarak gizlendi.
+- Tamamlananları Göster/Gizle butonu eklendi.
+- Rota detayındaki durak kartları mobilde belirgin biçimde küçültüldü ve daha ferah hale getirildi.
+- Adres alt satırı İl/İlçe odaklı gösterime çevrildi.
+- Durakta il/ilçe veya kullanılabilir adres bilgisi yoksa koordinatlardan OpenStreetMap Nominatim ters geocoding ile il/ilçe bilgisi alınır.
+- Ters geocoding sonuçları ayrı yerel önbellekte saklanır; Firestore veri modelini ve senkronizasyonu değiştirmez.
+- Firebase/Firestore senkronizasyon mantığı korunmuştur.
+- PWA cache sürümü v6-7-compact-detail olarak yükseltildi.

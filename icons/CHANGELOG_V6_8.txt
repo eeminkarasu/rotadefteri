@@ -1,0 +1,9 @@
+RotaDefteri v6.8 IMPORT FIX
+
+- Excel içe aktarma başlık tanıma motoru güçlendirildi.
+- CH Kodu / CH Ünvanı / Açık Adres / İlçe / Şehir / Enlem (Latitude) / Boylam (Longitude) başlıkları doğrudan desteklenir.
+- Gün + Hafta alanlarından Rota Adı otomatik oluşturulur (örn. Cumartesi - Hafta 25).
+- Ziyaret Periyodu bilgisi teslimat notuna korunarak alınır.
+- İlçe ve Şehir bilgisi adres alanına eklenir.
+- Başlık ilk satırda değilse ilk 25 satır içinde otomatik bulunur.
+- Firestore senkronizasyon mantığı değiştirilmedi.

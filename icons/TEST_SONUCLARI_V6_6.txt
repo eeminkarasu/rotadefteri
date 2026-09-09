@@ -1,0 +1,47 @@
+RotaDefteri v6.6 CLEAN ROUTE / NAV - TEST SONUCLARI
+===================================================
+
+Tarih: 2026-09-10
+
+1. HTML / DOM
+- index.html ve rotadefteri.html: yinelenen HTML id yok.
+- İki HTML dosyası SHA-256 olarak birebir aynı.
+- Yerel script/link/icon referansları: eksik dosya yok.
+
+2. JavaScript
+- Her iki HTML içindeki 5 inline JavaScript bloğu Node.js --check ile doğrulandı.
+- Sözdizimi hatası bulunmadı.
+- Eski üst üste binen rd-v6-premium-behavior rota/navigasyon katmanı kaldırıldı.
+- Tek rd-v66-clean-engine rota/navigasyon katmanı kullanılıyor.
+- Native draggable="true" kaldırıldı; pointer tabanlı gerçek yeniden sıralama kullanılıyor.
+
+3. Rota planlama birim testi
+- Yeni rota ekranı seçimleri boş başlatıyor.
+- start_end planlama seçilen başlangıç/bitişi sabit tutuyor.
+- Aynı durak ID'sinin sıralamada çoğalması engelleniyor.
+- Mevcut konum planlama modu mock geolocation ile doğrulandı.
+- Birim test sonucu: PASS.
+
+4. Firebase / senkronizasyon
+- v6.5 Email/Misafir sürümündeki auth + Firestore senkronizasyon bloğu v6.6'da değiştirilmedi.
+- Eski/yeni blok SHA-256: de6ae09c4c877b6c82968d5d60528b231f08110e7bd324afeca88fc840c93e80
+- Firestore rules: kullanıcı UID sahipliği kontrolü mevcut; stops/routes/settings kullanıcıya özel.
+- Misafir modu ve yedekten geri yükleme davranışı korunuyor.
+
+5. JSON / PWA
+- firebase.json: geçerli JSON.
+- manifest.webmanifest: geçerli JSON.
+- Rotalar.json: geçerli JSON.
+- Service Worker cache sürümü: v6-6-clean-route.
+
+6. Navigasyon regresyon kontrolleri
+- Sade tam ekran navigasyon katmanı mevcut.
+- Canlı hız / kalan km / kalan süre / ETA korunuyor.
+- Mavi GPS oku ve hedef yönü fallback heading mantığı mevcut.
+- Mevcut konum -> aktif durak yaklaşım güzergahı OSRM ile çiziliyor; başarısız olursa kesik direkt çizgi fallback var.
+- Rotalar arasında geçişte tek GPS watcher korunuyor.
+
+NOT / FIZIKSEL TEST
+Bu çalışma ortamında tarayıcı E2E testi yerel sayfa/localhost erişimi yönetim politikası tarafından engellendi.
+Bu nedenle gerçek GPS hassasiyeti, iPhone/Android pointer davranışı ve sürüş sırasında harita animasyonu fiziksel cihazda son kez test edilmelidir.
+Statik, sözdizimi, dosya bütünlüğü ve planlama birim kontrolleri geçti.

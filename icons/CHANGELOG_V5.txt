@@ -1,0 +1,65 @@
+ROTADEFTERİ v5 — KARARLILIK / SENKRONİZASYON GÜNCELLEMESİ
+===========================================================
+
+ÖNEMLİ DÜZELTMELER
+- Aynı isimli openRouteBuilder / openNavigation fonksiyon çakışmaları kaldırıldı.
+- Durağı Düzenle ekranındaki Google harita oluşturma hatası düzeltildi.
+- Google Maps anahtarı yoksa OpenStreetMap geri dönüşü korundu.
+- Duraklar sayfasına tekrar girildiğinde harita işaretçilerinin kaybolması düzeltildi.
+- Navigasyon haritasını bozan hatalı .#navMap CSS seçicisinin etkisi giderildi.
+- Telefon üst çubuğu / safe-area boşlukları ve dokunma alanları düzeltildi.
+- Toast bildirimleri alt navigasyonun arkasından çıkarıldı.
+- Durak düzenlemede irtibat kişisi, telefon ve not alanlarının kaybolması engellendi.
+- Durak araması; kişi, telefon ve not alanlarını da arıyor.
+- Excel/CSV içe aktarmada Durak ID veya aynı koordinat üzerinden mevcut kayıt güncelleme desteği eklendi.
+- Excel dışa/içe aktarmada irtibat kişisi, telefon, teslimat notu ve aktif/pasif durumu korunur.
+- Yedek geri yükleme sonrası veri şeması otomatik normalize edilir.
+- Durak silinince rotalardaki tamamlandı/gidilmedi referansları da temizleniyor.
+- "Tüm verileri sil" artık sadece yerel önbelleği değil, normal senkronizasyon yoluyla hesaptaki bulut verisini de temizliyor.
+
+FIREBASE / GOOGLE GİRİŞ
+- [TARİHSEL v5 NOTU] Eski sürümde masaüstünde popup, mobilde redirect kullanılıyordu. v6.4 artık tüm web/mobil PWA girişlerinde Firebase popup kullanır; redirect kaldırılmıştır.
+- auth/unauthorized-domain hatasında kullanılan alan adı doğrudan ekranda gösteriliyor.
+- file:// üzerinden giriş yapılmaya çalışılırsa anlaşılır uyarı veriliyor.
+- Oturum kalıcılığı LOCAL olarak ayarlandı.
+- Hesap değiştirirken önceki kullanıcının verisinin yeni boş hesaba taşınabilmesine yol açan risk giderildi.
+- Eski misafir verisi yalnızca bir kez ve yalnızca ilk uygun hesaba taşınır.
+- Firestore çevrimdışı olduğunda aynı UID'ye ait cihaz önbelleği ile uygulama açılabilir.
+
+SENKRONİZASYON
+- Her değişiklikte tüm bulut koleksiyonunu yeniden okuyup silme/yazma modeli kaldırıldı.
+- Yalnızca son bilinen bulut durumuna göre değişen durak/rota/ayarlar yazılıyor.
+- Başka cihazda sonradan eklenen ve bu cihazın bilmediği kayıtların yanlışlıkla silinmesi engellendi.
+- Uygulama tekrar öne geldiğinde, yerel bekleyen değişiklik yoksa bulut verisi yenilenir.
+- Bağlantı geri geldiğinde bekleyen yerel değişiklikler yeniden senkronize edilir.
+- 450 işlem/batch güvenlik sınırı korunmuştur.
+
+ROTA / NAVİGASYON
+- Yeni rota ekranına gerçek durak seçimi, arama, tüm aktifleri seç ve seçimi temizle eklendi.
+- İlk 10 durağın rastgele seçilmesi kaldırıldı; aktif duraklar varsayılan seçilir.
+- Sürükle-bırak yanında yukarı/aşağı ve kaldır butonları eklendi.
+- 50 duraklık parçalar halinde OSRM rota hesaplama desteği eklendi; büyük rotalar daha dayanıklı.
+- Yol servisi geçici olarak kullanılamazsa rota yaklaşık mesafe/süre ile kaydedilir ve kullanıcı uyarılır.
+- Rota detayındaki ETA artık rotanın kendi başlangıç saatini kullanır.
+- Gidildi/gidilmedi durumları ve durak aktif/pasif durumu birlikte güncellenir.
+- 100 m otomatik tamamlama tamamlanan durağı pasif yapar ve sıradaki çözülmemiş durağa geçer.
+- Canlı konum takibi ayarı artık gerçekten navigasyon başlatma davranışını etkiler.
+- Hız birimi etiketi km/sa olarak düzeltildi.
+- Dahili navigasyona ek olarak Google Haritalar'da aç seçeneği korundu.
+
+PWA / DAĞITIM
+- Eksik manifest.webmanifest, sw.js ve uygulama ikonları eklendi.
+- Firebase Hosting yapılandırması firebase.json içine eklendi.
+- .firebaserc gerçek proje kimliği rotadefteri-1a9d1 ile hazırlandı.
+- Windows için DEPLOY_FIREBASE.bat ve START_LOCAL.bat yardımcı dosyaları eklendi.
+- rotadefteri.html, index.html ile aynı güncel sürüme getirildi.
+
+SON SAĞLAMLIK İYİLEŞTİRMELERİ
+- Google Maps yükleyicisine zaman aşımı ve başarısız yükleme sonrası yeniden deneme desteği eklendi.
+- Bulut tamamen boşaltıldığında uygulamanın eski yerel kayıtları ekranda tutması engellendi.
+- Çevrimdışı UID önbelleği son bilinen bulut durumu olarak izlenir; çevrimdışı silmeler bağlantı geldiğinde doğru şekilde senkronize edilebilir.
+- Firestore belge yolu kimliği veri içindeki ID'den daha güvenilir kabul edilir; eski/bozuk kayıtların kimlik tutarlılığı iyileştirildi.
+- Excel/JSON içe aktarmadan gelebilecek geçersiz veya HTML/Firebase açısından riskli ID değerleri güvenli iç kimliklere dönüştürülür.
+- Rota tamamen kapatılıp yeniden açıldığında gidildi/gidilmedi durumlarının birbiriyle çakışması önlendi.
+- Rota detayına yeniden OSRM hesaplama ve isteğe bağlı Türkçe sesli durak bildirimi eklendi.
+- Excel dışa aktarma sütun genişlikleri yeni irtibat/not/durum alanlarına göre düzenlendi.

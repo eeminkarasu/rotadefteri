@@ -1,0 +1,11 @@
+RotaDefteri v6.8 IMPORT FIX - Test Sonuçları
+
+- index.html / rotadefteri.html birebir aynı: OK
+- Inline JavaScript syntax kontrolü: OK
+- Rotalar.json: OK
+- manifest.webmanifest: OK
+- firebase-config.js v6.7 ile aynı: OK
+- Firebase/Auth/Firestore script blokları değişmedi: OK
+- CH Kodu / CH Ünvanı / Enlem (Latitude) / Boylam (Longitude) örnek satır ayrıştırması: OK
+- Gün + Hafta -> otomatik rota adı: OK
+- Açık Adres + İlçe + Şehir birleştirme: OK

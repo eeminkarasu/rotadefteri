@@ -1,0 +1,8 @@
+RotaDefteri v7.2 AUTH STABLE + GUEST 24H
+
+- Firebase SDK yükleme artık sayfayı bloklamıyor; arka planda zaman aşımı kontrollü yükleniyor.
+- Firebase erişilemiyorsa giriş ekranı "hazırlanıyor" durumunda takılı kalmıyor; anlaşılır hata gösteriliyor ve misafir modu çalışmaya devam ediyor.
+- Misafir olarak devam et seçimi 24 saat hatırlanıyor. Bu sürede uygulama yeniden açıldığında giriş ekranı otomatik çıkmıyor.
+- 24 saat dolduğunda giriş ekranı yeniden gösteriliyor.
+- Hesaptan çıkış yapıldığında giriş ekranı hemen gösteriliyor.
+- E-posta/şifre, Firestore UID senkronizasyonu, Google Maps, rota/durak/navigasyon mantığı değiştirilmedi.

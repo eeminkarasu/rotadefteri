@@ -1,0 +1,22 @@
+GitHub Pages'e yükleme
+======================
+1) Bu ZIP'i bilgisayarında klasöre çıkar.
+2) Klasörün İÇİNDEKİ dosyaları GitHub repository kök dizinine yükle.
+3) index.html repository'nin ana seviyesinde kalmalı.
+4) Eski sw.js dosyasının üzerine yeni sw.js dosyasını yaz.
+5) GitHub Pages yayınlandıktan sonra iPhone/Android'de sayfayı tamamen kapatıp tekrar aç.
+   Service Worker v6.4 cache adı eski önbelleği otomatik temizlemek için değiştirilmiştir.
+
+Firebase:
+- firebase-config.js dosyasını silme.
+- firestore.rules dosyasını silme.
+- Firebase Authorized Domains ayarını koru.
+
+Google Maps API:
+- Anahtar web sitesi (HTTP referrer) kısıtlamalı olmalıdır.
+
+Google Authentication v6.4:
+- Uygulamada manuel OAuth Client ID yoktur.
+- Firebase Authentication > Google Enabled olmalıdır.
+- Authorized domains içinde eeminkarasu.github.io bulunmalıdır.
+- signInWithRedirect kullanılmaz; giriş Firebase popup ile yapılır.
