@@ -829,8 +829,8 @@ body[data-view="contacts"] .khy-topbar,body[data-view="mapHubPage"] .khy-topbar,
       <div class="auth-links"><button class="auth-link" id="authModeBtn" onclick="toggleAuthMode()">Hesabın yok mu? Hesap oluştur</button></div>
       <div class="auth-divider">veya</div>
       <button class="guest-login-btn" onclick="enterGuestMode()">👤 Misafir olarak devam et</button>
-      <div class="guest-note"><b>NOT:</b> Sisteme giriş yapmadan kullanırsanız bilgileriniz yalnızca bu cihazda tutulur. Tarayıcı verileri temizlenirse, uygulama kaldırılırsa veya site verileri silinirse kaybolabilir. Her uygulama açılışında giriş ekranı tekrar gösterilir.</div>
-      <div id="authStatus" class="auth-status">Firebase bağlantısı hazırlanıyor…</div><div class="auth-status" style="opacity:.62;margin-top:5px">Giriş altyapısı: EMAIL/MİSAFİR + FIRESTORE</div>
+      <div class="guest-note"><b>NOT:</b> Sisteme giriş yapmadan kullanırsanız bilgileriniz yalnızca bu cihazda tutulur. Tarayıcı verileri temizlenirse, uygulama kaldırılırsa veya site verileri silinirse kaybolabilir. Misafir olarak devam ettikten sonra giriş ekranı yaklaşık 24 saat boyunca yeniden gösterilmez.</div>
+      <div id="authStatus" class="auth-status">Giriş servisi hazırlanıyor…</div><div class="auth-status" style="opacity:.62;margin-top:5px">Giriş altyapısı: EMAIL/MİSAFİR + FIRESTORE</div>
       <div id="authConfigHelp" class="auth-config-help" style="display:none">Firebase giriş bilgisi burada gösterilecek.</div>
     </section>
   </div>
@@ -839,9 +839,6 @@ body[data-view="contacts"] .khy-topbar,body[data-view="mapHubPage"] .khy-topbar,
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
 <script src="./firebase-config.js"></script>
 <script>window.GOOGLE_MAPS_API_KEY = "AIzaSyCqGzoPHDTHlmfMy0IA6ZZnqmPOiwmgdsc";</script>
 <script>
@@ -1245,11 +1242,17 @@ if ("serviceWorker" in navigator) {
 </script>
 <script>
 (function(){
-  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false,guestSession=false,authSignupMode=false,guestTransferRequested=false;
+  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};const GUEST_ACCESS_KEY='rotadefteri-guest-access-until-v1',GUEST_ACCESS_MS=24*60*60*1000;let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false,guestSession=false,authSignupMode=false,guestTransferRequested=false,firebaseReady=false,firebaseBooting=false;
   const authGate=document.getElementById('authGate'),authStatus=document.getElementById('authStatus'),configHelp=document.getElementById('authConfigHelp');
   const cloudState={stops:new Map(),routes:new Map(),settings:null};
   const clone=x=>JSON.parse(JSON.stringify(x));const canonical=x=>Array.isArray(x)?x.map(canonical):(x&&typeof x==='object'?Object.keys(x).sort().reduce((o,k)=>(o[k]=canonical(x[k]),o),{}):x);const stable=x=>JSON.stringify(canonical(x??null));const configured=()=>!!(CONFIG.apiKey&&CONFIG.authDomain&&CONFIG.projectId&&CONFIG.appId);
   function setStatus(t){if(authStatus)authStatus.textContent=t}function showGate(v){if(authGate)authGate.classList.toggle('open',!!v)}
+  function guestAccessValid(){try{return Number(localStorage.getItem(GUEST_ACCESS_KEY)||0)>Date.now()}catch(_){return false}}
+  function rememberGuestAccess(){try{localStorage.setItem(GUEST_ACCESS_KEY,String(Date.now()+GUEST_ACCESS_MS))}catch(_){}}
+  function clearGuestAccess(){try{localStorage.removeItem(GUEST_ACCESS_KEY)}catch(_){}}
+  function loadScriptTimed(src,timeout=8000){return new Promise((resolve,reject)=>{if(document.querySelector('script[data-rd-src="'+src+'"]')){const s=document.querySelector('script[data-rd-src="'+src+'"]');if(s.dataset.loaded==='1')return resolve();s.addEventListener('load',()=>resolve(),{once:true});s.addEventListener('error',()=>reject(new Error('SDK yüklenemedi')),{once:true});return}const s=document.createElement('script');s.src=src;s.async=true;s.dataset.rdSrc=src;let done=false;const timer=setTimeout(()=>{if(done)return;done=true;reject(new Error('SDK yükleme zaman aşımı'))},timeout);s.onload=()=>{if(done)return;done=true;clearTimeout(timer);s.dataset.loaded='1';resolve()};s.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('SDK yüklenemedi'))};document.head.appendChild(s)})}
+  async function ensureFirebaseSdk(){if(window.firebase?.auth&&window.firebase?.firestore)return;await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js');await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js');await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js')}
+  function activateGuestLocal({remember=false,quiet=false}={}){guestSession=true;rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(remember)rememberGuestAccess();loadGuestLocal();updateProfile(null,true);setGuestBanner(true);hideAuthHelp();setStatus('Misafir modu • yalnızca bu cihazda');showGate(false);setTimeout(()=>window.rdApplyStartupView?.(true),60);if(!quiet){if(guestHasData())toast('Bu cihazdaki misafir verileri açıldı');else toast('Misafir modu açıldı')}}
   function cacheOnly(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){console.warn('Yerel önbellek yazılamadı',e)}updateStats()}
   function stateFromDb(){cloudState.stops=new Map(db.stops.map(x=>[x.id,clone(x)]));cloudState.routes=new Map(db.routes.map(x=>[x.id,clone(x)]));cloudState.settings=clone(db.settings)}
   function stateFromRemote(remote){cloudState.stops=new Map((remote.stops||[]).map(x=>[x.id,clone(x)]));cloudState.routes=new Map((remote.routes||[]).map(x=>[x.id,clone(x)]));cloudState.settings=remote.settings?clone(remote.settings):null}
@@ -1291,7 +1294,7 @@ if ("serviceWorker" in navigator) {
     finally{rdSyncInFlight=false;if(rdSyncAgain){rdSyncAgain=false;window.rdScheduleCloudSync()}}
   }
   window.rdScheduleCloudSync=function(){if(!rdUser||!rdFs)return;rdDirty=true;clearTimeout(rdSyncTimer);rdSyncTimer=setTimeout(()=>writeCloud().catch(()=>{}),700)};window.rdSyncNow=async function(){clearTimeout(rdSyncTimer);rdSyncTimer=null;return writeCloud()};
-  async function fetchCloud(uid){const [stopsSnap,routesSnap,settingsSnap]=await Promise.all([rdFs.collection('users/'+uid+'/stops').get(),rdFs.collection('users/'+uid+'/routes').get(),rdFs.doc('users/'+uid+'/settings/app').get()]);return {stops:stopsSnap.docs.map(d=>({...d.data(),id:d.id})),routes:routesSnap.docs.map(d=>({...d.data(),id:d.id})),settings:settingsSnap.exists?settingsSnap.data():null,hasCloud:!stopsSnap.empty||!routesSnap.empty||settingsSnap.exists}}
+  async function fetchCloud(uid){const read=Promise.all([rdFs.collection('users/'+uid+'/stops').get(),rdFs.collection('users/'+uid+'/routes').get(),rdFs.doc('users/'+uid+'/settings/app').get()]);const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Firestore okuma zaman aşımı')),12000));const [stopsSnap,routesSnap,settingsSnap]=await Promise.race([read,timeout]);return {stops:stopsSnap.docs.map(d=>({...d.data(),id:d.id})),routes:routesSnap.docs.map(d=>({...d.data(),id:d.id})),settings:settingsSnap.exists?settingsSnap.data():null,hasCloud:!stopsSnap.empty||!routesSnap.empty||settingsSnap.exists}}
   async function readCloud(user){
     const uid=user.uid;KEY='rotadefteri-user-'+uid;let cached=null;try{cached=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){};const remote=await fetchCloud(uid);
     if(remote.hasCloud){db={...db,stops:remote.stops,routes:remote.routes,settings:{...db.settings,...(remote.settings||{})}};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly()}
@@ -1306,25 +1309,35 @@ if ("serviceWorker" in navigator) {
   async function refreshCloud(){if(!rdUser||!rdFs||rdDirty||rdSyncInFlight||rdRefreshInFlight)return;rdRefreshInFlight=true;try{const remote=await fetchCloud(rdUser.uid);db.stops=remote.stops;db.routes=remote.routes;if(remote.settings)db.settings={...db.settings,...remote.settings};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();renderStops();renderRoutes();initMainMap();setStatus('Bulut senkronizasyonu hazır')}catch(e){console.warn('Arka plan yenilemesi başarısız',e)}finally{rdRefreshInFlight=false}}
   window.toggleAuthMode=function(){authSignupMode=!authSignupMode;const card=document.getElementById('authCard'),btn=document.getElementById('emailAuthBtn'),mode=document.getElementById('authModeBtn'),title=document.getElementById('authTitle'),sub=document.getElementById('authSubtitle'),pw=document.getElementById('authPassword');card?.classList.toggle('signup',authSignupMode);if(btn)btn.textContent=authSignupMode?'Hesap Oluştur':'Giriş Yap';if(mode)mode.textContent=authSignupMode?'Zaten hesabın var mı? Giriş yap':'Hesabın yok mu? Hesap oluştur';if(title)title.textContent=authSignupMode?'Hesap Oluştur':'RotaDefteri';if(sub)sub.textContent=authSignupMode?'Yeni hesabınızla durak ve rotalarınızı güvenli şekilde senkronize edin.':'Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.';if(pw)pw.autocomplete=authSignupMode?'new-password':'current-password';hideAuthHelp();setStatus(authSignupMode?'Yeni hesap bilgilerinizi girin':'E-posta ve şifrenizle giriş yapın')};
   window.submitEmailAuth=async function(){
-    if(!rdAuth)return;hideAuthHelp();const email=(document.getElementById('authEmail')?.value||'').trim(),password=document.getElementById('authPassword')?.value||'',name=(document.getElementById('authName')?.value||'').trim(),remember=document.getElementById('rememberMe')?.checked!==false;if(!email||!password){showAuthHelp('E-posta ve şifre alanlarını doldurun.');return}if(authSignupMode&&!name){showAuthHelp('Hesap oluşturmak için ad soyad alanını doldurun.');return}if(password.length<6){showAuthHelp('Şifre en az 6 karakter olmalıdır.');return}
+    if(!rdAuth){setStatus(firebaseBooting?'Giriş servisi hazırlanıyor…':'Firebase bağlantısı kurulamadı. İnterneti kontrol edin veya misafir olarak devam edin.');showAuthHelp('E-posta ile giriş servisi henüz hazır değil. Birkaç saniye sonra tekrar deneyin veya misafir modunu kullanın.');return;}hideAuthHelp();const email=(document.getElementById('authEmail')?.value||'').trim(),password=document.getElementById('authPassword')?.value||'',name=(document.getElementById('authName')?.value||'').trim(),remember=document.getElementById('rememberMe')?.checked!==false;if(!email||!password){showAuthHelp('E-posta ve şifre alanlarını doldurun.');return}if(authSignupMode&&!name){showAuthHelp('Hesap oluşturmak için ad soyad alanını doldurun.');return}if(password.length<6){showAuthHelp('Şifre en az 6 karakter olmalıdır.');return}
     const btn=document.getElementById('emailAuthBtn');if(btn)btn.disabled=true;setStatus(authSignupMode?'Hesap oluşturuluyor…':'Giriş yapılıyor…');
     try{await rdAuth.setPersistence(remember?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);if(authSignupMode){guestTransferRequested=document.getElementById('transferGuestData')?.checked!==false&&guestHasData();const cred=await rdAuth.createUserWithEmailAndPassword(email,password);if(name)await cred.user.updateProfile({displayName:name});await cred.user.reload();updateProfile(rdAuth.currentUser||cred.user);toast('Hesabınız oluşturuldu')}else{guestTransferRequested=false;await rdAuth.signInWithEmailAndPassword(email,password)}hideAuthHelp()}
     catch(e){console.error('Email auth',e);guestTransferRequested=false;const t=authErrorText(e);setStatus(t.replace(/<[^>]+>/g,''));showAuthHelp(t);toast(authSignupMode?'Hesap oluşturulamadı':'Giriş yapılamadı')}
     finally{if(btn)btn.disabled=false}
   };
-  window.resetPassword=async function(){if(!rdAuth)return;const email=(document.getElementById('authEmail')?.value||'').trim();if(!email){showAuthHelp('Şifre sıfırlama bağlantısı için önce e-posta adresinizi yazın.');document.getElementById('authEmail')?.focus();return}try{await rdAuth.sendPasswordResetEmail(email);hideAuthHelp();setStatus('Şifre sıfırlama e-postası gönderildi');toast('Şifre sıfırlama bağlantısı gönderildi')}catch(e){const t=authErrorText(e);showAuthHelp(t);setStatus(t.replace(/<[^>]+>/g,''))}};
-  window.enterGuestMode=function(){guestSession=true;rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);loadGuestLocal();updateProfile(null,true);setGuestBanner(true);hideAuthHelp();setStatus('Misafir modu • yalnızca bu cihazda');showGate(false);setTimeout(()=>window.rdApplyStartupView?.(true),60);if(guestHasData())toast('Bu cihazdaki misafir verileri açıldı');else toast('Misafir modu açıldı')};
+  window.resetPassword=async function(){if(!rdAuth){setStatus(firebaseBooting?'Giriş servisi hazırlanıyor…':'Firebase bağlantısı kurulamadı');showAuthHelp('Şifre sıfırlama servisi henüz hazır değil.');return;}const email=(document.getElementById('authEmail')?.value||'').trim();if(!email){showAuthHelp('Şifre sıfırlama bağlantısı için önce e-posta adresinizi yazın.');document.getElementById('authEmail')?.focus();return}try{await rdAuth.sendPasswordResetEmail(email);hideAuthHelp();setStatus('Şifre sıfırlama e-postası gönderildi');toast('Şifre sıfırlama bağlantısı gönderildi')}catch(e){const t=authErrorText(e);showAuthHelp(t);setStatus(t.replace(/<[^>]+>/g,''))}};
+  window.enterGuestMode=function(){activateGuestLocal({remember:true,quiet:false})};
   window.openAuthGate=function(){if(authSignupMode)window.toggleAuthMode();showGate(true);setStatus('Hesabınızla giriş yapın veya misafir olarak devam edin');hideAuthHelp()};
-  window.signOutUser=async function(){if(!rdAuth)return;if(!rdUser){window.openAuthGate();return}try{if(rdDirty)await writeCloud();guestSession=false;await rdAuth.signOut();toast('Hesaptan çıkış yapıldı')}catch(e){console.error(e);toast('Çıkış yapılamadı')}};
-  if(!configured()){setStatus('Firebase yapılandırması eksik');showAuthHelp('ZIP içindeki <b>firebase-config.js</b> dosyasında Firebase Web App yapılandırmasını kontrol edin.');showGate(true);return}
-  try{
-    if(!firebase.apps.length)firebase.initializeApp(CONFIG);rdAuth=firebase.auth();rdFs=firebase.firestore();rdAuth.useDeviceLanguage();
-    rdAuth.onAuthStateChanged(async user=>{
-      if(user){guestSession=false;setGuestBanner(false);rdUser=user;hideAuthHelp();updateProfile(user,false);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();initMainMap();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''))}}else{setStatus('Veriler yüklenemedi: '+(e.message||''));toast('Firestore erişimi başarısız')}}}
-      else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);loadGuestLocal();updateProfile(null,true);setGuestBanner(guestSession);if(guestSession){setStatus('Misafir modu • yalnızca bu cihazda');showGate(false)}else{setStatus('E-posta ile giriş yapın veya misafir olarak devam edin');showGate(true)}}
-    });
-    window.addEventListener('focus',refreshCloud);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloud()});window.addEventListener('online',()=>{if(rdDirty)window.rdScheduleCloudSync();else refreshCloud()});
-  }catch(e){console.error(e);setStatus('Firebase başlatılamadı');showAuthHelp('Firebase başlatılırken hata oluştu: '+esc(e.message||''));showGate(true)}
+  window.signOutUser=async function(){if(!rdAuth){window.openAuthGate();return}if(!rdUser){window.openAuthGate();return}try{if(rdDirty)await writeCloud();guestSession=false;clearGuestAccess();await rdAuth.signOut();toast('Hesaptan çıkış yapıldı')}catch(e){console.error(e);toast('Çıkış yapılamadı')}};
+  async function bootstrapFirebase(){
+    if(firebaseBooting||firebaseReady)return;firebaseBooting=true;
+    if(!configured()){firebaseBooting=false;setStatus('Firebase yapılandırması eksik');showAuthHelp('ZIP içindeki <b>firebase-config.js</b> dosyasında Firebase Web App yapılandırmasını kontrol edin. Misafir modu yine kullanılabilir.');if(!guestAccessValid())showGate(true);return}
+    try{
+      setStatus('Giriş servisi hazırlanıyor…');
+      await ensureFirebaseSdk();
+      if(!window.firebase)throw new Error('Firebase SDK yüklenemedi');
+      if(!firebase.apps.length)firebase.initializeApp(CONFIG);rdAuth=firebase.auth();rdFs=firebase.firestore();rdAuth.useDeviceLanguage();firebaseReady=true;firebaseBooting=false;setStatus('Giriş servisi hazır');
+      rdAuth.onAuthStateChanged(async user=>{
+        if(user){guestSession=false;clearGuestAccess();setGuestBanner(false);rdUser=user;hideAuthHelp();updateProfile(user,false);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();initMainMap();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''));showGate(false)}}else{KEY='rotadefteri-user-'+user.uid;const base=defaultGuestDb();db={...base,stops:[],routes:[]};normalizeDb();stateFromDb();cacheOnly();renderStops();renderRoutes();initMainMap();setStatus('Buluta erişilemedi. Hesap açık; yerel kullanım devam ediyor.');showGate(false);toast('Firestore erişimi başarısız; kullanıcı önbelleği açıldı')}}}
+        else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else{guestSession=false;loadGuestLocal();updateProfile(null,true);setGuestBanner(false);setStatus('E-posta ile giriş yapın veya misafir olarak devam edin');showGate(true)}}
+      });
+      window.addEventListener('focus',refreshCloud);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloud()});window.addEventListener('online',()=>{if(rdDirty)window.rdScheduleCloudSync();else refreshCloud()});
+    }catch(e){firebaseBooting=false;firebaseReady=false;console.error('Firebase bootstrap',e);setStatus('Firebase bağlantısı kurulamadı');showAuthHelp('Firebase servislerine şu anda erişilemiyor. İnternet bağlantısını kontrol edin. Misafir modu ile uygulamayı kullanmaya devam edebilirsiniz.');if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else showGate(true)}
+  }
+  // Son 24 saat içinde misafir modu seçildiyse uygulamayı bekletmeden aç.
+  if(guestAccessValid())activateGuestLocal({remember:false,quiet:true});
+  // Firebase'i arka planda başlat; CDN gecikmesi uygulamayı kilitlemez.
+  bootstrapFirebase();
 })();
 </script>
 <script id="rd-v66-clean-engine">
