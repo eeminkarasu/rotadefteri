@@ -628,6 +628,62 @@ body[data-view="contacts"] .khy-topbar,body[data-view="mapHubPage"] .khy-topbar,
 @media(max-width:600px){.rd-stops-head{grid-template-columns:auto 1fr}.rd-stops-head-actions{grid-column:1/-1;justify-content:flex-end}.rd-stops-title h2{font-size:30px}.rd-stop-filter-chips{overflow-x:auto;display:flex;padding-bottom:4px}.rd-stop-filter-chips button{min-width:118px;padding:0 12px}.rd-stop-v71{grid-template-columns:42px 48px minmax(0,1fr) auto 18px;padding:13px!important;gap:8px}.rd-stop-seq{width:40px;height:40px}.rd-stop-type{width:46px;height:46px}.rd-stop-status-v71{min-width:96px}.rd-stop-copy h3{font-size:16px}.rd-stop-expanded-actions button{min-height:48px;font-size:12px}.rd-auth-shell{padding:14px!important}.rd-auth-brand img{width:72px;height:72px}.rd-auth-brand strong{font-size:27px}.rd-auth-hero{padding-top:20px;padding-bottom:145px}.rd-auth-hero h1{font-size:36px}.rd-auth-hero p{font-size:16px}.rd-auth-actions button{height:64px}.rd-auth-features>div{min-height:118px;padding:12px}.rd-auth-privacy{grid-template-columns:40px 1fr}.rd-auth-privacy button{grid-column:1/-1;text-align:right}.rd-nav-v71 .rd-nav-instruction-v71{grid-template-columns:36px 58px 1fr;min-height:104px;padding:10px}.rd-lane-guide{display:none}.rd-big-turn{width:54px;height:54px;font-size:45px}.rd-nav-instruction-copy strong{font-size:22px}.rd-nav-instruction-copy b{font-size:18px}.rd-nav-speed-card-v71{width:120px;height:120px;top:calc(env(safe-area-inset-top) + 130px)}.rd-speed-ring{width:94px;height:94px}.rd-speed-ring b{font-size:31px}.rd-nav-call-card-v71{top:calc(env(safe-area-inset-top) + 260px);width:190px;min-height:98px;padding:12px}.rd-nav-call-card-v71 b{font-size:20px}.rd-nav-compass-v71{top:calc(env(safe-area-inset-top) + 134px);width:60px;height:60px}.rd-nav-route-chip{top:calc(env(safe-area-inset-top) + 204px);max-width:150px}.rd-nav-progress-v71{bottom:180px!important}.rd-nav-stats-v71 span{font-size:18px}.rd-nav-stats-v71 b{font-size:13px}.rd-nav-stats-v71 small{font-size:8px}.rd-nav-controls-v71 button span{font-size:10px}}
 </style>
 
+
+<style id="rd-v73-stops-tabs-fix">
+/* v7.3 - sekmeler ve Duraklar ekranı referansına yakın, kompakt görünüm */
+body[data-view="contacts"]{background:linear-gradient(180deg,#0a2038 0%,#071827 48%,#05111d 100%)!important}
+body[data-view="contacts"] .main{max-width:820px!important;margin:0 auto!important;padding-left:16px!important;padding-right:16px!important}
+.rd-stops-v71{max-width:820px!important;width:100%!important;margin:0 auto!important}
+.rd-stops-head{margin:4px 0 22px!important}
+.rd-map-see{min-width:238px!important;justify-content:center!important;white-space:nowrap!important}
+.rd-map-inline{margin-top:16px!important;border-radius:22px!important;overflow:hidden!important;background:rgba(8,27,46,.9)!important}
+.rd-map-inline:not([open]){display:none!important}
+.rd-map-inline summary{display:flex!important}
+.khy-stop-list.rd-v71-stop-list{display:flex!important;flex-direction:column!important;gap:12px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71{
+ display:grid!important;grid-template-columns:52px 56px minmax(0,1fr) 112px 24px!important;grid-auto-rows:auto!important;align-items:center!important;gap:10px!important;
+ width:100%!important;height:auto!important;min-height:112px!important;margin:0!important;padding:14px 16px!important;
+ background:linear-gradient(180deg,rgba(8,34,56,.98),rgba(6,24,42,.98))!important;border:1px solid rgba(47,121,184,.4)!important;border-radius:20px!important;box-shadow:0 8px 22px rgba(0,0,0,.18)!important;color:#fff!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.expanded{border-color:#18a9ff!important;box-shadow:0 0 0 2px rgba(22,164,255,.26),0 14px 30px rgba(0,0,0,.22)!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-seq{position:relative;width:46px!important;height:46px!important;background:#0d4f82!important;color:#55c2ff!important;align-self:start!important;margin-top:2px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-seq::after{content:"";position:absolute;left:50%;top:52px;width:1px;height:30px;border-left:1px dashed rgba(67,169,229,.48);transform:translateX(-50%)}
+.khy-stop-list.rd-v71-stop-list .rd-stop-type{width:52px!important;height:52px!important;background:rgba(24,143,224,.16)!important;color:#27b8ff!important;border-radius:14px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy{align-self:center!important;min-width:0!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy h3{margin:0!important;font-size:18px!important;line-height:1.22!important;color:#fff!important;font-weight:800!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy p{margin:5px 0 0!important;color:#c9d8e9!important;font-size:14px!important;line-height:1.25!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy small{margin-top:4px!important;color:#8fa7c2!important;font-size:12px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-phone{margin-top:7px!important;color:#9fc1df!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-status-v71{min-width:104px!important;max-width:112px!important;padding:9px 8px!important;border-radius:14px!important;font-size:12px!important;line-height:1.2!important;justify-self:end!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-chevron{font-size:30px!important;color:#a8cae8!important;justify-self:end!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-expanded-actions{grid-column:2/-1!important;display:none!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;margin-top:4px!important;padding-top:12px!important;border-top:1px solid rgba(69,140,201,.25)!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.expanded .rd-stop-expanded-actions{display:grid!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-expanded-actions button{min-height:48px!important;border-radius:14px!important;background:rgba(5,37,64,.92)!important;font-size:13px!important}
+.rd-stop-filter-chips{gap:10px!important}
+.rd-stop-filter-chips button{min-height:50px!important}
+@media(max-width:700px){
+ body[data-view="contacts"] .main{padding:10px 12px 102px!important}
+ .rd-stops-head{grid-template-columns:34px minmax(0,1fr) auto!important;gap:8px!important;align-items:center!important;margin-bottom:16px!important}
+ .rd-stops-head-actions{grid-column:auto!important;display:flex!important;gap:6px!important;justify-content:flex-end!important}
+ .rd-stops-title h2{font-size:30px!important}.rd-stops-title p{font-size:13px!important;line-height:1.25!important}
+ .rd-map-see{min-width:0!important;max-width:190px!important;min-height:46px!important;padding:0 11px!important;font-size:11px!important;line-height:1.15!important}.rd-map-see span{white-space:normal!important}
+ .rd-add-stop{width:44px!important;min-width:44px!important;height:46px!important}
+ .rd-stop-search-row{grid-template-columns:minmax(0,1fr) 54px!important}.rd-stop-search{height:58px!important}.rd-stop-sort-btn{border-radius:16px!important}
+ .rd-stop-filter-chips{display:flex!important;overflow-x:auto!important;gap:8px!important;padding-bottom:3px!important}.rd-stop-filter-chips button{min-width:112px!important;padding:0 10px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:42px 46px minmax(0,1fr) 88px 18px!important;gap:7px!important;min-height:104px!important;padding:12px 10px!important;border-radius:18px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-seq{width:39px!important;height:39px!important;font-size:16px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-seq::after{top:45px;height:27px}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-type{width:44px!important;height:44px!important;font-size:20px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-copy h3{font-size:15px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-copy p{font-size:12px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-copy small{font-size:10.5px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-status-v71{min-width:82px!important;max-width:88px!important;font-size:10.5px!important;padding:8px 5px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-chevron{font-size:24px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-expanded-actions{grid-column:1/-1!important;gap:7px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-expanded-actions button{min-height:44px!important;font-size:11px!important;padding:6px!important}
+}
+@media(max-width:430px){
+ .rd-stops-head{grid-template-columns:28px minmax(0,1fr)!important}.rd-stops-head-actions{grid-column:1/-1!important;justify-content:stretch!important}.rd-map-see{max-width:none!important;flex:1!important}.rd-add-stop{flex:none!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:38px 42px minmax(0,1fr) 78px 16px!important;gap:6px!important;padding:11px 8px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-copy h3{font-size:14px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-copy p{font-size:11px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-copy small{font-size:9.8px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-status-v71{min-width:72px!important;max-width:78px!important;font-size:9.5px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -636,10 +692,10 @@ body[data-view="contacts"] .khy-topbar,body[data-view="mapHubPage"] .khy-topbar,
   <div class="brand khy-brand"><img class="brand-logo" src="icons/brand-mark.svg" alt="RotaDefteri logosu"><span>Rota<span class="brand-blue">Defteri</span></span></div>
   <button class="head-icon" onclick="showView('settings')" aria-label="Ayarlar">⚙</button>
   <nav class="nav khy-nav">
-    <button class="navbtn active" data-view="home">⌂<span>Ana Menü</span></button>
+    <button class="navbtn active" data-view="home">⌂<span>Ana Sayfa</span></button>
     <button class="navbtn" data-view="routes">⌁<span>Rotalarım</span></button>
     <button class="navbtn nav-primary" onclick="smartNavigateHome()">➤<span>Navigasyon</span></button>
-    <button class="navbtn" data-view="mapHubPage">⌖<span>Harita</span></button>
+    <button class="navbtn" data-view="contacts">⌖<span>Duraklar</span></button>
     <button class="navbtn" data-view="settings">◉<span>Profil</span></button>
   </nav>
 </header>
@@ -676,11 +732,11 @@ body[data-view="contacts"] .khy-topbar,body[data-view="mapHubPage"] .khy-topbar,
 </section>
 
 <section id="contacts" class="view khy-page rd-contacts-page rd-stops-v71">
-  <div class="rd-stops-head"><button class="rd-v71-back" onclick="showView('home')" aria-label="Geri">‹</button><div class="rd-stops-title"><h2>Duraklar</h2><p>Rotalarındaki tüm durakları görüntüle ve yönet.</p></div><div class="rd-stops-head-actions"><button class="rd-map-see" onclick="openMapHub()">🗺 <span>Haritada Gör</span></button><button class="rd-add-stop" onclick="openStopModal()" aria-label="Durak ekle">＋</button></div></div>
+  <div class="rd-stops-head"><button class="rd-v71-back" onclick="showView('home')" aria-label="Geri">‹</button><div class="rd-stops-title"><h2>Duraklar</h2><p>Rotalarındaki tüm durakları görüntüle ve yönet.</p></div><div class="rd-stops-head-actions"><button class="rd-map-see" id="stopsMapToggleBtn" onclick="toggleStopsMapInline()">🗺 <span>Haritayı görmek için tıklayınız</span></button><button class="rd-add-stop" onclick="openStopModal()" aria-label="Durak ekle">＋</button></div></div>
   <div class="rd-stop-search-row"><div class="rd-stop-search"><span>⌕</span><input id="stopSearch" placeholder="Durak adı, müşteri veya adres ara..." oninput="renderStops()"></div><button class="rd-stop-sort-btn" id="stopSortBtn" onclick="cycleStopSort()" title="Sıralama">☷</button><select id="stopSort" hidden onchange="renderStops()"><option value="az">A–Z</option><option value="za">Z–A</option><option value="newest">En yeni</option><option value="oldest">En eski</option></select></div>
   <div class="rd-stop-filter-chips"><button class="active" data-stop-filter="all" onclick="setStopFilter('all')">Tümü <b id="stopCountAll">0</b></button><button data-stop-filter="today" onclick="setStopFilter('today')">Bugün <b id="stopCountToday">0</b></button><button data-stop-filter="done" onclick="setStopFilter('done')">✓ Gidildi <b id="stopCountDone">0</b></button><button data-stop-filter="pending" onclick="setStopFilter('pending')">◷ Gidilmedi <b id="stopCountPending">0</b></button></div>
   <div id="stopList" class="list khy-stop-list rd-v71-stop-list"></div>
-  <details class="khy-map-card rd-map-details"><summary><span>⌖ Durak Haritası</span><small>Haritayı aç/kapat</small></summary><div id="map"></div></details>
+  <details id="stopsMapDetails" class="khy-map-card rd-map-details rd-map-inline"><summary><span>⌖ Durak Haritası</span><small>Haritayı gizlemek için kapatın</small></summary><div id="map"></div></details>
 </section>
 
 <section id="mapHubPage" class="view khy-page full-page rd-map-hub-page"><div class="page-head"><button class="back-btn" onclick="showView('home')">‹</button><div><span class="eyebrow">HARİTA</span><h2>Tüm Duraklar ve Rotalar</h2><p class="rd-page-sub">Kayıtlı durakların harita görünümü ve hızlı erişim.</p></div></div><div class="rd-map-page-card"><div id="dashboardMap"></div><div class="rd-map-actions"><button class="rd-secondary-btn" onclick="showView('contacts')">Durak listesine git</button><button class="rd-secondary-btn" onclick="openRouteBuilder()">Yeni rota oluştur</button></div></div></section>
@@ -884,6 +940,11 @@ function getActiveRouteList(){return db.routes.filter(r=>!r.completed&&(r.stopId
 function getOpenRoute(){return getActiveRouteList().find(r=>routeFinishedCount(r)<(r.stopIds?.length||0))||null}
 function smartNavigateHome(){const open=getOpenRoute();if(open)return openNavigation(open.id);if(db.routes.length)return openRouteBuilder();toast('Önce bir rota oluşturun')}
 function openMapHub(){showView('mapHubPage')}
+function toggleStopsMapInline(){
+ const details=document.getElementById('stopsMapDetails'),btn=document.getElementById('stopsMapToggleBtn');if(!details)return;details.open=!details.open;
+ if(btn){const t=btn.querySelector('span');if(t)t.textContent=details.open?'Haritayı gizlemek için tıklayınız':'Haritayı görmek için tıklayınız'}
+ if(details.open){setTimeout(async()=>{try{await initMainMap();invalidateMainMap();details.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){console.warn('Durak haritası açılamadı',e);toast('Harita açılamadı')}} ,80)}
+}
 function showHistoryPage(refresh=false){showView('historyPage');if(refresh)renderHistoryPage()}
 function renderDashboardHome(){const userName=getHomeUserName(),greet=document.getElementById('homeGreeting'),name=document.getElementById('homeProfileName'),role=document.getElementById('homeProfileRole'),avatar=document.getElementById('homeProfileAvatar'),dateEl=document.getElementById('homeDateText'),tr=document.getElementById('homeTotalRoutes'),ts=document.getElementById('statStops'),rem=document.getElementById('homeRemainingDistance'),backup=document.getElementById('statBackup'),detail=document.getElementById('homeDetailText'),profileEmail=(document.getElementById('profileEmail')?.textContent||'');if(greet)greet.textContent=(new Date().getHours()<12?'Günaydın, ':new Date().getHours()<18?'İyi günler, ':'İyi akşamlar, ')+userName+'!';if(name)name.textContent=userName;if(role)role.textContent=/yalnızca bu cihazda/i.test(profileEmail)?'Misafir Modu':'Saha Ekibi';if(avatar){avatar.textContent=(userName[0]||'R').toLocaleUpperCase('tr-TR');avatar.style.backgroundImage=''}if(dateEl)dateEl.textContent=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',weekday:'long'});const active=getActiveRouteList(),open=getOpenRoute(),remaining=active.reduce((sum,r)=>sum+Math.max(0,(routeRemainingScheduled(r).distance||0)),0);if(tr)tr.textContent=String(active.length||db.routes.length||0);if(ts)ts.textContent=String(db.stops.length);if(rem)rem.textContent=remaining?formatDistance(remaining):'—';if(backup)backup.textContent='Son senkron: '+(db.lastSyncAt?new Date(db.lastSyncAt).toLocaleString('tr-TR'):'—');if(detail)detail.textContent=open?`${open.name} rotası için ${routeFinishedCount(open)}/${open.stopIds.length} durak işlendi.`:'Disiplinli rotalar, büyük başarılar getirir.'}
 function renderHistoryPage(){const el=document.getElementById('historyList');if(!el)return;const arr=[...db.routes].filter(r=>r.completed||routeFinishedCount(r)>0).sort((a,b)=>String(b.completedAt||b.createdAt||b.date||'').localeCompare(String(a.completedAt||a.createdAt||a.date||'')));if(!arr.length){el.innerHTML='<div class="rd-history-empty">Henüz tamamlanan veya işlem gören rota yok.</div>';return}el.innerHTML=arr.map((r,idx)=>{const total=r.stopIds?.length||0,done=routeFinishedCount(r),pct=total?Math.round(done/total*100):0;return `<article class="card route-card rd-route-card ${r.completed?'completed':''}" onclick="viewRoute('${r.id}')"><div class="route-card-top"><div class="route-card-title"><span class="rd-route-index">${r.completed?'✓':idx+1}</span><div><h3>${esc(r.name)}</h3><div class="route-card-meta">${r.date?new Date(r.date+'T00:00:00').toLocaleDateString('tr-TR'):''} • ${total} durak</div></div></div><span class="status-pill ${r.completed?'':'off'}">${r.completed?'TAMAMLANDI':'İŞLENİYOR'}</span></div><div class="route-progress"><div style="width:${pct}%"></div></div><div class="route-card-stats"><div><small>Mesafe</small><b>${r.distance?formatDistance(r.distance):'—'}</b></div><div><small>İlerleme</small><b>${done}/${total}</b></div><div><small>Varış</small><b>${routeArrival(r)}</b></div></div><div class="route-card-footer"><div class="metric-chip">${pct}% ilerleme</div><span class="rd-card-arrow">›</span></div></article>`}).join('')}

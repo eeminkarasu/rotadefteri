@@ -1,0 +1,10 @@
+RotaDefteri v7.3 - Duraklar + Sekmeler Düzeltmesi
+
+- Alt sekmeler: Ana Sayfa / Rotalarım / Navigasyon / Duraklar / Profil.
+- Harita sekmesi kaldırıldı; Duraklar ekranındaki buton üzerinden açılır.
+- Duraklar haritası sayfa içinde açılıp kapanır.
+- Harita butonu metni: Haritayı görmek için tıklayınız.
+- Durak kartlarının eski CSS ile çakışması giderildi; kartlar tekrar kompakt grid görünümünde.
+- Mobil görünüm referans ekrandaki sıralı kart yapısına yaklaştırıldı.
+- Ara / Düzenle / Rotaya Ekle işlevleri korunmuştur.
+- Firebase/Firestore senkronizasyon mantığı değiştirilmemiştir.
