@@ -1,15 +1,24 @@
-RotaDefteri v5 - Görsel Yenilenmiş + Google Maps
+RotaDefteri v6.9 - Google Maps
 
 Google Maps API anahtarı bu pakette index.html ve rotadefteri.html içine tanımlanmıştır.
+
+Harita görünümü seçenekleri:
+- Google Maps (ana durak haritası + navigasyon haritası)
+- OpenStreetMap
+- OpenStreetMap HOT
+
+Google Maps seçiliyken navigasyonda Google TrafficLayer da gösterilir.
+Google Maps yüklenemezse uygulama otomatik olarak OpenStreetMap yedeğine geçer.
+
 Google Cloud tarafında önerilen API kısıtlamaları:
 - Maps JavaScript API
 - Places API (New)
-- Routes API (trafik tabanlı rota özelliği eklendiğinde kullanılacaktır)
-- Geocoding API (adres/koordinat dönüşümü gerektiğinde)
+- Geocoding API (adres/koordinat dönüşümü için)
+- Routes API (ileride Google trafik-duyarlı rota hesaplama motoru kullanılırsa)
 
 Website (HTTP referrer) kısıtlaması için GitHub Pages alan adınızı kullanın.
 Örnek:
 https://eeminkarasu.github.io/*
 https://eeminkarasu.github.io/rotadefteri/*
 
-Not: API anahtarı web uygulamasında tarayıcı tarafından görülebilir. Güvenlik için Google Cloud'da HTTP referrer ve API restrictions zorunlu tutulmalıdır.
+Not: API anahtarı web uygulamasında tarayıcı tarafından görülebilir. Güvenlik için Google Cloud'da HTTP referrer ve API restrictions uygulanmalıdır.

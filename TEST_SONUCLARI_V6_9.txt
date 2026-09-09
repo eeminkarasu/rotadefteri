@@ -1,0 +1,14 @@
+RotaDefteri v6.9 TEST SONUÇLARI
+
+[OK] index.html ve rotadefteri.html birebir aynı.
+[OK] Tüm inline JavaScript blokları sözdizimi kontrolünden geçti.
+[OK] HTML içinde yinelenen id bulunmadı.
+[OK] Harita seçenekleri: Google Maps / OpenStreetMap / OpenStreetMap HOT.
+[OK] Google Maps seçildiğinde ana durak haritası için gerçek Google Maps kod yolu mevcut.
+[OK] Google Maps seçildiğinde navigasyon için gerçek Google Maps kod yolu mevcut.
+[OK] Google navigasyonunda TrafficLayer etkinleştirildi.
+[OK] Google Maps yüklenemezse Leaflet/OpenStreetMap yedeği korunuyor.
+[OK] Planlama yöntemi varsayılanı: Mevcut konumdan yakından uzağa.
+[OK] Yeni rota ve mevcut rota düzenleme ekranları current modunda açılıyor.
+[OK] Firebase/Firestore bulut senkronizasyon bloğu v6.8 ile SHA-256 olarak birebir aynı.
+[OK] Service worker önbellek sürümü v6.9 olarak yenilendi.
