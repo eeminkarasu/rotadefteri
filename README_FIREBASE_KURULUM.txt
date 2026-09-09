@@ -1,101 +1,75 @@
-ROTADEFTERİ v6.4 — FIREBASE + GOOGLE GİRİŞ KURULUMU
-=================================================
+ROTADEFTERİ v6.5 — E-POSTA/ŞİFRE + MİSAFİR GİRİŞİ
+====================================================
 
-Bu paket mevcut Firebase projesi "rotadefteri-1a9d1" için hazırlanmıştır.
-Firebase Web App yapılandırması firebase-config.js içinde korunmuştur.
+Bu paket Firebase projesi "rotadefteri-1a9d1" için hazırlanmıştır.
+Firebase Web App yapılandırması firebase-config.js içindedir.
 
-EN KOLAY KURULUM — FIREBASE HOSTING
------------------------------------
-1. Windows'ta Node.js kurulu olmalıdır.
-2. Komut İstemi / PowerShell:
-      npm install -g firebase-tools
-3. ZIP'i klasöre çıkarın.
-4. DEPLOY_FIREBASE.bat dosyasını çalıştırın.
-5. Firebase hesabınızla giriş yapın.
-6. Script Hosting ve Firestore Rules'u deploy eder.
+1) FIREBASE AUTHENTICATION
+--------------------------
+Firebase Console > Authentication > Sign-in method bölümüne girin.
 
-Google girişi için uygulamayı file:// ile açmayın. HTTP/HTTPS gerekir.
+Açılması gereken sağlayıcı:
+  Email/Password (E-posta/Şifre) -> ENABLED
 
-AUTH/UNAUTHORIZED-DOMAIN HATASI
--------------------------------
-Şu hata görülürse:
-  Firebase: This domain is not authorized for OAuth operations
-  (auth/unauthorized-domain)
+Google sağlayıcısı bu sürümde zorunlu değildir. İsterseniz kapalı bırakabilirsiniz.
 
-Firebase Console:
-  Authentication > Settings > Authorized domains
+Uygulamadaki giriş seçenekleri:
+- E-posta + şifre ile giriş
+- Hesap oluştur
+- Şifremi unuttum
+- Misafir olarak devam et
+- Beni hatırla
 
-bölümüne uygulamanın çalıştığı alan adını ekleyin.
-Örnekler:
-  rotadefteri-1a9d1.web.app
-  rotadefteri-1a9d1.firebaseapp.com
-  kendi-domaininiz.com
-  localhost   (yalnızca yerel test gerekiyorsa)
+2) MİSAFİR MODU
+---------------
+Misafir kullanıcı Firebase/Firestore'a veri göndermez.
+Duraklar, rotalar ve ayarlar yalnızca cihazın tarayıcı localStorage alanında tutulur.
 
-Not: Yeni Firebase projelerinde localhost her zaman otomatik ekli olmayabilir.
-Uygulama artık bu hata oluştuğunda eklenmesi gereken mevcut alan adını ekranda
-açıkça gösterir.
+Önemli:
+- Uygulama her yeni açılışta, hesapla oturum açılmamışsa giriş ekranını tekrar gösterir.
+- Misafir verileri tarayıcı/site verileri temizlenirse veya uygulama kaldırılırsa kaybolabilir.
+- Hesap oluştururken "Bu cihazdaki misafir durak ve rotalarımı hesabıma aktar" seçeneği ile
+  mevcut misafir verileri yeni hesaba kopyalanabilir.
 
-GOOGLE SIGN-IN
---------------
-Firebase Console > Authentication > Sign-in method > Google sağlayıcısı
-etkin olmalıdır.
-
-Masaüstü ve mobil cihazlarda Firebase signInWithPopup akışı kullanılır.
-signInWithRedirect/getRedirectResult kullanılmaz; bu sayede Safari/Chrome üçüncü taraf
-depolama bölümleme sorunu tetiklenmez. Uygulama içinde ayrı OAuth Client ID tutulmaz.
-Oturum kalıcılığı LOCAL'dır; tarayıcı tekrar açıldığında hesap korunur.
-
-FIRESTORE
----------
-Firestore Database oluşturulmuş olmalıdır. firestore.rules dosyası yalnızca
-oturum açmış kullanıcının kendi UID yoluna erişmesine izin verir:
+3) FIRESTORE
+------------
+Firestore Standard edition ve (default) veritabanı kullanılabilir.
+firestore.rules dosyası yalnızca giriş yapan kullanıcının kendi UID alanına erişmesine izin verir:
 
 users/{uid}
-  profile fields
-  users/{uid}/stops/{stopId}
-  users/{uid}/routes/{routeId}
-  users/{uid}/settings/app
+users/{uid}/stops/{stopId}
+users/{uid}/routes/{routeId}
+users/{uid}/settings/app
 
-Bir kullanıcı başka bir kullanıcının UID yolunu okuyamaz/yazamaz.
+Misafir kullanıcı Firestore kullanmadığı için kurallar ona hiçbir erişim vermez.
 
-SENKRONİZASYON
---------------
-- Cihaz önbelleği kullanıcı UID'sine göre ayrıdır.
-- Yalnızca değişen durak/rota/ayar kayıtları buluta yazılır.
-- Başka cihazın bu cihaz tarafından henüz görülmeyen kayıtları toplu
-  "sil ve yeniden yaz" işlemiyle yanlışlıkla silinmez.
-- Uygulama yeniden öne geldiğinde ve bekleyen yerel değişiklik yoksa bulut
-  verisi yenilenir.
-- İnternet geri geldiğinde bekleyen değişiklik tekrar gönderilir.
-- Firestore batch işlemleri 450'lik güvenli gruplar halinde yapılır.
+4) GITHUB PAGES
+---------------
+Repo kökünde index.html bulunmalıdır.
+Settings > Pages:
+  Source: Deploy from a branch
+  Branch: main
+  Folder: /(root)
 
-ESKİ VERİ MİGRASYONU / HESAP GÜVENLİĞİ
---------------------------------------
-Eski misafir/localStorage verisi yalnızca bir kez ilk uygun Google hesabına
-aktarılır. Hesaptan çıkıp başka bir boş hesaba giriş yapıldığında önceki
-kullanıcının verileri yeni hesaba taşınmaz.
+Site örneği:
+  https://eeminkarasu.github.io/rotadefteri/
 
-GOOGLE MAPS / YER ARAMA
------------------------
-Firebase Google girişi ile Google Maps API anahtarı farklı şeylerdir.
-Firma/adres arama için Google Maps JavaScript API + Places API anahtarı
-Ayarlar ekranından girilebilir. Anahtar yoksa durak konumu seçimi için
-OpenStreetMap geri dönüşü çalışır.
+Email/Password girişinde OAuth origin veya redirect URI gerekmez.
+Firebase Authorized domains ayarının Email/Password için zorunlu bir OAuth görevi yoktur,
+ancak proje ayarlarında eeminkarasu.github.io kaydının kalmasında sakınca yoktur.
 
-Google Maps anahtarını Google Cloud Console'da web sitesi (HTTP referrer)
-kısıtlaması ve gerekli API kısıtlamalarıyla sınırlandırmanız önerilir.
+5) YEDEK / GERİ YÜKLEME DÜZELTMESİ
+------------------------------------
+Yeni yedek formatı sürüm 2'dir.
+Eski yedek geri yüklenirken:
+- Duraklar ve rotalar geri yüklenir.
+- Mevcut tema korunur.
+- Mevcut harita/görünüm ve güzergah renk/kalınlık ayarları korunur.
+- Google Maps API anahtarı mevcut cihazdaki değer olarak korunur.
+- Eski yedek içindeki tema ayarı uygulamayı beyaz/uyumsuz görünüme çeviremez.
 
-YEREL TEST
-----------
-START_LOCAL.bat bir Python HTTP sunucusu açar:
-  http://localhost:8080/
-
-Google girişini localhost'ta test edecekseniz localhost'u Authorized domains
-listesine manuel eklemeniz gerekebilir.
-
-GÜVENLİK
---------
-Firebase Web App config istemci tarafında görünür olması gereken yapılandırmadır.
-Service Account private key veya başka sunucu sırlarını bu klasöre koymayın.
-Veri erişim güvenliği Authentication + Firestore Security Rules ile sağlanır.
+6) GÜVENLİK
+-----------
+Firebase Web App config istemci tarafında görülebilir; bu normaldir.
+Service Account private key, OAuth client secret veya başka sunucu sırlarını HTML/JS içine koymayın.
+Veri güvenliği Authentication + Firestore Security Rules ile sağlanır.

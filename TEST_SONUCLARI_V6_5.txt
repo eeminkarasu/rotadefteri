@@ -1,0 +1,26 @@
+RotaDefteri v6.5 — OTOMATİK KONTROL SONUÇLARI
+==============================================
+
+[PASS] index.html ve rotadefteri.html birebir aynı.
+[PASS] Tüm inline JavaScript blokları Node.js sözdizimi kontrolünden geçti.
+[PASS] firebase-config.js JavaScript sözdizimi kontrolünden geçti.
+[PASS] manifest.webmanifest geçerli JSON.
+[PASS] HTML içinde yinelenen id bulunmadı.
+[PASS] Eski Google popup/redirect giriş çağrıları bulunmuyor.
+[PASS] Firebase Email/Password giriş çağrıları mevcut.
+[PASS] Hesap oluşturma ve şifre sıfırlama çağrıları mevcut.
+[PASS] Misafir modu rotadefteri-guest localStorage alanına bağlı.
+[PASS] Misafir modunda bulut senkronizasyonu rdUser olmadığı için çalışmıyor.
+[PASS] Yeni hesap oluştururken misafir verisi aktarım seçeneği mevcut.
+[PASS] Yedek formatı version:2 olarak üretilecek.
+[PASS] Geri yükleme mevcut tema/görünüm/Google Maps anahtarını koruyacak şekilde güncellendi.
+[PASS] Firestore kuralları users/{uid} altında UID izolasyonunu koruyor.
+[PASS] Service Worker cache anahtarları v6.5'e yükseltildi.
+
+CİHAZDA YAPILMASI GEREKEN MANUEL TESTLER
+-----------------------------------------
+1. Firebase Authentication > Email/Password sağlayıcısını Enable edin.
+2. Yeni hesap oluşturun, durak ekleyin, çıkış/giriş sonrası verinin geldiğini kontrol edin.
+3. Misafir modunda durak ekleyin; uygulamayı yeniden açınca giriş ekranının tekrar çıktığını kontrol edin.
+4. Tekrar Misafir olarak devam edin; cihazdaki misafir verisinin geldiğini kontrol edin.
+5. Eski .rota-backup dosyasını yükleyin; tema/görünümün değişmediğini kontrol edin.

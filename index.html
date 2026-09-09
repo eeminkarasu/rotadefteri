@@ -141,6 +141,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .nav-bottom{bottom:14px;padding:14px;border-radius:22px;background:rgba(8,16,28,.88);backdrop-filter:blur(18px);border:1px solid rgba(122,158,214,.16)}.nav-stats{margin-top:0}.nav-controls{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:10px;margin-top:14px}.nav-controls button,.center-btn{padding:14px 12px;background:rgba(255,255,255,.06);color:#fff}.center-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#149dff,#235cff)!important}
 #navMap{height:calc(100vh - 110px);border-radius:28px;overflow:hidden}.map-search input{border-radius:14px!important;background:rgba(8,16,28,.92)!important;color:#fff!important;border:1px solid rgba(122,158,214,.14)!important}.map-search button{background:linear-gradient(135deg,#149dff,#235cff)!important}
 .auth-gate{background:radial-gradient(circle at top right, rgba(74,214,255,.18), transparent 25%), rgba(6,12,22,.82)!important;backdrop-filter:blur(16px)}.auth-card{width:min(440px,calc(100% - 30px));padding:28px;border-radius:28px;background:linear-gradient(180deg, rgba(16,29,49,.95), rgba(8,17,30,.96));border:1px solid rgba(108,156,255,.16);box-shadow:0 24px 54px rgba(0,0,0,.42)}.auth-brand{width:74px;height:74px;margin:0 auto 14px;display:block}.auth-card h1{text-align:center;color:#fff;margin:0 0 8px;font-size:30px}.auth-sub,.auth-status,.auth-config-help{text-align:center;color:#a2b7d3;line-height:1.55}.google-login-btn{margin-top:18px;width:100%;padding:15px 18px;background:#fff!important;color:#081221!important;font-weight:800}.google-g{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#f3f5f8;margin-right:10px}
+.auth-card{max-height:min(780px,calc(100vh - 28px));overflow:auto}.auth-fields{display:grid;gap:11px;margin-top:18px;text-align:left}.auth-field label{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;color:#86a0c3;margin:0 0 6px 3px}.auth-field input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(121,160,218,.2);color:#f7fbff;border-radius:14px;padding:14px 15px;outline:none;font-size:15px}.auth-field input:focus{border-color:#29a8ff;box-shadow:0 0 0 3px rgba(41,168,255,.12)}.auth-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:11px 2px 0;color:#91a7c5;font-size:12px}.auth-check{display:flex;align-items:center;gap:7px;cursor:pointer}.auth-check input{accent-color:#168cff;width:17px;height:17px}.email-login-btn,.guest-login-btn{width:100%;border:0;border-radius:14px;padding:14px 16px;font-weight:850;font-size:15px;cursor:pointer}.email-login-btn{margin-top:15px;background:linear-gradient(135deg,#168cff,#2359ff);color:white;box-shadow:0 10px 25px rgba(22,140,255,.2)}.guest-login-btn{background:rgba(255,255,255,.06);border:1px solid rgba(132,168,221,.18);color:#e9f2ff}.auth-links{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}.auth-link{border:0;background:transparent;color:#53bdff;padding:5px;font-size:12px;cursor:pointer}.auth-divider{display:flex;align-items:center;gap:10px;color:#647b9a;font-size:11px;margin:16px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;flex:1;background:rgba(126,159,207,.14)}.guest-note{margin:11px 0 0;padding:11px 12px;border-radius:12px;background:rgba(255,177,46,.08);border:1px solid rgba(255,177,46,.18);color:#d5b46d;font-size:11px;line-height:1.5;text-align:left}.guest-note b{color:#ffd58a}.auth-transfer{display:none;margin-top:8px;padding:10px 11px;border-radius:12px;background:rgba(39,185,107,.08);border:1px solid rgba(39,185,107,.15);color:#9ed7ba;font-size:11px}.auth-card.signup .auth-transfer{display:block}.auth-card.signup #authNameWrap{display:block!important}.auth-card.signup #forgotPasswordBtn{display:none}.guest-mode-banner{display:none;position:sticky;top:86px;z-index:3900;margin:0 12px 10px;padding:9px 12px;background:linear-gradient(90deg,rgba(255,174,42,.14),rgba(255,174,42,.06));border:1px solid rgba(255,188,72,.22);border-radius:12px;color:#f6d18c;font-size:11px;align-items:center;justify-content:space-between;gap:10px}.guest-mode-banner.show{display:flex}.guest-mode-banner button{border:0;border-radius:9px;padding:7px 9px;background:#168cff;color:#fff;font-weight:800;font-size:11px}.guest-mode-banner strong{display:block;color:#ffd58a;margin-bottom:2px}.profile-card.guest-profile{border-color:rgba(255,188,72,.18)!important}.profile-card.guest-profile .profile-avatar{background:linear-gradient(135deg,#d18b20,#ffbd4d)}
+
 .empty{padding:26px;border-radius:20px;border:1px dashed rgba(122,158,214,.22)!important;background:rgba(255,255,255,.03)!important;color:#9eb2cf!important}
 @media (min-width:901px){.khy-topbar{justify-content:flex-start}.khy-brand{position:static;transform:none}.head-icon{display:none}.main{padding-bottom:36px!important}.khy-nav{position:static!important;height:auto!important;background:transparent!important;border-top:0!important;box-shadow:none!important;padding:0!important;margin-left:auto!important}.khy-nav .navbtn{font-size:14px!important;flex-direction:row!important;padding:10px 14px!important;border-radius:14px!important;border-top:0!important}.khy-nav .navbtn.active{background:rgba(41,182,255,.12)!important}}
 @media (max-width:900px){.route-card-stats,.stop-meta-grid,.builder-summary,.home-summary,.nav-stats{grid-template-columns:1fr 1fr}.home-grid{grid-template-columns:1fr 1fr}.route-stop-row{grid-template-columns:auto 1fr}.eta-box{grid-column:2}.route-stop-actions{grid-column:2}}
@@ -180,6 +182,7 @@ body:not(.theme-dark){--v6-text:#172033;--v6-muted:#64748b}body:not(.theme-dark)
     <button class="navbtn" data-view="settings">⚙<span>Ayarlar</span></button>
   </nav>
 </header>
+<div id="guestModeBanner" class="guest-mode-banner"><div><strong>⚠ Misafir Modu</strong><span>Veriler yalnızca bu cihazda tutulur; tarayıcı/site verileri silinirse kaybolabilir.</span></div><button onclick="openAuthGate()">Giriş yap</button></div>
 
 <main class="main">
 <section id="home" class="view khy-home rd-dashboard">
@@ -211,7 +214,7 @@ body:not(.theme-dark){--v6-text:#172033;--v6-muted:#64748b}body:not(.theme-dark)
 
 <section id="settings" class="view khy-page rd-settings-page">
   <div class="page-head"><div><span class="eyebrow">UYGULAMA</span><h2>Ayarlar</h2><p class="rd-page-sub">Navigasyon, görünüm, açılış ekranı ve veri tercihleri.</p></div></div>
-  <div class="profile-card"><div class="profile-avatar" id="profileAvatar">R</div><div style="flex:1"><b id="profileName">RotaDefteri</b><span id="profileEmail">Google hesabı ile senkronizasyon hazır</span><small class="rd-sync-note">Değişiklikler kullanıcı hesabına özel Firestore alanında tutulur.</small></div><button class="dark-btn" id="signOutBtn" onclick="signOutUser()">Çıkış</button></div>
+  <div class="profile-card" id="profileCard"><div class="profile-avatar" id="profileAvatar">R</div><div style="flex:1"><b id="profileName">RotaDefteri</b><span id="profileEmail">Hesabınızla senkronizasyon hazır</span><small class="rd-sync-note" id="profileSyncNote">Giriş yapan kullanıcıların değişiklikleri kullanıcı hesabına özel Firestore alanında tutulur.</small></div><button class="dark-btn" id="signOutBtn" onclick="signOutUser()">Çıkış</button></div>
   <div class="settings-card rd-settings-card">
     <div class="setting-group-title">Başlangıç</div>
     <div class="setting-row"><div><b>🚀 Açılış ekranı</b><small>Uygulama girişten sonra bu sayfada açılır.</small></div><select id="startupViewSelect" onchange="saveSettings()"><option value="routes">Rotalar</option><option value="home">Ana Sayfa</option><option value="contacts">Adres Defteri</option></select></div>
@@ -303,17 +306,24 @@ body:not(.theme-dark){--v6-text:#172033;--v6-muted:#64748b}body:not(.theme-dark)
 <div id="stopActionModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">DURAK İŞLEMLERİ</span><h3 id="stopActionTitle">Durak</h3></div><button class="close" onclick="closeModal('stopActionModal')">×</button></div><div class="rd-action-list"><button onclick="editActionStop()">✎ Durak bilgilerini düzenle</button><button onclick="callActionStop()">☎ İrtibat kişisini ara</button><button class="danger" onclick="removeActionStop()">⌫ Rotadan kaldır</button></div></div></div>
 
 <div id="authGate" class="auth-gate open">
-  <div class="auth-card">
+  <div class="auth-card" id="authCard">
     <img class="auth-brand" src="icons/brand-mark.svg" alt="RotaDefteri logosu">
-    <h1>RotaDefteri</h1>
-    <p class="auth-sub">Rotalarınızı güvenli şekilde kaydedin ve her cihazda senkronize edin.</p>
-    <button id="googleSignInBtn" class="google-login-btn" onclick="signInWithGoogle()">
-      <span class="google-g">G</span><span>Google ile Giriş Yap</span>
-    </button>
-    <div id="authStatus" class="auth-status">Firebase bağlantısı hazırlanıyor…</div><div class="auth-status" style="opacity:.62;margin-top:5px">Giriş altyapısı: v6.4 FIREBASE POPUP</div>
-    <div id="authConfigHelp" class="auth-config-help" style="display:none">
-      Firebase / Google giriş bilgisi burada gösterilecek.
+    <h1 id="authTitle">RotaDefteri</h1>
+    <p class="auth-sub" id="authSubtitle">Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.</p>
+    <div class="auth-fields">
+      <div class="auth-field" id="authNameWrap" style="display:none"><label>AD SOYAD</label><input id="authName" autocomplete="name" placeholder="Adınız ve soyadınız"></div>
+      <div class="auth-field"><label>E-POSTA</label><input id="authEmail" type="email" autocomplete="email" inputmode="email" placeholder="ornek@gmail.com"></div>
+      <div class="auth-field"><label>ŞİFRE</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="En az 6 karakter" onkeydown="if(event.key==='Enter')submitEmailAuth()"></div>
     </div>
+    <div class="auth-row"><label class="auth-check"><input id="rememberMe" type="checkbox" checked><span>Beni hatırla</span></label><button id="forgotPasswordBtn" class="auth-link" onclick="resetPassword()">Şifremi unuttum</button></div>
+    <div class="auth-transfer" id="authTransfer"><label class="auth-check"><input id="transferGuestData" type="checkbox" checked><span>Bu cihazdaki misafir durak ve rotalarımı hesabıma aktar</span></label></div>
+    <button id="emailAuthBtn" class="email-login-btn" onclick="submitEmailAuth()">Giriş Yap</button>
+    <div class="auth-links"><button class="auth-link" id="authModeBtn" onclick="toggleAuthMode()">Hesabın yok mu? Hesap oluştur</button></div>
+    <div class="auth-divider">veya</div>
+    <button class="guest-login-btn" onclick="enterGuestMode()">👤 Misafir olarak devam et</button>
+    <div class="guest-note"><b>NOT:</b> Sisteme giriş yapmadan kullanırsanız bilgileriniz yalnızca bu cihazda tutulur. Tarayıcı verileri temizlenirse, uygulama kaldırılırsa veya site verileri silinirse kaybolabilir. Her uygulama açılışında giriş ekranı tekrar gösterilir.</div>
+    <div id="authStatus" class="auth-status">Firebase bağlantısı hazırlanıyor…</div><div class="auth-status" style="opacity:.62;margin-top:5px">Giriş altyapısı: v6.5 EMAIL + MİSAFİR</div>
+    <div id="authConfigHelp" class="auth-config-help" style="display:none">Firebase giriş bilgisi burada gösterilecek.</div>
   </div>
 </div>
 <div id="toast" class="toast"></div>
@@ -534,7 +544,7 @@ function exportStopsXlsx(){
 }
 function backupNow(){
  db.lastBackup=new Date().toISOString();persist();
- const payload={format:'RotaDefteri Tam Yedek',version:1,backupAt:db.lastBackup,data:db};
+ const payload={format:'RotaDefteri Tam Yedek',version:2,settingsSchema:2,backupAt:db.lastBackup,data:db};
  download(JSON.stringify(payload,null,2),'rotadefteri-yedek-'+stamp()+'.rota-backup','application/json');toast('Güncel yedek oluşturuldu');
 }
 function download(text,name,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
@@ -565,9 +575,20 @@ async function importFile(file,restore){
   if(restore){
    if(!['json','rota-backup'].includes(ext))throw Error('Yedek yalnızca JSON/.rota-backup olmalıdır');
    const text=await file.text();const x=JSON.parse(text);const d=x.data||x;if(!Array.isArray(d.stops))throw Error();
-   if(!confirm('Mevcut veriler yedekteki verilerle değiştirilecek. Devam edilsin mi?'))return;
-   db={...db,...d,settings:{...db.settings,...(d.settings||{})}};normalizeDb();
-   persist();renderStops();renderRoutes();applyTheme();toast('Yedek geri yüklendi');return;
+   if(!confirm('Mevcut durak ve rotalar yedekteki verilerle değiştirilecek. Mevcut tema ve cihaz görünüm ayarları korunacak. Devam edilsin mi?'))return;
+   const currentSettings={...(db.settings||{})},backupSettings=(d.settings&&typeof d.settings==='object')?d.settings:{};
+   const safeSettings={...currentSettings};
+   if(['km','mi'].includes(backupSettings.unit))safeSettings.unit=backupSettings.unit;
+   if(typeof backupSettings.autoComplete==='boolean')safeSettings.autoComplete=backupSettings.autoComplete;
+   if(typeof backupSettings.liveTracking==='boolean')safeSettings.liveTracking=backupSettings.liveTracking;
+   if(typeof backupSettings.voiceNavigation==='boolean')safeSettings.voiceNavigation=backupSettings.voiceNavigation;
+   // Eski yedekler tema/harita/açılış/güzergâh görünümünü bozmasın: cihazdaki güncel görünüm korunur.
+   safeSettings.theme=currentSettings.theme||'dark';safeSettings.map=currentSettings.map||'google';safeSettings.googleMapsKey=currentSettings.googleMapsKey||window.GOOGLE_MAPS_API_KEY||'';
+   safeSettings.startupView=currentSettings.startupView||'routes';safeSettings.routeColor=currentSettings.routeColor||'blue';safeSettings.routeWidth=currentSettings.routeWidth||10;
+   db={...db,...d,settings:safeSettings,lastSyncAt:db.lastSyncAt||null};normalizeDb();
+   persist();renderStops();renderRoutes();applyTheme();
+   const th=document.getElementById('themeSelect'),un=document.getElementById('unitSelect'),mp=document.getElementById('mapSelect'),gk=document.getElementById('googleMapsKey');if(th)th.value=db.settings.theme;if(un)un.value=db.settings.unit;if(mp)mp.value=db.settings.map;if(gk)gk.value=db.settings.googleMapsKey||'';
+   setTimeout(()=>{try{fillV6Settings?.()}catch(e){}},0);toast('Yedek geri yüklendi • mevcut görünüm korundu');return;
   }
   if(ext==='rota-db'||ext==='json'){
    const x=JSON.parse(await file.text());
@@ -632,7 +653,7 @@ function mergeStops(items){
  items.forEach(src=>{const lat=Number(src.lat),lng=Number(src.lng),name=String(src.name||'').trim();if(!name||!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){skipped++;return}const wantedId=validInternalId(src.id);let existing=wantedId?db.stops.find(x=>x.id===wantedId):null;if(!existing)existing=db.stops.find(x=>Math.abs(Number(x.lat)-lat)<0.0000001&&Math.abs(Number(x.lng)-lng)<0.0000001);if(existing){existing.name=name;existing.address=String(src.address??existing.address??'').trim();existing.lat=lat;existing.lng=lng;if(Object.prototype.hasOwnProperty.call(src,'contactName'))existing.contactName=String(src.contactName||'').trim();if(Object.prototype.hasOwnProperty.call(src,'contactPhone'))existing.contactPhone=String(src.contactPhone||'').trim();if(Object.prototype.hasOwnProperty.call(src,'note'))existing.note=String(src.note||'').trim();if(typeof src.active==='boolean')existing.active=src.active;existing.updatedAt=now();updated++;return}const id=wantedId&&!db.stops.some(x=>x.id===wantedId)?wantedId:crypto.randomUUID();db.stops.push({id,name,address:String(src.address||'').trim(),lat,lng,active:typeof src.active==='boolean'?src.active:src.active!==false,contactName:String(src.contactName||'').trim(),contactPhone:String(src.contactPhone||'').trim(),note:String(src.note||'').trim(),createdAt:src.createdAt||now(),updatedAt:src.updatedAt||now()});added++});
  return {added,updated,skipped};
 }
-async function clearAll(){if(!confirm('Tüm duraklar, rotalar ve uygulama tercihleri bu hesaptan silinecek. Google Maps anahtarı korunur. Bu işlem geri alınamaz.'))return;db.stops=[];db.routes=[];db.settings={theme:'dark',unit:'km',map:'google',googleMapsKey:db.settings.googleMapsKey||'',autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue'};db.lastBackup=null;persist();renderStops();renderRoutes();applyTheme();try{if(window.rdSyncNow)await window.rdSyncNow();toast('Hesap verileri silindi')}catch(e){toast('Yerel veriler silindi; bulut silme tekrar denenecek')}}
+async function clearAll(){if(!confirm('Tüm duraklar, rotalar ve uygulama tercihleri mevcut kullanım alanından silinecek. Giriş yaptıysanız hesabınızdan, misafirseniz bu cihazdan silinir. Google Maps anahtarı korunur. Bu işlem geri alınamaz.'))return;db.stops=[];db.routes=[];db.settings={theme:'dark',unit:'km',map:'google',googleMapsKey:db.settings.googleMapsKey||'',autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue'};db.lastBackup=null;persist();renderStops();renderRoutes();applyTheme();try{if(window.rdSyncNow)await window.rdSyncNow();toast('Hesap verileri silindi')}catch(e){toast('Yerel veriler silindi; bulut silme tekrar denenecek')}}
 function shareApp(){if(navigator.share){navigator.share({title:'Karasu Hava Yolları',text:'Karasu Hava Yolları Rota Yönetimi',url:location.href}).catch(()=>{});}else{navigator.clipboard?.writeText(location.href);toast('Uygulama bağlantısı kopyalandı')}}
 function stamp(){return new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -646,7 +667,7 @@ if ("serviceWorker" in navigator) {
 </script>
 <script>
 (function(){
-  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false;
+  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false,guestSession=false,authSignupMode=false,guestTransferRequested=false;
   const authGate=document.getElementById('authGate'),authStatus=document.getElementById('authStatus'),configHelp=document.getElementById('authConfigHelp');
   const cloudState={stops:new Map(),routes:new Map(),settings:null};
   const clone=x=>JSON.parse(JSON.stringify(x));const canonical=x=>Array.isArray(x)?x.map(canonical):(x&&typeof x==='object'?Object.keys(x).sort().reduce((o,k)=>(o[k]=canonical(x[k]),o),{}):x);const stable=x=>JSON.stringify(canonical(x??null));const configured=()=>!!(CONFIG.apiKey&&CONFIG.authDomain&&CONFIG.projectId&&CONFIG.appId);
@@ -656,17 +677,28 @@ if ("serviceWorker" in navigator) {
   function stateFromRemote(remote){cloudState.stops=new Map((remote.stops||[]).map(x=>[x.id,clone(x)]));cloudState.routes=new Map((remote.routes||[]).map(x=>[x.id,clone(x)]));cloudState.settings=remote.settings?clone(remote.settings):null}
   function showAuthHelp(message){if(!configHelp)return;configHelp.style.display='block';configHelp.innerHTML=message}
   function hideAuthHelp(){if(!configHelp)return;configHelp.style.display='none';configHelp.innerHTML=''}
+  function guestHasData(){try{const g=JSON.parse(localStorage.getItem('rotadefteri-guest')||'null');return !!(g&&(g.stops?.length||g.routes?.length))}catch(e){return false}}
+  function setGuestBanner(on){document.getElementById('guestModeBanner')?.classList.toggle('show',!!on)}
   function authErrorText(e){
-    const host=location.hostname||'file://';
-    if(e?.code==='auth/unauthorized-domain')return `Bu alan adı Firebase Google girişinde yetkili değil: ${esc(host)}. Firebase Console → Authentication → Settings → Authorized domains bölümüne <b>${esc(host)}</b> alanını ekleyin.`;
-    if(e?.code==='auth/popup-blocked')return 'Google giriş penceresi tarayıcı tarafından engellendi. Bu site için açılır pencerelere izin verin ve Google ile Giriş Yap düğmesine tekrar basın.';
-    if(e?.code==='auth/popup-closed-by-user')return 'Google giriş penceresi tamamlanmadan kapatıldı. Tekrar deneyebilirsiniz.';
-    if(e?.code==='auth/cancelled-popup-request')return 'Önceki Google giriş penceresi iptal edildi. Düğmeye bir kez basıp açılan pencerenin tamamlanmasını bekleyin.';
-    if(e?.code==='auth/operation-not-allowed')return 'Firebase Authentication → Sign-in method bölümünde Google sağlayıcısı etkin değil.';
-    if(e?.code==='auth/network-request-failed')return 'Google/Firebase bağlantısı kurulamadı. İnternet bağlantısını kontrol edip tekrar deneyin.';
-    if(e?.code==='auth/invalid-credential'||e?.code==='auth/invalid-oauth-client-id')return 'Firebase Google OAuth yapılandırması geçersiz. Firebase Console → Authentication → Google sağlayıcısını kontrol edin. Uygulama artık ayrı bir Google OAuth Client ID kullanmıyor.';
-    if(e?.code==='auth/account-exists-with-different-credential')return 'Bu e-posta başka bir oturum açma yöntemiyle kayıtlı. Aynı hesapla mevcut yöntemi kullanarak giriş yapın.';
-    return 'Google girişi başarısız: '+esc(e?.message||e?.code||'Bilinmeyen hata');
+    if(e?.code==='auth/invalid-email')return 'E-posta adresi geçerli görünmüyor.';
+    if(e?.code==='auth/invalid-credential'||e?.code==='auth/user-not-found'||e?.code==='auth/wrong-password')return 'E-posta veya şifre hatalı. Bilgileri kontrol edip tekrar deneyin.';
+    if(e?.code==='auth/email-already-in-use')return 'Bu e-posta adresiyle zaten bir hesap var. Giriş Yap bölümünü kullanın.';
+    if(e?.code==='auth/weak-password')return 'Şifre en az 6 karakter olmalıdır.';
+    if(e?.code==='auth/operation-not-allowed')return 'Firebase Authentication → Sign-in method bölümünde E-posta/Şifre sağlayıcısını etkinleştirin.';
+    if(e?.code==='auth/too-many-requests')return 'Çok fazla başarısız deneme yapıldı. Bir süre sonra tekrar deneyin.';
+    if(e?.code==='auth/network-request-failed')return 'Firebase bağlantısı kurulamadı. İnternet bağlantınızı kontrol edin.';
+    return 'Giriş işlemi başarısız: '+esc(e?.message||e?.code||'Bilinmeyen hata');
+  }
+  function defaultGuestDb(){return {stops:[],routes:[],settings:{theme:'dark',unit:'km',map:'google',googleMapsKey:(window.GOOGLE_MAPS_API_KEY||''),autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue',startupView:'routes',routeWidth:10},lastBackup:null,lastSyncAt:null}}
+  function loadGuestLocal(){
+    KEY='rotadefteri-guest';let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+    const base=defaultGuestDb();db=saved?{...base,...saved,settings:{...base.settings,...(saved.settings||{})}}:base;if(window.GOOGLE_MAPS_API_KEY)db.settings.googleMapsKey=window.GOOGLE_MAPS_API_KEY;normalizeDb();applyTheme();updateStats();renderStops();renderRoutes();initMainMap();
+  }
+  function updateProfile(user,guest=false){
+    const n=document.getElementById('profileName'),e=document.getElementById('profileEmail'),a=document.getElementById('profileAvatar'),note=document.getElementById('profileSyncNote'),btn=document.getElementById('signOutBtn'),card=document.getElementById('profileCard');
+    card?.classList.toggle('guest-profile',guest);
+    if(guest){if(n)n.textContent='Misafir Kullanıcı';if(e)e.textContent='Veriler yalnızca bu cihazda';if(note)note.textContent='Buluta gönderilmez. Tarayıcı/site verileri silinirse kaybolabilir.';if(a)a.textContent='M';if(btn){btn.textContent='Giriş yap';btn.onclick=window.openAuthGate}return}
+    const name=user?.displayName||user?.email?.split('@')[0]||'RotaDefteri Kullanıcısı';if(n)n.textContent=name;if(e)e.textContent=user?.email||'';if(note)note.textContent='Değişiklikler kullanıcı hesabınıza özel Firestore alanında tutulur.';if(a)a.textContent=name.charAt(0).toLocaleUpperCase('tr-TR');if(btn){btn.textContent='Çıkış';btn.onclick=window.signOutUser}
   }
   async function writeCloud(){
     if(!rdUser||!rdFs)return;if(rdSyncInFlight){rdSyncAgain=true;return}clearTimeout(rdSyncTimer);rdSyncTimer=null;rdSyncInFlight=true;rdDirty=true;setStatus('Değişiklikler buluta kaydediliyor…');
@@ -683,47 +715,38 @@ if ("serviceWorker" in navigator) {
   window.rdScheduleCloudSync=function(){if(!rdUser||!rdFs)return;rdDirty=true;clearTimeout(rdSyncTimer);rdSyncTimer=setTimeout(()=>writeCloud().catch(()=>{}),700)};window.rdSyncNow=async function(){clearTimeout(rdSyncTimer);rdSyncTimer=null;return writeCloud()};
   async function fetchCloud(uid){const [stopsSnap,routesSnap,settingsSnap]=await Promise.all([rdFs.collection('users/'+uid+'/stops').get(),rdFs.collection('users/'+uid+'/routes').get(),rdFs.doc('users/'+uid+'/settings/app').get()]);return {stops:stopsSnap.docs.map(d=>({...d.data(),id:d.id})),routes:routesSnap.docs.map(d=>({...d.data(),id:d.id})),settings:settingsSnap.exists?settingsSnap.data():null,hasCloud:!stopsSnap.empty||!routesSnap.empty||settingsSnap.exists}}
   async function readCloud(user){
-    const uid=user.uid;KEY='rotadefteri-user-'+uid;let cached=null;try{cached=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){};let remote=await fetchCloud(uid);
-    if(remote.hasCloud){db={...db,stops:remote.stops,routes:remote.routes,settings:{...db.settings,...(remote.settings||{})}};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();}
-    else{cloudState.stops=new Map();cloudState.routes=new Map();cloudState.settings=null;const guestKey='rotadefteri-guest',migrated=localStorage.getItem('rotadefteri-legacy-migrated')==='1';let guest=null;try{guest=JSON.parse(localStorage.getItem(guestKey)||'null')}catch(e){};const seed=(cached&&(cached.stops?.length||cached.routes?.length))?cached:(!migrated&&guest&&(guest.stops?.length||guest.routes?.length)?guest:null);db=seed?{...db,...seed,settings:{...db.settings,...(seed.settings||{})}}:{...db,stops:[],routes:[]};normalizeDb();if(seed){await writeCloud();if(seed===guest){localStorage.setItem('rotadefteri-legacy-migrated','1');toast('Eski cihaz verileriniz Google hesabınıza bir kez aktarıldı')}}else{stateFromDb();db.lastSyncAt=new Date().toISOString();cacheOnly()}}
-    applyTheme();updateStats();renderStops();renderRoutes();initMainMap();const a=document.getElementById('themeSelect'),b=document.getElementById('unitSelect'),c=document.getElementById('mapSelect'),d=document.getElementById('googleMapsKey');if(a)a.value=db.settings.theme||'dark';if(b)b.value=db.settings.unit||'km';if(c)c.value=db.settings.map||'google';if(d)d.value=db.settings.googleMapsKey||'';
+    const uid=user.uid;KEY='rotadefteri-user-'+uid;let cached=null;try{cached=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){};const remote=await fetchCloud(uid);
+    if(remote.hasCloud){db={...db,stops:remote.stops,routes:remote.routes,settings:{...db.settings,...(remote.settings||{})}};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly()}
+    else{
+      cloudState.stops=new Map();cloudState.routes=new Map();cloudState.settings=null;let guest=null;try{guest=JSON.parse(localStorage.getItem('rotadefteri-guest')||'null')}catch(e){}
+      const cachedHasData=!!(cached&&(cached.stops?.length||cached.routes?.length)),guestCanTransfer=guestTransferRequested&&guest&&(guest.stops?.length||guest.routes?.length),seed=cachedHasData?cached:(guestCanTransfer?guest:null);
+      const base=defaultGuestDb();db=seed?{...base,...seed,settings:{...base.settings,...(seed.settings||{})}}:{...base,stops:[],routes:[]};normalizeDb();
+      if(seed){await writeCloud();if(guestCanTransfer){toast('Misafir verileriniz yeni hesabınıza aktarıldı');localStorage.setItem('rotadefteri-guest-last-migrated',new Date().toISOString())}}else{stateFromDb();db.lastSyncAt=new Date().toISOString();cacheOnly()}
+    }
+    guestTransferRequested=false;applyTheme();updateStats();renderStops();renderRoutes();initMainMap();const a=document.getElementById('themeSelect'),b=document.getElementById('unitSelect'),c=document.getElementById('mapSelect'),d=document.getElementById('googleMapsKey');if(a)a.value=db.settings.theme||'dark';if(b)b.value=db.settings.unit||'km';if(c)c.value=db.settings.map||'google';if(d)d.value=db.settings.googleMapsKey||'';
   }
   async function refreshCloud(){if(!rdUser||!rdFs||rdDirty||rdSyncInFlight||rdRefreshInFlight)return;rdRefreshInFlight=true;try{const remote=await fetchCloud(rdUser.uid);db.stops=remote.stops;db.routes=remote.routes;if(remote.settings)db.settings={...db.settings,...remote.settings};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();renderStops();renderRoutes();initMainMap();setStatus('Bulut senkronizasyonu hazır')}catch(e){console.warn('Arka plan yenilemesi başarısız',e)}finally{rdRefreshInFlight=false}}
-  function updateProfile(user){const n=document.getElementById('profileName'),e=document.getElementById('profileEmail'),a=document.getElementById('profileAvatar');if(n)n.textContent=user?.displayName||'Google Kullanıcısı';if(e)e.textContent=user?.email||'';if(a){if(user?.photoURL){const img=document.createElement('img');img.src=user.photoURL;img.alt='Profil';img.referrerPolicy='no-referrer';img.style.cssText='width:42px;height:42px;border-radius:50%;object-fit:cover';a.replaceChildren(img)}else a.textContent=(user?.displayName||'R').charAt(0).toUpperCase()}}
-  window.signInWithGoogle=async function(){
-    if(!rdAuth)return;
-    if(location.protocol==='file:'){
-      setStatus('Uygulamayı HTTP/HTTPS üzerinden açın');
-      showAuthHelp('Google girişi <b>file://</b> üzerinden çalışmaz. GitHub Pages veya Firebase Hosting üzerinden açın.');
-      return;
-    }
-    hideAuthHelp();
-    setStatus('Google hesabı açılıyor…');
-    const btn=document.getElementById('googleSignInBtn');
-    if(btn)btn.disabled=true;
-    try{
-      const provider=new firebase.auth.GoogleAuthProvider();
-      provider.addScope('profile');
-      provider.addScope('email');
-      provider.setCustomParameters({prompt:'select_account'});
-      const result=await rdAuth.signInWithPopup(provider);
-      hideAuthHelp();
-      setStatus('Google hesabı doğrulandı…');
-      return result;
-    }catch(e){
-      console.error('Firebase Google popup sign-in',e);
-      const t=authErrorText(e);
-      setStatus(t.replace(/<[^>]+>/g,''));
-      showAuthHelp(t);
-      if(e?.code!=='auth/popup-closed-by-user'&&e?.code!=='auth/cancelled-popup-request')toast('Google ile giriş başarısız');
-      return null;
-    }finally{
-      if(btn)btn.disabled=false;
-    }
+  window.toggleAuthMode=function(){authSignupMode=!authSignupMode;const card=document.getElementById('authCard'),btn=document.getElementById('emailAuthBtn'),mode=document.getElementById('authModeBtn'),title=document.getElementById('authTitle'),sub=document.getElementById('authSubtitle'),pw=document.getElementById('authPassword');card?.classList.toggle('signup',authSignupMode);if(btn)btn.textContent=authSignupMode?'Hesap Oluştur':'Giriş Yap';if(mode)mode.textContent=authSignupMode?'Zaten hesabın var mı? Giriş yap':'Hesabın yok mu? Hesap oluştur';if(title)title.textContent=authSignupMode?'Hesap Oluştur':'RotaDefteri';if(sub)sub.textContent=authSignupMode?'Yeni hesabınızla durak ve rotalarınızı güvenli şekilde senkronize edin.':'Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.';if(pw)pw.autocomplete=authSignupMode?'new-password':'current-password';hideAuthHelp();setStatus(authSignupMode?'Yeni hesap bilgilerinizi girin':'E-posta ve şifrenizle giriş yapın')};
+  window.submitEmailAuth=async function(){
+    if(!rdAuth)return;hideAuthHelp();const email=(document.getElementById('authEmail')?.value||'').trim(),password=document.getElementById('authPassword')?.value||'',name=(document.getElementById('authName')?.value||'').trim(),remember=document.getElementById('rememberMe')?.checked!==false;if(!email||!password){showAuthHelp('E-posta ve şifre alanlarını doldurun.');return}if(authSignupMode&&!name){showAuthHelp('Hesap oluşturmak için ad soyad alanını doldurun.');return}if(password.length<6){showAuthHelp('Şifre en az 6 karakter olmalıdır.');return}
+    const btn=document.getElementById('emailAuthBtn');if(btn)btn.disabled=true;setStatus(authSignupMode?'Hesap oluşturuluyor…':'Giriş yapılıyor…');
+    try{await rdAuth.setPersistence(remember?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);if(authSignupMode){guestTransferRequested=document.getElementById('transferGuestData')?.checked!==false&&guestHasData();const cred=await rdAuth.createUserWithEmailAndPassword(email,password);if(name)await cred.user.updateProfile({displayName:name});await cred.user.reload();updateProfile(rdAuth.currentUser||cred.user);toast('Hesabınız oluşturuldu')}else{guestTransferRequested=false;await rdAuth.signInWithEmailAndPassword(email,password)}hideAuthHelp()}
+    catch(e){console.error('Email auth',e);guestTransferRequested=false;const t=authErrorText(e);setStatus(t.replace(/<[^>]+>/g,''));showAuthHelp(t);toast(authSignupMode?'Hesap oluşturulamadı':'Giriş yapılamadı')}
+    finally{if(btn)btn.disabled=false}
   };
-  window.signOutUser=async function(){if(!rdAuth)return;try{if(rdDirty)await writeCloud();await rdAuth.signOut()}catch(e){console.error(e);toast('Çıkış yapılamadı')}};
+  window.resetPassword=async function(){if(!rdAuth)return;const email=(document.getElementById('authEmail')?.value||'').trim();if(!email){showAuthHelp('Şifre sıfırlama bağlantısı için önce e-posta adresinizi yazın.');document.getElementById('authEmail')?.focus();return}try{await rdAuth.sendPasswordResetEmail(email);hideAuthHelp();setStatus('Şifre sıfırlama e-postası gönderildi');toast('Şifre sıfırlama bağlantısı gönderildi')}catch(e){const t=authErrorText(e);showAuthHelp(t);setStatus(t.replace(/<[^>]+>/g,''))}};
+  window.enterGuestMode=function(){guestSession=true;rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);loadGuestLocal();updateProfile(null,true);setGuestBanner(true);hideAuthHelp();setStatus('Misafir modu • yalnızca bu cihazda');showGate(false);setTimeout(()=>window.rdApplyStartupView?.(true),60);if(guestHasData())toast('Bu cihazdaki misafir verileri açıldı');else toast('Misafir modu açıldı')};
+  window.openAuthGate=function(){if(authSignupMode)window.toggleAuthMode();showGate(true);setStatus('Hesabınızla giriş yapın veya misafir olarak devam edin');hideAuthHelp()};
+  window.signOutUser=async function(){if(!rdAuth)return;if(!rdUser){window.openAuthGate();return}try{if(rdDirty)await writeCloud();guestSession=false;await rdAuth.signOut();toast('Hesaptan çıkış yapıldı')}catch(e){console.error(e);toast('Çıkış yapılamadı')}};
   if(!configured()){setStatus('Firebase yapılandırması eksik');showAuthHelp('ZIP içindeki <b>firebase-config.js</b> dosyasında Firebase Web App yapılandırmasını kontrol edin.');showGate(true);return}
-  try{if(!firebase.apps.length)firebase.initializeApp(CONFIG);rdAuth=firebase.auth();rdFs=firebase.firestore();rdAuth.useDeviceLanguage();rdAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.warn);rdAuth.onAuthStateChanged(async user=>{if(user){rdUser=user;hideAuthHelp();updateProfile(user);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();initMainMap();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''))}}else{setStatus('Veriler yüklenemedi: '+(e.message||''));toast('Firestore erişimi başarısız')}}}else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);KEY='rotadefteri-guest';db={stops:[],routes:[],settings:{theme:'dark',unit:'km',map:'google',googleMapsKey:(db.settings?.googleMapsKey||''),autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue'},lastBackup:null,lastSyncAt:null};normalizeDb();updateProfile(null);renderStops();renderRoutes();setStatus('Google hesabınızla giriş yapın');showGate(true)}});window.addEventListener('focus',refreshCloud);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloud()});window.addEventListener('online',()=>{if(rdDirty)window.rdScheduleCloudSync();else refreshCloud()})}catch(e){console.error(e);setStatus('Firebase başlatılamadı');showAuthHelp('Firebase başlatılırken hata oluştu: '+esc(e.message||''));showGate(true)}
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(CONFIG);rdAuth=firebase.auth();rdFs=firebase.firestore();rdAuth.useDeviceLanguage();
+    rdAuth.onAuthStateChanged(async user=>{
+      if(user){guestSession=false;setGuestBanner(false);rdUser=user;hideAuthHelp();updateProfile(user,false);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();initMainMap();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''))}}else{setStatus('Veriler yüklenemedi: '+(e.message||''));toast('Firestore erişimi başarısız')}}}
+      else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);loadGuestLocal();updateProfile(null,true);setGuestBanner(guestSession);if(guestSession){setStatus('Misafir modu • yalnızca bu cihazda');showGate(false)}else{setStatus('E-posta ile giriş yapın veya misafir olarak devam edin');showGate(true)}}
+    });
+    window.addEventListener('focus',refreshCloud);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloud()});window.addEventListener('online',()=>{if(rdDirty)window.rdScheduleCloudSync();else refreshCloud()});
+  }catch(e){console.error(e);setStatus('Firebase başlatılamadı');showAuthHelp('Firebase başlatılırken hata oluştu: '+esc(e.message||''));showGate(true)}
 })();
 </script>
 <script>

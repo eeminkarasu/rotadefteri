@@ -1,0 +1,15 @@
+KISA KURULUM
+============
+
+1. Firebase Console > Authentication > Sign-in method
+2. Email/Password sağlayıcısını Enable yap ve Save bas.
+3. Firestore Rules sekmesinde paket içindeki firestore.rules kurallarını Publish et.
+4. ZIP içindeki dosyaları GitHub repo köküne yükle.
+5. GitHub Pages yayını tamamlanınca siteyi aç.
+
+Test:
+- Yeni hesap oluştur.
+- Bir durak ekle, çıkış yap, tekrar giriş yap: veri geri gelmeli.
+- Misafir olarak devam et, durak ekle, sayfayı kapat/aç: giriş ekranı tekrar çıkmalı.
+- Tekrar Misafir olarak devam et: cihaz verileri görünmeli.
+- Eski .rota-backup dosyasını geri yükle: tema değişmemeli.
