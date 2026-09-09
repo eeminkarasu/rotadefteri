@@ -1,5 +1,5 @@
-const SHELL_CACHE='rotadefteri-shell-v6-6-clean-route';
-const RUNTIME_CACHE='rotadefteri-runtime-v6-6-clean-route';
+const SHELL_CACHE='rotadefteri-shell-v6-7-compact-detail';
+const RUNTIME_CACHE='rotadefteri-runtime-v6-7-compact-detail';
 const SHELL=['./','./index.html','./rotadefteri.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(SHELL_CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>![SHELL_CACHE,RUNTIME_CACHE].includes(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

@@ -1,0 +1,15 @@
+RotaDefteri v6.7 TEST SONUÇLARI
+
+[OK] index.html ve rotadefteri.html birebir aynı.
+[OK] Tüm inline JavaScript blokları node --check ile geçti.
+[OK] Yinelenen HTML id bulunmadı.
+[OK] Rota detay başlığındaki eski sağ üst yeşil oynat butonu kaldırıldı.
+[OK] Planla + Navigasyon ana aksiyonları rota durumu kartına eklendi.
+[OK] Tamamlanan duraklar ayrı alt gruba ayrıldı; varsayılan gizli, Göster/Gizle düğmesi mevcut.
+[OK] İl/ilçe gösterimi için adres ayrıştırma testi: Gönen • Balıkesir.
+[OK] Koordinattan ters geocoding kuyruğu 1.15 sn aralıkla çalışacak şekilde önbellekli tasarlandı.
+[OK] Ters geocoding önbelleği Firestore verisini değiştirmez.
+[OK] Firebase/Firestore senkronizasyon script SHA-256 değeri v6.6 ile birebir aynı: c772454f462e989ba758a4a2f18354ed4235a1a4ed36d3fda24ccf006873f37a
+[OK] Service Worker cache sürümü v6-7-compact-detail.
+
+Not: Gerçek il/ilçe ters geocoding sonucu internet bağlantısına ve OpenStreetMap Nominatim erişimine bağlıdır. İlk görüntülemede koordinat kısa süreli görünebilir; sonuç geldiğinde kart otomatik güncellenir.
