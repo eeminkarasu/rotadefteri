@@ -1,0 +1,11 @@
+ICONS KLASÖRÜNE EKLENEN DOSYALAR
+- brand-mark.svg  : Uygulama logosu (başlık ve giriş ekranında kullanılıyor)
+- app-icon.svg    : Vektörel ana uygulama ikonu
+- icon-180.png    : iPhone / Apple touch icon
+- icon-192.png    : PWA Android ikonu
+- icon-512.png    : PWA büyük ikon
+- nav-home.svg    : Ana sayfa ikon alternatifi
+- nav-routes.svg  : Rotalar ikon alternatifi
+- nav-stops.svg   : Duraklar ikon alternatifi
+- nav-settings.svg: Ayarlar ikon alternatifi
+- nav-navigation.svg: Navigasyon ikon alternatifi
