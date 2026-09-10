@@ -1,0 +1,42 @@
+RotaDefteri v7.5 CLEAN STABLE - Otomatik Test Sonuçları
+
+PASS | index.html JS syntax
+PASS | index.html duplicate IDs
+PASS | index.html UI handlers
+PASS | index.html no legacy route modal
+PASS | index.html no orphan legacy view body
+PASS | index.html single dashboard CSS | 1
+PASS | index.html v7.5 marker
+PASS | index.html current stop renderer
+PASS | index.html compact nav retained
+PASS | index.html plan default current
+PASS | index.html bootstrap clean | 
+ try{const x=JSON.parse(localStorage.getItem(KEY));if(x)db={...db,...x,settings:{...db.settings,...(x.settings||{})}}}catch(e){console.warn('Yerel veri okunama
+PASS | index.html duplicate function overrides | {}
+PASS | rotadefteri.html JS syntax
+PASS | rotadefteri.html duplicate IDs
+PASS | rotadefteri.html UI handlers
+PASS | rotadefteri.html no legacy route modal
+PASS | rotadefteri.html no orphan legacy view body
+PASS | rotadefteri.html single dashboard CSS | 1
+PASS | rotadefteri.html v7.5 marker
+PASS | rotadefteri.html current stop renderer
+PASS | rotadefteri.html compact nav retained
+PASS | rotadefteri.html plan default current
+PASS | rotadefteri.html bootstrap clean | 
+ try{const x=JSON.parse(localStorage.getItem(KEY));if(x)db={...db,...x,settings:{...db.settings,...(x.settings||{})}}}catch(e){console.warn('Yerel veri okunama
+PASS | rotadefteri.html duplicate function overrides | {}
+PASS | Service Worker syntax
+PASS | Service Worker network-first
+PASS | HTML files identical
+PASS | manifest.webmanifest JSON
+PASS | firebase.json JSON
+PASS | Sync writeCloud unchanged | b71f5075584dfc13
+PASS | Sync fetchCloud unchanged | d22a4f2cbcadc07c
+PASS | Sync readCloud unchanged | 5de8fcc2b195c102
+PASS | Sync refreshCloud unchanged | ed5ec38b82a73f76
+PASS | firebase-config.js unchanged | 3d45a88f72ceecd1
+PASS | firestore.rules unchanged | 97c1126e2d5c4eff
+PASS | Legacy route builder removed
+
+Sonuç: 36/36 test geçti.

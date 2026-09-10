@@ -1,0 +1,10 @@
+RotaDefteri v7.5 CLEAN STABLE
+- Eski rota oluşturma ve eski rota detay modal motorları kaldırıldı.
+- Açılışta v6/v7 çalışma sırası çakışmasına neden olan erken render çağrıları kaldırıldı.
+- updateStats, yeni rota motoru yüklenmeden önce güvenli çalışacak hale getirildi.
+- Duraklar için yalnızca güncel v7.1/v7.3 renderer kullanılıyor.
+- Kalan düzenleme modalları güncel koyu mavi UI ile tek görünüme getirildi.
+- Service Worker network-first yapıya geçti; eski rotadefteri cache'leri otomatik temizleniyor.
+- v7.5 Service Worker beklemeden aktive oluyor ve bir defalık güvenli yenileme yapıyor.
+- Firestore veri şeması ve UID tabanlı senkronizasyon motoru değiştirilmedi.
+- Navigasyon v7.4 kompakt görünümü korundu.

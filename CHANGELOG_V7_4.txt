@@ -1,0 +1,10 @@
+RotaDefteri v7.4 NAV COMPACT
+
+- Navigasyon ekranındaki üst, yan ve alt paneller küçültüldü; harita görünür alanı artırıldı.
+- Ara kartı kaldırılıp yalnızca küçük telefon simgesi bırakıldı.
+- Sağ üst N/pusula düğmesi kaldırıldı.
+- Hedef durak bilgisinin altına Gidildi (✓) ve Gidilmedi (×) düğmeleri eklendi.
+- ✓ basıldığında durak yeşil tamamlandı durumuna geçer ve sıradaki durağa ilerler.
+- × basıldığında gidilmedi olarak işaretlenir ve sıradaki durağa ilerler.
+- Tamamlanan/gidilmeyen duraklara ait geçmiş güzergah mavi rota çizgisinden çıkarılır; yalnız kalan güzergah çizilir.
+- Firebase/Firestore senkronizasyon motoruna dokunulmadı.
