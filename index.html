@@ -454,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v8.3";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v8.4";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -1045,8 +1045,8 @@ showView('home');
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
-      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-0-auth-sync-stable-clean'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.0.0',{updateViaCache:'none'});
+      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-compact-multiselect-actions'))await caches.delete(k)}}
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.4.0',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -1650,6 +1650,144 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
   };
 
   setTimeout(()=>{try{if(document.body.dataset.view==='routeDetailPage'&&currentRouteId)renderRouteDetailPage(currentRouteId)}catch(e){console.warn(e)}},0);
+})();
+</script>
+
+<style id="rd-v84-compact-select-ui">
+/* v8.4 — kompakt rota kartları, ikon aksiyonları ve güvenli çoklu seçim */
+.rd-route-action-strip{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap}
+.rd-route-action-strip .rd-route-count-pill{margin-right:1px}
+.rd-route-icon-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;text-align:center!important;flex:none}
+.rd-route-icon-action.danger{border-color:rgba(255,93,118,.36)!important;background:rgba(128,25,45,.22)!important;color:#ff9fb0!important}
+.rd-route-detail-page .rd-detail-tools{display:none!important}
+.rd-route-detail-page .rd-stop-list-head{align-items:center!important}
+.rd-detail-select-btn{width:36px;height:36px;border-radius:12px;border:1px solid rgba(76,184,255,.28);background:rgba(18,93,149,.14);color:#69d0ff;font-size:16px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0;flex:none}
+.rd-detail-select-btn.active{background:#168cff;color:#fff;border-color:#4bc5ff}
+.rd-selection-bar{display:none;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0 12px;padding:9px 10px;border-radius:15px;border:1px solid rgba(73,176,244,.24);background:rgba(9,38,64,.78)}
+.rd-selection-bar.active{display:flex}
+.rd-selection-bar b{font-size:12px;color:#dff5ff;margin-right:auto;white-space:nowrap}
+.rd-selection-bar button{min-height:34px;border-radius:11px;border:1px solid rgba(96,169,225,.22);background:rgba(255,255,255,.055);color:#eaf6ff;padding:0 10px;font-size:11px;font-weight:850;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.rd-selection-bar button.danger{border-color:rgba(255,92,112,.32);background:rgba(132,28,45,.22);color:#ffb3bf}
+.rd-select-mark{width:34px;height:34px;border-radius:11px;border:1px solid rgba(82,177,239,.30);background:rgba(14,76,125,.16);color:#65caff;font-weight:900;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.rd-select-mark.selected{background:#168cff;color:#fff;border-color:#5bcaff;box-shadow:0 0 0 2px rgba(47,173,255,.16)}
+.rd-route-card.rd-selected,.rd-stop-v71.rd-selected,.route-stop-row.rd-selected{border-color:#27b8ff!important;box-shadow:0 0 0 2px rgba(39,184,255,.20)!important}
+.rd-route-card.rd-selecting{cursor:pointer}
+.rd-route-card.rd-selecting .rd-route-delete-btn{display:none!important}
+.rd-route-card .rd-route-select-wrap{display:flex;align-items:center;gap:7px}
+.rd-route-card.rd-v84-compact{padding:12px 13px!important;border-radius:19px!important}
+.rd-route-card.rd-v84-compact .route-card-top{gap:8px!important;align-items:center!important}
+.rd-route-card.rd-v84-compact .route-card-title{gap:8px!important;min-width:0;flex:1}
+.rd-route-card.rd-v84-compact .route-card-title>div{min-width:0}
+.rd-route-card.rd-v84-compact .route-card-title h3{font-size:18px!important;line-height:1.15!important;margin:0 0 4px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-route-card.rd-v84-compact .route-card-meta{font-size:11px!important;line-height:1.2!important}
+.rd-route-card.rd-v84-compact .rd-route-index{width:34px!important;height:34px!important;border-radius:11px!important;flex:none}
+.rd-route-card.rd-v84-compact .rd-route-card-actions{gap:6px!important;flex-wrap:nowrap!important;max-width:none!important}
+.rd-route-card.rd-v84-compact .status-pill{font-size:10px!important;padding:7px 8px!important;white-space:nowrap}
+.rd-route-card.rd-v84-compact .rd-route-delete-btn{width:34px!important;height:34px!important;border-radius:11px!important;font-size:16px!important;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.rd-route-card.rd-v84-compact .route-progress{height:4px!important;margin:9px 0 0!important}
+.rd-route-card.rd-v84-compact .route-card-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin-top:8px!important}
+.rd-route-card.rd-v84-compact .route-card-stats>div{padding:7px 8px!important;border-radius:12px!important;min-width:0}
+.rd-route-card.rd-v84-compact .route-card-stats small{font-size:8px!important;margin-bottom:3px!important;white-space:nowrap}
+.rd-route-card.rd-v84-compact .route-card-stats b{font-size:13px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-route-card.rd-v84-compact .rd-route-times{margin-top:7px!important;gap:6px!important;flex-wrap:nowrap!important}
+.rd-route-card.rd-v84-compact .rd-time-pill{padding:5px 7px!important;border-radius:10px!important;font-size:10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-route-card.rd-v84-compact .rd-card-arrow{font-size:21px!important;line-height:1}
+.rd-route-card.rd-v84-compact .route-card-footer{margin-top:5px!important;justify-content:flex-end!important}
+.rd-route-card.rd-v84-compact .route-card-footer .metric-chip{display:none!important}
+.rd-route-card.rd-v84-compact .rd-route-sequence{display:none!important}
+.rd-routes-page .rd-route-cta{padding:11px 13px!important;margin-bottom:10px!important;border-radius:16px!important}
+.rd-routes-page .rd-route-cta b{font-size:14px!important}.rd-routes-page .rd-route-cta span{font-size:10px!important;line-height:1.3!important;margin-top:2px!important}.rd-routes-page .rd-route-cta strong{font-size:21px!important}
+.rd-routes-page .rd-filter-row{margin-bottom:10px!important}
+.rd-route-select-head,.rd-stop-select-head{width:44px!important;height:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;padding:0!important}
+.rd-route-select-head.active,.rd-stop-select-head.active{background:#168cff!important;color:#fff!important;border-color:#52c8ff!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting{grid-template-columns:38px 42px minmax(0,1fr) 42px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-chevron{display:none!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-quick-actions{justify-self:end!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-seq::after{display:none!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-type{display:none!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-copy{grid-column:2/4!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-quick-actions{grid-column:4!important}
+.rd-detail-select-mode .route-stop-row{grid-template-columns:34px minmax(0,1fr) 86px!important;grid-template-rows:auto!important;cursor:pointer}
+.rd-detail-select-mode .route-stop-row .route-num2{grid-column:1!important;grid-row:1!important;border:1px solid rgba(75,184,255,.28)!important;background:rgba(15,83,136,.16)!important;color:#5dccff!important}
+.rd-detail-select-mode .route-stop-row.rd-selected .route-num2{background:#168cff!important;color:#fff!important;border-color:#5dccff!important}
+.rd-detail-select-mode .route-stop-row .route-stop-main{grid-column:2!important;grid-row:1!important}
+.rd-detail-select-mode .route-stop-row .eta-box{grid-column:3!important;grid-row:1!important}
+@media(max-width:620px){
+ .rd-route-overview-top{grid-template-columns:1fr!important}
+ .rd-route-status-actions,.rd-route-action-strip{justify-content:center!important;margin-top:0!important;gap:4px!important}
+ .rd-route-count-pill{min-width:56px!important;min-height:36px!important;padding:3px 6px!important;border-radius:11px!important}
+ .rd-route-count-pill b{font-size:14px!important}.rd-route-count-pill small{font-size:7px!important}
+ .rd-route-icon-action{width:34px!important;height:34px!important;border-radius:11px!important;font-size:16px!important}
+ .rd-route-mini-info{padding:6px!important;gap:4px!important}.rd-route-mini-info>div{padding:4px!important}.rd-route-mini-info strong{font-size:10.5px!important}.rd-route-mini-info small{font-size:6.5px!important}
+ .rd-route-card.rd-v84-compact .route-card-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .rd-routes-page .rd-route-cta span{display:none!important}
+ .rd-routes-page .rd-route-cta{min-height:44px!important}
+ .rd-selection-bar{gap:5px!important;padding:8px!important}.rd-selection-bar b{width:100%;margin:0 0 2px!important}.rd-selection-bar button{flex:1;min-width:0;padding:0 7px!important}
+}
+@media(max-width:420px){
+ .rd-route-icon-action{width:33px!important;height:33px!important;font-size:15px!important}.rd-route-count-pill{min-width:52px!important}
+ .rd-route-card.rd-v84-compact{padding:11px!important}.rd-route-card.rd-v84-compact .route-card-title h3{font-size:16px!important}.rd-route-card.rd-v84-compact .route-card-stats b{font-size:12px!important}.rd-route-card.rd-v84-compact .rd-time-pill{font-size:9px!important}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting{grid-template-columns:36px minmax(0,1fr) 38px!important}.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-copy{grid-column:2!important}.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-quick-actions{grid-column:3!important}.khy-stop-list.rd-v71-stop-list .rd-stop-v71.rd-selecting .rd-stop-seq{grid-column:1!important}
+ .rd-detail-select-mode .route-stop-row{grid-template-columns:31px minmax(0,1fr) 80px!important}
+}
+body:not(.theme-dark) .rd-selection-bar{background:#eef7ff;border-color:#cbe6f7}body:not(.theme-dark) .rd-selection-bar b{color:#174262}body:not(.theme-dark) .rd-selection-bar button{background:#fff;color:#174262}body:not(.theme-dark) .rd-select-mark{background:#eef7ff;color:#087aca}
+</style>
+<script id="rd-v84-compact-select-runtime">
+(function(){
+  window.RD_BUILD='8.4.0-compact-multiselect-actions';document.body.dataset.build=window.RD_BUILD;
+  const V84=window.V84=window.V84||{routeSelectMode:false,stopSelectMode:false,detailSelectMode:false,routeSelected:new Set(),stopSelected:new Set(),detailSelected:new Set()};
+  const baseRouteStopCompact=window.renderRouteStopCompact;
+
+  function uniqCount(arr){return new Set(Array.isArray(arr)?arr:[]).size}
+  function approvedCount(r){return uniqCount((r?.completedStopIds||[]).filter(id=>(r?.stopIds||[]).includes(id)))}
+  function routePct(r){const total=r?.stopIds?.length||0;return total?Math.round(routeFinishedCount(r)/total*100):0}
+  function routeDateLabel(r){try{return r.date?new Date(r.date+'T00:00:00').toLocaleDateString('tr-TR'):''}catch(_){return r.date||''}}
+  function filteredRoutes(){const q=(document.getElementById('routeFilter')?.value||'').trim().toLocaleLowerCase('tr-TR'),sort=document.getElementById('routeSort')?.value||'newest';let arr=db.routes.filter(r=>!q||((r.name||'')+' '+(r.date||'')).toLocaleLowerCase('tr-TR').includes(q));return [...arr].sort((a,b)=>sort==='oldest'?String(a.createdAt||a.date||'').localeCompare(String(b.createdAt||b.date||'')):sort==='az'?(a.name||'').localeCompare(b.name||'','tr'):sort==='za'?(b.name||'').localeCompare(a.name||'','tr'):sort==='distance'?(b.distance||0)-(a.distance||0):String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||'')))}
+  function filteredStops(){const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR'),sort=document.getElementById('stopSort')?.value||'az',today=stopTodaySet();let arr=db.stops.filter(s=>((s.name||'')+' '+(s.address||'')+' '+(s.contactName||'')+' '+(s.contactPhone||'')+' '+(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id));else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';return [...arr].sort((a,b)=>sort==='za'?(b.name||'').localeCompare(a.name||'','tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):(a.name||'').localeCompare(b.name||'','tr'))}
+
+  function ensureSelectionUi(){
+    const routeTools=document.querySelector('#routes .head-tools');
+    if(routeTools&&!document.getElementById('routeSelectModeBtn')){const b=document.createElement('button');b.id='routeSelectModeBtn';b.className='circle-btn rd-route-select-head';b.title='Rotaları seç';b.setAttribute('aria-label','Rotaları seç');b.textContent='☑';b.onclick=()=>toggleRouteSelectMode();routeTools.insertBefore(b,routeTools.lastElementChild||null)}
+    const routeList=document.getElementById('routeList');
+    if(routeList&&!document.getElementById('routeSelectionBar')){const bar=document.createElement('div');bar.id='routeSelectionBar';bar.className='rd-selection-bar';routeList.parentElement.insertBefore(bar,routeList)}
+    const stopTools=document.querySelector('#contacts .rd-stops-head-actions');
+    if(stopTools&&!document.getElementById('stopSelectModeBtn')){const b=document.createElement('button');b.id='stopSelectModeBtn';b.className='rd-add-stop rd-stop-select-head';b.title='Durakları seç';b.setAttribute('aria-label','Durakları seç');b.textContent='☑';b.onclick=()=>toggleStopSelectMode();stopTools.insertBefore(b,stopTools.lastElementChild||null)}
+    const stopList=document.getElementById('stopList');
+    if(stopList&&!document.getElementById('stopSelectionBar')){const bar=document.createElement('div');bar.id='stopSelectionBar';bar.className='rd-selection-bar';stopList.parentElement.insertBefore(bar,stopList)}
+  }
+  function syncSelectionUi(){
+    ensureSelectionUi();
+    const rb=document.getElementById('routeSelectModeBtn'),rbar=document.getElementById('routeSelectionBar');if(rb)rb.classList.toggle('active',V84.routeSelectMode);if(rbar){rbar.classList.toggle('active',V84.routeSelectMode);rbar.innerHTML=V84.routeSelectMode?`<b>${V84.routeSelected.size} rota seçili</b><button onclick="selectAllVisibleRoutes()">Tümünü seç</button><button class="danger" onclick="bulkDeleteRoutes()">⌫ Toplu sil</button><button onclick="toggleRouteSelectMode(false)">Vazgeç</button>`:''}
+    const sb=document.getElementById('stopSelectModeBtn'),sbar=document.getElementById('stopSelectionBar');if(sb)sb.classList.toggle('active',V84.stopSelectMode);if(sbar){sbar.classList.toggle('active',V84.stopSelectMode);sbar.innerHTML=V84.stopSelectMode?`<b>${V84.stopSelected.size} durak seçili</b><button onclick="selectAllVisibleStops()">Tümünü seç</button><button class="danger" onclick="bulkDeleteStops()">⌫ Toplu sil</button><button onclick="toggleStopSelectMode(false)">Vazgeç</button>`:''}
+  }
+
+  window.toggleRouteSelectMode=function(force){V84.routeSelectMode=typeof force==='boolean'?force:!V84.routeSelectMode;if(!V84.routeSelectMode)V84.routeSelected.clear();renderRoutes()};
+  window.toggleRouteSelection=function(id){if(!V84.routeSelectMode)return viewRoute(id);V84.routeSelected.has(id)?V84.routeSelected.delete(id):V84.routeSelected.add(id);renderRoutes()};
+  window.selectAllVisibleRoutes=function(){const ids=filteredRoutes().map(r=>r.id),all=ids.length&&ids.every(id=>V84.routeSelected.has(id));ids.forEach(id=>all?V84.routeSelected.delete(id):V84.routeSelected.add(id));renderRoutes()};
+  window.bulkDeleteRoutes=function(){const ids=[...V84.routeSelected].filter(id=>db.routes.some(r=>r.id===id));if(!ids.length)return toast('Önce rota seçin');if(!confirm(ids.length+' rotayı silmek istediğinize emin misiniz?'))return;const set=new Set(ids);db.routes=db.routes.filter(r=>!set.has(r.id));if(currentRouteId&&set.has(currentRouteId))currentRouteId=null;V84.routeSelected.clear();V84.routeSelectMode=false;persist();renderRoutes();renderStops();toast(ids.length+' rota silindi')};
+
+  window.renderRoutes=function(){ensureV66Settings();ensureSelectionUi();const el=document.getElementById('routeList');if(!el)return;const arr=filteredRoutes();for(const id of [...V84.routeSelected])if(!db.routes.some(r=>r.id===id))V84.routeSelected.delete(id);if(!arr.length){el.innerHTML='<div class="empty">'+((document.getElementById('routeFilter')?.value||'').trim()?'Aramanızla eşleşen rota yok.':'Henüz rota oluşturulmadı.')+'</div>';syncSelectionUi();return}el.innerHTML=arr.map((r,idx)=>{const total=r.stopIds?.length||0,approved=approvedCount(r),processed=routeFinishedCount(r),pct=routePct(r),selected=V84.routeSelected.has(r.id),status=r.completed?'TAMAMLANDI':approved?approved+'/'+total+' ONAY':'BEKLEMEDE';return `<article class="card route-card rd-route-card rd-v84-compact ${r.completed?'completed':''} ${V84.routeSelectMode?'rd-selecting':''} ${selected?'rd-selected':''}" onclick="${V84.routeSelectMode?`toggleRouteSelection('${r.id}')`:`viewRoute('${r.id}')`}"><div class="route-card-top"><div class="route-card-title"><span class="rd-route-index">${r.completed?'✓':idx+1}</span><div><h3>${esc(r.name||'İsimsiz rota')}</h3><div class="route-card-meta">${routeDateLabel(r)} • ${total} durak</div></div></div><div class="rd-route-card-actions">${V84.routeSelectMode?`<button class="rd-select-mark ${selected?'selected':''}" onclick="event.stopPropagation();toggleRouteSelection('${r.id}')">${selected?'✓':'○'}</button>`:`<span class="status-pill ${r.completed?'':'off'}">${status}</span><button class="rd-route-delete-btn" title="Rotayı sil" aria-label="Rotayı sil" onclick="event.stopPropagation();deleteRoute('${r.id}')">⌫</button>`}</div></div><div class="route-progress"><div style="width:${pct}%"></div></div><div class="route-card-stats"><div><small>MESAFE</small><b>${r.distance?formatDistance(r.distance):'—'}</b></div><div><small>BAŞLANGIÇ</small><b>${r.startTime||'08:30'}</b></div><div><small>VARIŞ</small><b>${routeArrival(r)}</b></div></div><div class="rd-route-times"><span class="rd-time-pill">◷ ${r.duration?formatDuration(r.duration):'Süre yok'}</span><span class="rd-time-pill">📦 ${approved}/${total} durak</span>${processed>approved?`<span class="rd-time-pill">× ${processed-approved} atlandı</span>`:''}</div><div class="route-card-footer"><span class="rd-card-arrow">›</span></div></article>`}).join('');syncSelectionUi()};
+
+  window.toggleStopSelectMode=function(force){V84.stopSelectMode=typeof force==='boolean'?force:!V84.stopSelectMode;if(!V84.stopSelectMode)V84.stopSelected.clear();renderStops()};
+  window.toggleStopSelection=function(id){if(!V84.stopSelectMode)return;V84.stopSelected.has(id)?V84.stopSelected.delete(id):V84.stopSelected.add(id);renderStops()};
+  window.selectAllVisibleStops=function(){const ids=filteredStops().map(s=>s.id),all=ids.length&&ids.every(id=>V84.stopSelected.has(id));ids.forEach(id=>all?V84.stopSelected.delete(id):V84.stopSelected.add(id));renderStops()};
+  window.bulkDeleteStops=function(){const ids=[...V84.stopSelected].filter(id=>db.stops.some(s=>s.id===id));if(!ids.length)return toast('Önce durak seçin');if(!confirm(ids.length+' durağı tamamen silmek istediğinize emin misiniz? Bu duraklar rotalardan da kaldırılır.'))return;const set=new Set(ids),now=new Date().toISOString();db.stops=db.stops.filter(s=>!set.has(s.id));db.routes=db.routes.map(r=>{const nr={...r,stopIds:(r.stopIds||[]).filter(id=>!set.has(id)),completedStopIds:(r.completedStopIds||[]).filter(id=>!set.has(id)),skippedStopIds:(r.skippedStopIds||[]).filter(id=>!set.has(id)),updatedAt:now};if(nr.stopNotes)nr.stopNotes=Object.fromEntries(Object.entries(nr.stopNotes).filter(([id])=>!set.has(id)));nr.completed=routeFinishedCount(nr)===nr.stopIds.length&&nr.stopIds.length>0;return nr}).filter(r=>r.stopIds.length);currentRouteStops=(currentRouteStops||[]).filter(id=>!set.has(id));if(currentRouteId&&!db.routes.some(r=>r.id===currentRouteId))currentRouteId=null;V84.stopSelected.clear();V84.stopSelectMode=false;persist();renderStops();renderRoutes();if(currentRouteId&&document.body.dataset.view==='routeDetailPage')renderRouteDetailPage(currentRouteId);toast(ids.length+' durak silindi')};
+
+  window.renderStops=function(){ensureV66Settings();ensureSelectionUi();const today=stopTodaySet(),allFiltered=db.stops.filter(s=>((s.name||'')+' '+(s.address||'')+' '+(s.contactName||'')+' '+(s.contactPhone||'')+' '+(s.note||'')).toLocaleLowerCase('tr-TR').includes((document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR')));const counts={stopCountAll:allFiltered.length,stopCountToday:allFiltered.filter(s=>today.has(s.id)).length,stopCountDone:0,stopCountPending:0};Object.entries(counts).forEach(([id,v])=>{const n=document.getElementById(id);if(n)n.textContent=v});const arr=filteredStops(),el=document.getElementById('stopList');if(!el)return;for(const id of [...V84.stopSelected])if(!db.stops.some(s=>s.id===id))V84.stopSelected.delete(id);if(!arr.length){el.innerHTML='<div class="empty">'+((document.getElementById('stopSearch')?.value||'').trim()?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';syncSelectionUi();return}el.innerHTML=arr.map((s,i)=>{const expanded=!V84.stopSelectMode&&V71.expandedStopId===s.id,region=stopRegionLabel(s),address=(s.address||'').trim(),phone=s.contactPhone||'Telefon belirtilmemiş',selected=V84.stopSelected.has(s.id);return `<article class="item rd-stop-v71 ${expanded?'expanded':''} ${V84.stopSelectMode?'rd-selecting':''} ${selected?'rd-selected':''}" onclick="${V84.stopSelectMode?`toggleStopSelection('${s.id}')`:`toggleStopCard('${s.id}')`}"><span class="rd-stop-seq">${i+1}</span>${V84.stopSelectMode?'':`<span class="rd-stop-type">${/market|süper|carrefour/i.test(s.name||'')?'🛒':'▦'}</span>`}<div class="rd-stop-copy"><h3>${esc(s.name||'İsimsiz durak')}</h3><p>⌖ ${esc(region)}</p><small>${esc(address||region)}</small>${V84.stopSelectMode?'':`<small class="rd-stop-phone">☎ ${esc(phone)}</small>`}</div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()">${V84.stopSelectMode?`<button class="rd-select-mark ${selected?'selected':''}" onclick="toggleStopSelection('${s.id}')">${selected?'✓':'○'}</button>`:`<button class="rd-stop-quick-btn" title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="rd-stop-quick-btn danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')">⌫</button>`}</div>${V84.stopSelectMode?'':`<span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()"><button onclick="openCallPanel('${s.id}')">☎ Ara</button><button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">🧭 Git</button><button onclick="openRouteBuilderWithStop('${s.id}')">➤ Rotaya Ekle</button></div>`}</article>`}).join('');syncSelectionUi();if(map)refreshMainMapMarkers()};
+
+  window.toggleDetailSelectMode=function(force){V84.detailSelectMode=typeof force==='boolean'?force:!V84.detailSelectMode;if(!V84.detailSelectMode)V84.detailSelected.clear();if(currentRouteId)renderRouteDetailPage(currentRouteId)};
+  window.toggleDetailStopSelection=function(id){if(!V84.detailSelectMode)return;V84.detailSelected.has(id)?V84.detailSelected.delete(id):V84.detailSelected.add(id);if(currentRouteId)renderRouteDetailPage(currentRouteId)};
+  window.selectAllDetailStops=function(){const r=db.routes.find(x=>x.id===currentRouteId);if(!r)return;const ids=r.stopIds||[],all=ids.length&&ids.every(id=>V84.detailSelected.has(id));ids.forEach(id=>all?V84.detailSelected.delete(id):V84.detailSelected.add(id));renderRouteDetailPage(r.id)};
+  window.bulkRemoveDetailStops=function(){const r=db.routes.find(x=>x.id===currentRouteId);if(!r)return;const ids=[...V84.detailSelected].filter(id=>r.stopIds.includes(id));if(!ids.length)return toast('Önce durak seçin');if(!confirm(ids.length+' durağı bu rotadan kaldırmak istediğinize emin misiniz?'))return;const set=new Set(ids),now=new Date().toISOString();r.stopIds=r.stopIds.filter(id=>!set.has(id));r.completedStopIds=(r.completedStopIds||[]).filter(id=>!set.has(id));r.skippedStopIds=(r.skippedStopIds||[]).filter(id=>!set.has(id));if(r.stopNotes)r.stopNotes=Object.fromEntries(Object.entries(r.stopNotes).filter(([id])=>!set.has(id)));r.completed=routeFinishedCount(r)===r.stopIds.length&&r.stopIds.length>0;r.updatedAt=now;V84.detailSelected.clear();V84.detailSelectMode=false;persist();renderRoutes();renderRouteDetailPage(r.id);toast(ids.length+' durak rotadan kaldırıldı');if(r.stopIds.length>1)recalculateRoute(r.id,true).then(()=>{if(currentRouteId===r.id)renderRouteDetailPage(r.id);renderRoutes()}).catch(e=>console.warn('Toplu durak kaldırma sonrası rota hesabı',e))};
+
+  function renderDetailSelectableRow(r,sid,i,done,skipped){const st=db.stops.find(x=>x.id===sid),isDone=done.has(sid),isSkipped=skipped.has(sid),state=isDone?'done':isSkipped?'skipped':'',selected=V84.detailSelected.has(sid),seg=segmentToStop(r,i),region=stopRegionLabel(st);return `<div class="route-stop-row ${state} ${selected?'rd-selected':''}" onclick="toggleDetailStopSelection('${sid}')"><span class="route-num2">${selected?'✓':i+1}</span><div class="route-stop-main"><b>${esc(st?.name||'Silinmiş durak')}</b><small>${esc(region)}</small></div><div class="eta-box rd-eta"><small>${i?'MESAFE':'BAŞLANGIÇ'}</small><b>${i?formatDistance(seg.distance):'0 km'}</b><em>◷ ${estimateRouteStopEta(r,i)}</em></div></div>`}
+
+  window.renderRouteDetailPage=function(id){ensureV66Settings();const r=db.routes.find(x=>x.id===id);if(!r)return;currentRouteId=id;document.getElementById('routeDetailTitle').textContent=r.name;for(const sid of [...V84.detailSelected])if(!r.stopIds.includes(sid))V84.detailSelected.delete(sid);const done=new Set(r.completedStopIds||[]),skipped=new Set(r.skippedStopIds||[]),total=r.stopIds.length,approved=approvedCount(r),remain=routeRemainingScheduled(r),pct=routePct(r),showDone=!!V66.showCompletedByRoute[id],pendingIds=r.stopIds.filter(sid=>!done.has(sid)),doneIds=r.stopIds.filter(sid=>done.has(sid)),row=(sid)=>V84.detailSelectMode?renderDetailSelectableRow(r,sid,r.stopIds.indexOf(sid),done,skipped):baseRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped);const pendingHtml=(V84.detailSelectMode?r.stopIds.map(row):pendingIds.map(row)).join('')||'<div class="empty">Tamamlanmamış durak kalmadı.</div>',doneHtml=doneIds.map(row).join('');const detailBar=V84.detailSelectMode?`<div class="rd-selection-bar active"><b>${V84.detailSelected.size} durak seçili</b><button onclick="selectAllDetailStops()">Tümünü seç</button><button class="danger" onclick="bulkRemoveDetailStops()">⌫ Rotadan kaldır</button><button onclick="toggleDetailSelectMode(false)">Vazgeç</button></div>`:'';document.getElementById('routeDetailContent').innerHTML=`<div class="route-detail-card rd-route-overview-compact"><div class="rd-route-overview-top"><div class="rd-route-mini-info"><div><small>TOPLAM</small><strong>${r.distance?formatDistance(r.distance):'—'}</strong></div><div><small>KALAN</small><strong>${r.completed?'0 km':formatDistance(remain.distance||0)}</strong></div><div><small>BAŞLANGIÇ</small><strong>${r.startTime||'08:30'}</strong></div><div><small>VARIŞ</small><strong>${routeArrival(r)}</strong></div></div><div class="rd-route-status-actions rd-route-action-strip"><div class="rd-route-count-pill"><b>${approved}/${total}</b><small>DURAK</small></div><button class="rd-route-icon-action" title="Planla" aria-label="Rotayı planla" onclick="openRoutePlanner('${r.id}')">⚡</button><button class="rd-route-icon-action" title="Sırayı düzenle" aria-label="Sırayı düzenle" onclick="editRouteOrder('${r.id}')">☷</button><button class="rd-route-icon-action" title="Güzergâhı güncelle" aria-label="Güzergâhı güncelle" onclick="recalculateRoute('${r.id}')">↻</button><button class="rd-route-icon-action" title="Google Haritalar" aria-label="Google Haritalar" onclick="openGoogleMapsNavigation('${r.id}')">↗</button><button class="rd-route-icon-action nav" title="Navigasyon" aria-label="Navigasyonu aç" onclick="openNavigation('${r.id}')">➤</button><button class="rd-route-icon-action danger" title="Rotayı sil" aria-label="Rotayı sil" onclick="deleteRouteFromDetail('${r.id}')">⌫</button></div></div><div class="route-progress"><div style="width:${pct}%"></div></div></div><div class="route-detail-card rd-route-detail-list ${V84.detailSelectMode?'rd-detail-select-mode':''}"><div class="builder-title rd-stop-list-head"><div><b>Duraklar</b><span>Tamamlanmamış duraklar üstte tutulur</span></div><button class="rd-detail-select-btn ${V84.detailSelectMode?'active':''}" title="Durak seç" aria-label="Durakları seç" onclick="toggleDetailSelectMode()">☑</button>${!V84.detailSelectMode&&doneIds.length?`<button class="rd-completed-toggle" onclick="toggleCompletedStops('${r.id}')">${showDone?'Tamamlananları gizle':'Tamamlananları göster'} (${doneIds.length})</button>`:''}</div>${detailBar}${pendingHtml}${!V84.detailSelectMode&&doneIds.length&&showDone?`<div class="rd-completed-section"><div class="rd-completed-section-title"><span>TAMAMLANAN DURAKLAR</span><span>${doneIds.length}</span></div>${doneHtml}</div>`:''}</div>`};
+
+  const oldShow=window.showView;window.showView=function(id,opts){if(id!=='routes'&&V84.routeSelectMode){V84.routeSelectMode=false;V84.routeSelected.clear()}if(id!=='contacts'&&V84.stopSelectMode){V84.stopSelectMode=false;V84.stopSelected.clear()}if(id!=='routeDetailPage'&&V84.detailSelectMode){V84.detailSelectMode=false;V84.detailSelected.clear()}const out=oldShow(id,opts);setTimeout(()=>{try{ensureSelectionUi();syncSelectionUi()}catch(e){console.warn('Seçim arayüzü',e)}},0);return out};
+
+  ensureSelectionUi();syncSelectionUi();
+  try{if(document.body.dataset.view==='routes')renderRoutes();if(document.body.dataset.view==='contacts')renderStops();if(document.body.dataset.view==='routeDetailPage'&&currentRouteId)renderRouteDetailPage(currentRouteId)}catch(e){console.error('v8.4 ilk çizim',e)}
 })();
 </script>
 
