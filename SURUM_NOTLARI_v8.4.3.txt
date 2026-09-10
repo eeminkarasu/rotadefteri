@@ -1,0 +1,10 @@
+RotaDefteri v8.4.3
+
+- Ayarlar > Görünüm bölümüne 6 renk paketi eklendi:
+  Mavi, Turkuaz, Yeşil, Mor, Turuncu, Pembe.
+- Seçilen renk paketi cihazda saklanır ve giriş yapılmışsa ayarlarla birlikte buluta senkronize edilir.
+- Tema paketi navigasyon vurgu rengini, sekmeleri, seçimleri, sıra numaralarını, ana aksiyonları ve vurgu çerçevelerini değiştirir.
+- Haritadaki güzergâh rengi ayarı ayrı tutulmuştur.
+- Durak kartlarında isimlerin solundaki kare/bina tipi ikonu kaldırıldı.
+- Durak kartı grid yapısı ikon kaldırıldıktan sonra yeniden hizalandı; mobil ve seçim modları da güncellendi.
+- PWA cache sürümü v8.4.3 olarak yenilendi.
