@@ -1,4 +1,4 @@
-const BUILD='v8-4-4-compact-stop-actions';
+const BUILD='v8-4-5-readable-compact-stops';
 const SHELL_CACHE='rotadefteri-shell-'+BUILD;
 const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
 const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg'];

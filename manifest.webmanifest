@@ -1,7 +1,7 @@
 {
   "name": "RotaDefteri",
   "short_name": "RotaDefteri",
-  "description": "Karasu Hava Yolları RotaDefteri v8.4.4 — kompakt durak kartları ve hızlı işlemler",
+  "description": "Karasu Hava Yolları RotaDefteri v8.4.5 — okunabilir kompakt durak kartları ve küçük hızlı işlemler",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

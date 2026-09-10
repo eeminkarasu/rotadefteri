@@ -1,0 +1,11 @@
+RotaDefteri v8.4.5 — Readable Compact Stops
+
+- Durak kartlarındaki eski CSS çakışması giderildi; metin sütununun 42 px’e düşmesine neden olan legacy v8.2 grid kuralı final override ile etkisizleştirildi.
+- Durak adı tek satırda okunabilir genişlikte gösterilir; uzun isimler üç nokta (…) ile kısalır.
+- İl / ilçe ve telefon bilgisi durak adının altında ayrı satırlarda gösterilir.
+- Adres satırı karttan kaldırılarak metin ve butonlara daha dengeli alan ayrıldı.
+- Google Haritalar, Düzenle, Sil ve Rotaya Ekle butonları sağ tarafa alındı ve küçültüldü.
+- Silme ikonu çöp kutusu olarak korunur; konum butonu Google Haritalar’da ilgili durağı açar; + butonu durağı rota oluşturucuya seçili taşır.
+- Kart yüksekliği korunmuştur; yalnızca gerektiğinde birkaç piksel esneyebilir.
+- Rota/durak adlarında yatay ellipsis davranışı korunmuştur.
+- Service Worker önbellek sürümü v8.4.5 olarak yenilenmiştir.
