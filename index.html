@@ -539,7 +539,7 @@ body.nav-active::after{display:none}
 
 <section id="routes" class="view khy-page rd-routes-page">
   <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('home')" aria-label="Geri">‹</button><div class="rd-head-copy"><span class="eyebrow">PLANLAMA</span><h2>Rotalarım</h2><p class="rd-page-sub">Güzergâh, ilerleme ve tahmini saatler tek bakışta.</p></div><div class="head-tools"><button class="circle-btn" onclick="showView('settings')" title="Ayarlar">⚙</button><button class="circle-btn rd-plus" onclick="openRouteBuilder()" title="Yeni rota">＋</button></div></div>
-  <button class="route-action-card rd-route-cta" onclick="openRouteBuilder()"><div><b>Yolu Hesapla ve Git</b><span>Başlangıç saatini belirle, durakları basılı tutup sırala ve yeni rota oluştur.</span></div><strong>→</strong></button>
+  <button class="route-action-card rd-route-cta" onclick="openRouteBuilder()"><div><b>Yolu Hesapla ve Git</b><span>Başlangıç saatini belirle, durakları ☷ tutamacından sürükleyerek sırala ve yeni rota oluştur.</span></div><strong>→</strong></button>
   <div class="rd-filter-row"><div class="filter-bar"><span>⌕</span><input id="routeFilter" placeholder="Rota ara..." oninput="renderRoutes()"></div><select id="routeSort" class="rd-sort" onchange="renderRoutes()"><option value="newest">En yeni</option><option value="oldest">En eski</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="distance">Mesafe</option></select></div>
   <div id="routeList" class="list khy-route-list"></div>
 </section>
@@ -582,13 +582,13 @@ body.nav-active::after{display:none}
   </div>
 </section>
 <section id="routeBuilderPage" class="view khy-page full-page rd-builder-page">
-  <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="cancelRouteBuilder()" aria-label="Geri ve vazgeç">‹</button><div class="rd-head-copy"><span class="eyebrow">YENİ ROTA</span><h2>Yolu Hesapla ve Git</h2><p class="rd-page-sub">Durakları seç, Planla ile otomatik sırala veya ☷ tutamacından manuel düzenle.</p></div><button class="rd-head-cancel" type="button" onclick="cancelRouteBuilder()">Vazgeç</button></div>
+  <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="cancelRouteBuilder()" aria-label="Geri ve vazgeç">‹</button><div class="rd-head-copy"><span class="eyebrow">YENİ ROTA</span><h2>Yolu Hesapla ve Git</h2><p class="rd-page-sub">Durakları seç, Planla ile otomatik sırala veya ☷ tutamacını sürükleyerek manuel düzenle.</p></div><button class="rd-head-cancel" type="button" onclick="cancelRouteBuilder()">Vazgeç</button></div>
   <div class="rd-planner-steps"><span class="active">1 <b>Bilgiler</b></span><i></i><span class="active">2 <b>Duraklar</b></span><i></i><span>3 <b>Navigasyon</b></span></div>
   <div class="builder-card">
     <div class="rd-form-grid"><div><label>Rota adı</label><input id="pageRouteName" placeholder="Boş bırakılırsa tarih atanır"></div><div><label>Başlangıç saati</label><input id="pageRouteStart" type="time" value="08:30" oninput="updateBuilderSummary()"></div></div>
     <div class="builder-title"><b>Durakları seç</b><span>Yeni rotada seçim boş başlar</span></div>
     <input id="pageRouteSearch" class="builder-search" placeholder="Durak ara..." oninput="renderPageRouteChoices()">
-    <div class="builder-select-actions"><button type="button" onclick="selectAllActiveStops()">Tüm aktifleri seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
+    <div class="builder-select-actions"><button type="button" onclick="selectAllActiveStops()">Tüm durakları seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
     <div id="pageRouteChoices" class="builder-choices"></div>
 
     <div class="rd-auto-plan-card">
@@ -602,7 +602,7 @@ body.nav-active::after{display:none}
       <div id="routePlanHint" class="rd-plan-hint">Telefonun mevcut konumu başlangıç referansı olur; en yakın duraktan başlanır.</div>
     </div>
 
-    <div class="builder-title"><b>Durak sırası</b><span>☷ tutamacına basılı tut ve yukarı/aşağı taşı</span></div>
+    <div class="builder-title"><b>Durak sırası</b><span>☷ tutamaca dokun ve sürükle • mavi numaraya dokunarak sırayı elle değiştir</span></div>
     <div id="pageRouteOrder" class="drag-list"></div>
     <div class="builder-summary"><div><small>Toplam yol</small><b id="pageRouteDistance">—</b></div><div><small>Tahmini süre</small><b id="pageRouteDuration">—</b></div><div><small>Tahmini varış</small><b id="pageRouteArrival">—</b></div></div>
     <div class="rd-save-cancel-row"><button type="button" class="rd-cancel-action" onclick="cancelRouteBuilder()">Vazgeç</button><button id="calculateRouteBtn" class="start-route-btn" onclick="calculatePageRoute()"><span>🧭</span> Rotayı Hesapla ve Git</button></div>
@@ -1450,7 +1450,7 @@ setTimeout(()=>{if(document.getElementById('authGate')?.classList.contains('open
 </script>
 
 <script id="rd-v75-runtime-guard">
-window.RD_BUILD='8.1.0-stops-drag-liveloc';
+window.RD_BUILD='8.2.0-drag-order-liveloc-ui';
 document.body.dataset.build=window.RD_BUILD;
 (function(){
   // Legacy modals may survive in a stale DOM snapshot; force-close them.
@@ -1465,197 +1465,79 @@ document.body.dataset.build=window.RD_BUILD;
 </script>
 
 
-<style id="rd-v81-stop-order-live-style">
+<style id="rd-v82-drag-order-live-style">
 .rd-stop-filter-chips{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .rd-stop-filter-chips [data-stop-filter="done"],.rd-stop-filter-chips [data-stop-filter="pending"]{display:none!important}
 .rd-stop-quick-actions{display:flex;align-items:center;gap:6px;justify-self:end}
-.rd-stop-quick-actions .rd-stop-quick-btn{width:40px;height:40px;border-radius:14px;border:1px solid rgba(24,169,255,.42);background:rgba(7,105,174,.08);color:#29a7ff;font-size:18px;font-weight:900;display:grid;place-items:center}
+.rd-stop-quick-actions .rd-stop-quick-btn{width:40px;height:40px;border-radius:14px;border:1px solid rgba(24,169,255,.42);background:rgba(7,105,174,.08);color:#29a7ff;font-size:18px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1}
 .rd-stop-quick-actions .rd-stop-quick-btn.danger{border-color:rgba(255,102,126,.42);background:rgba(125,32,39,.14);color:#ff9faf}
 .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn{width:38px!important;height:38px!important;border-radius:13px!important}
-.drag-list,.drag-item,.drag-item *{user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important}
-.drag-item{touch-action:pan-y;cursor:grab}
-.drag-item .drag-main,.drag-item .eta-box{pointer-events:none}
-.drag-item .drag-tools,.drag-item .drag-handle{pointer-events:auto}
-.drag-item.rd-pointer-sorting,.drag-item.dragging{cursor:grabbing;box-shadow:0 0 0 2px rgba(24,169,255,.32),0 16px 34px rgba(0,0,0,.24)}
-.drag-handle{display:grid;place-items:center;min-width:22px;font-size:22px;color:#7ed2ff}
-.drag-tools{display:flex;gap:6px}
-.drag-tools .remove{width:36px;height:36px;border:0;border-radius:12px;background:#61262c;color:#fff;font-size:22px;line-height:1;display:grid;place-items:center}
+.drag-list{position:relative}
+.drag-item{touch-action:pan-y;cursor:default;transition:transform .08s ease,box-shadow .08s ease,border-color .08s ease;background-clip:padding-box}
+.drag-item,.drag-item *{-webkit-user-drag:none}
+.drag-item.rd-pointer-sorting{box-shadow:0 0 0 2px rgba(24,169,255,.42),0 18px 36px rgba(0,0,0,.32)!important;border-color:#2ab8ff!important;transform:scale(1.015);z-index:50}
+html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-list,html.rd-route-sorting .drag-item,html.rd-route-sorting .drag-item *{user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important}
+.drag-handle{width:46px;height:46px;min-width:46px;border-radius:14px;display:inline-flex!important;align-items:center;justify-content:center;font-size:25px!important;color:#69cfff!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;cursor:grab;background:rgba(24,169,255,.06)}
+.drag-handle:active{cursor:grabbing;background:rgba(24,169,255,.14)}
+.drag-num.rd-order-number{appearance:none;-webkit-appearance:none;border:0!important;padding:0!important;margin:0;width:42px!important;height:42px!important;min-width:42px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#168cff!important;color:#fff!important;font-weight:900!important;font-size:18px!important;line-height:1!important;box-shadow:0 0 0 1px rgba(95,199,255,.25) inset;touch-action:manipulation!important}
+.drag-num.rd-order-number:active{transform:scale(.95)}
+.drag-tools{display:flex;align-items:center;justify-content:center;gap:6px}.drag-tools .remove{width:38px;height:38px;border:0;border-radius:12px;background:#61262c;color:#fff;font-size:24px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;margin:0}
+.circle-btn,.back-btn,.rd-v71-back,.rd-add-stop,.rd-stop-sort-btn,.rd-stop-quick-btn,.drag-tools button,.rd-nav-exit-v71,.rd-nav-stop-state button,.rd-call-mini,.rd-nav-call-card-v71,.mini-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important}
+.circle-btn,.back-btn,.rd-add-stop,.rd-stop-sort-btn,.rd-nav-exit-v71,.rd-nav-stop-state button,.mini-btn{padding:0!important}
+.rd-nav-call-card-v71{padding:0!important;text-align:center!important}.rd-nav-call-card-v71>span{margin:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+.rd-order-live-note{font-size:10px;color:#6fcfff;margin-top:3px;text-align:center;white-space:nowrap}
 @media(max-width:600px){
-  .rd-stop-filter-chips{display:grid!important;grid-template-columns:1fr 1fr!important;overflow:visible!important}
-  .rd-stop-filter-chips button{min-width:0!important}
-  .rd-stop-quick-actions{gap:5px}
-  .rd-stop-quick-actions .rd-stop-quick-btn{width:34px;height:34px;font-size:16px;border-radius:12px}
-  .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:38px 42px minmax(0,1fr) 74px 16px!important}
+ .rd-stop-filter-chips{display:grid!important;grid-template-columns:1fr 1fr!important;overflow:visible!important}.rd-stop-filter-chips button{min-width:0!important}
+ .rd-stop-quick-actions{gap:5px}.rd-stop-quick-actions .rd-stop-quick-btn{width:34px;height:34px;font-size:16px;border-radius:12px}
+ .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:38px 42px minmax(0,1fr) 74px 16px!important}
+ .drag-handle{width:42px;height:42px;min-width:42px;font-size:24px!important}.drag-num.rd-order-number{width:40px!important;height:40px!important;min-width:40px!important;font-size:17px!important}
 }
 </style>
-
-<script id="rd-v81-runtime">
+<script id="rd-v82-runtime">
 (function(){
-  window.RD_BUILD='8.1.0-stops-drag-liveloc';
-  document.body.dataset.build=window.RD_BUILD;
-  window.V71=window.V71||{};
-  if(['done','pending'].includes(V71.stopFilter)) V71.stopFilter='all';
-
-  let appWatchId=null;
-  let builderRefreshRaf=0;
-  function trackingEnabled(){return !!navigator.geolocation && db?.settings?.liveTracking!==false}
-  function queueBuilderRefresh(){
-    if(document.body.dataset.view!=='routeBuilderPage')return;
-    cancelAnimationFrame(builderRefreshRaf);
-    builderRefreshRaf=requestAnimationFrame(()=>{
-      try{renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors()}catch(e){console.warn('Builder konum yenilemesi ertelendi',e)}
-    });
-  }
-  function updateAppPosition(pos){
-    const c=pos?.coords||{};
-    const current={lat:Number(c.latitude),lng:Number(c.longitude)};
-    if(!Number.isFinite(current.lat)||!Number.isFinite(current.lng))return;
-    V66.lastPos=current;
-    V66.lastGpsAt=Date.now();
-    const rawSpeed=Math.max(0,(Number(c.speed)||0)*3.6);
-    V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.58+rawSpeed*.42:rawSpeed;
-    if(Number.isFinite(Number(c.heading)))V66.heading=Number(c.heading);
-    queueBuilderRefresh();
-  }
-  window.startAppLocationTracking=function(silent=true){
-    if(!trackingEnabled())return;
-    if(appWatchId!==null)return;
-    try{appWatchId=navigator.geolocation.watchPosition(updateAppPosition,err=>{console.warn('Arka plan konum izleme',err);if(!silent&&err?.code===1)toast('Konum izni gerekli')},{enableHighAccuracy:true,maximumAge:1000,timeout:15000})}catch(e){console.warn('Konum izleme başlatılamadı',e)}
-  };
-  window.stopAppLocationTracking=function(){if(appWatchId!==null){navigator.geolocation.clearWatch(appWatchId);appWatchId=null}};
-  window.getBuilderOrigin=function(){return V66.lastPos&&Number.isFinite(V66.lastPos.lat)&&Number.isFinite(V66.lastPos.lng)?V66.lastPos:null};
-  window.builderLeadMetrics=function(){
-    normalizeCurrentRouteStops();
-    const origin=getBuilderOrigin();
-    const first=db.stops.find(s=>s.id===currentRouteStops?.[0]);
-    if(!origin||!first)return {distance:0,duration:0};
-    const distance=haversine(origin.lat,origin.lng,Number(first.lat),Number(first.lng))*1.22;
-    return {distance,duration:(distance/1000)/38*3600};
-  };
-
-  const previousShowView=window.showView;
-  window.showView=function(id,opts={}){
-    previousShowView(id,opts);
-    if(id==='navigationPage')stopAppLocationTracking(); else if(trackingEnabled())startAppLocationTracking(true);
-    if(id==='routeBuilderPage')setTimeout(queueBuilderRefresh,50);
-    if(id==='contacts')setTimeout(()=>{try{renderStops()}catch(e){}},40);
-  };
-  const previousSaveNavSettings=window.saveNavSettings;
-  window.saveNavSettings=function(){previousSaveNavSettings();if(db.settings.liveTracking!==false){if(document.body.dataset.view!=='navigationPage')startAppLocationTracking(true)}else stopAppLocationTracking()};
-
-  window.renderPageRouteChoices=function(){
-    normalizeCurrentRouteStops();
-    const el=document.getElementById('pageRouteChoices');
-    if(!el)return;
-    const q=(document.getElementById('pageRouteSearch')?.value||'').toLocaleLowerCase('tr-TR');
-    const rows=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')).toLocaleLowerCase('tr-TR').includes(q));
-    el.innerHTML=rows.length?rows.map(s=>`<label class="builder-choice"><input type="checkbox" ${currentRouteStops.includes(s.id)?'checked':''} onchange="togglePageRouteStop('${s.id}',this.checked)"><span class="builder-choice-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></span></label>`).join(''):'<div class="empty">Eşleşen durak yok.</div>';
-  };
-  window.selectAllActiveStops=function(){currentRouteStops=db.stops.map(s=>s.id);normalizeCurrentRouteStops();renderPageRouteChoices();renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors()};
-
-  window.estimateBuilderEta=function(i){
-    const base=document.getElementById('pageRouteStart')?.value||'08:30';
-    const pts=currentRouteStops.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);
-    const lead=builderLeadMetrics();
-    let totalDist=lead.distance,cum=lead.distance;
-    for(let x=1;x<pts.length;x++){
-      const dist=haversine(pts[x-1].lat,pts[x-1].lng,pts[x].lat,pts[x].lng)*1.22;
-      totalDist+=dist;
-      if(x<=i)cum+=dist;
-    }
-    if(i===0&&!lead.distance)cum=0;
-    const metrics=routeFallbackMetrics();
-    const totalDuration=metrics.duration+lead.duration;
-    const seconds=totalDist?totalDuration*(cum/totalDist):0;
-    return clockAfter(base,seconds);
-  };
-  window.updateBuilderSummary=function(){
-    const base=routeFallbackMetrics(),lead=builderLeadMetrics();
-    const totalDistance=base.distance+lead.distance,totalDuration=base.duration+lead.duration;
-    const d=document.getElementById('pageRouteDistance'),u=document.getElementById('pageRouteDuration'),a=document.getElementById('pageRouteArrival');
-    if(d)d.textContent=currentRouteStops.length?'≈ '+formatDistance(totalDistance):'—';
-    if(u)u.textContent=currentRouteStops.length?'≈ '+formatDuration(totalDuration):'—';
-    if(a)a.textContent=currentRouteStops.length?'≈ '+clockAfter(document.getElementById('pageRouteStart')?.value||'08:30',totalDuration):'—';
-  };
-  window.renderPageRouteOrder=function(){
-    normalizeCurrentRouteStops();
-    const el=document.getElementById('pageRouteOrder');
-    if(!el)return;
-    if(!currentRouteStops.length){el.innerHTML='<div class="empty">Henüz durak seçilmedi. Rota için en az 2 durak seçin.</div>';refreshPlanSelectors();return}
-    const temp={stopIds:[...currentRouteStops],...routeFallbackMetrics(currentRouteStops)};
-    const origin=getBuilderOrigin();
-    const lead=builderLeadMetrics();
-    el.innerHTML=currentRouteStops.map((id,i)=>{
-      const s=db.stops.find(x=>x.id===id); if(!s)return '';
-      const seg=i?segmentToStop(temp,i):lead;
-      const label=i?'ÖNCEKİNDEN':(origin?'KONUMUNDAN':'BAŞLANGIÇ');
-      const distanceText=i||origin?('≈ '+formatDistance(seg.distance)):('0 km');
-      return `<div class="drag-item" data-id="${s.id}"><span class="drag-handle" title="Bas ve sürükle">☷</span><span class="drag-num">${i+1}</span><div class="drag-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></div><div class="eta-box rd-leg-chip"><small>${label}</small><b>${distanceText}</b><em>${estimateBuilderEta(i)}</em></div><div class="drag-tools"><button class="remove" title="Rotadan çıkar" onclick="event.stopPropagation();togglePageRouteStop('${s.id}',false);renderPageRouteChoices()">×</button></div></div>`;
-    }).join('');
-    bindPointerSort(el);refreshPlanSelectors();
-  };
-
-  window.bindPointerSort=function(el){
-    if(!el)return;
-    let active=null,pointerId=null,sorting=false;
-    const finish=(e)=>{
-      if(e&&pointerId!==null&&e.pointerId!==pointerId)return;
-      if(active){active.style.pointerEvents='';active.style.zIndex='';active.style.touchAction='';active.classList.remove('rd-pointer-sorting','dragging')}
-      if(sorting)syncRouteOrderFromDom(el);
-      active=null;pointerId=null;sorting=false;
-    };
-    el.querySelectorAll('.drag-item').forEach(item=>{
-      if(item.dataset.sortBound==='1')return;
-      item.dataset.sortBound='1';
-      item.addEventListener('dragstart',ev=>ev.preventDefault());
-      item.addEventListener('pointerdown',e=>{
-        if(e.pointerType==='mouse'&&e.button!==0)return;
-        if(e.target.closest('button,input,select,textarea,label,a')&&!e.target.closest('.drag-handle'))return;
-        active=item;pointerId=e.pointerId;sorting=true;
-        active.classList.add('rd-pointer-sorting','dragging');
-        active.style.pointerEvents='none';active.style.zIndex='15';active.style.touchAction='none';
-        try{item.setPointerCapture(pointerId)}catch(_){try{e.target.setPointerCapture(pointerId)}catch(__){}}
-        e.preventDefault();
-      },{passive:false});
-      item.addEventListener('pointermove',e=>{
-        if(!sorting||!active||e.pointerId!==pointerId)return;
-        e.preventDefault();
-        const y=e.clientY;
-        if(y<96)window.scrollBy(0,-14);else if(y>window.innerHeight-110)window.scrollBy(0,14);
-        const target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.drag-item');
-        if(!target||target===active||target.parentElement!==el)return;
-        const r=target.getBoundingClientRect();
-        el.insertBefore(active,e.clientY<r.top+r.height/2?target:target.nextSibling);
-      },{passive:false});
-      item.addEventListener('pointerup',finish);
-      item.addEventListener('pointercancel',finish);
-      item.addEventListener('lostpointercapture',finish);
-    });
-  };
-
-  window.renderStops=function(){
-    ensureV66Settings();
-    const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR');
-    const sort=document.getElementById('stopSort')?.value||'az';
-    const visited=stopVisitedSet(),today=stopTodaySet();
-    let arr=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')+' '+(s.contactPhone||'')+' '+(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));
-    const all=arr.length,todayCount=arr.filter(s=>today.has(s.id)).length;
-    const counts={stopCountAll:all,stopCountToday:todayCount,stopCountDone:0,stopCountPending:0};
-    Object.entries(counts).forEach(([id,v])=>{const node=document.getElementById(id);if(node)node.textContent=v});
-    if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id)); else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
-    arr=[...arr].sort((a,b)=>sort==='za'?b.name.localeCompare(a.name,'tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):a.name.localeCompare(b.name,'tr'));
-    const el=document.getElementById('stopList');
-    if(!el)return;
-    if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';return}
-    el.innerHTML=arr.map((s,i)=>{
-      const expanded=V71.expandedStopId===s.id,region=stopRegionLabel(s),address=(s.address||'').trim(),phone=s.contactPhone||'Telefon belirtilmemiş';
-      return `<article class="item rd-stop-v71 ${expanded?'expanded':''}" onclick="toggleStopCard('${s.id}')"><span class="rd-stop-seq">${i+1}</span><span class="rd-stop-type">${/market|market|süper|carrefour/i.test(s.name)?'🛒':'▦'}</span><div class="rd-stop-copy"><h3>${esc(s.name)}</h3><p>⌖ ${esc(region)}</p><small>${esc(address||region)}</small><small class="rd-stop-phone">☎ ${esc(phone)}</small></div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()"><button class="rd-stop-quick-btn" title="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="rd-stop-quick-btn danger" title="Sil" onclick="deleteStop('${s.id}')">⌫</button></div><span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()"><button onclick="openCallPanel('${s.id}')">☎ Ara</button><button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">🧭 Git</button><button onclick="openRouteBuilderWithStop('${s.id}')">➤ Rotaya Ekle</button></div></article>`;
-    }).join('');
-    if(map)refreshMainMapMarkers();
-  };
-
-  document.addEventListener('selectstart',e=>{if(e.target.closest('.drag-item'))e.preventDefault()});
-  setTimeout(()=>{try{if(document.body.dataset.view!=='navigationPage')startAppLocationTracking(true);renderStops();queueBuilderRefresh()}catch(e){console.warn(e)}},120);
+ window.RD_BUILD='8.2.0-drag-order-liveloc-ui';document.body.dataset.build=window.RD_BUILD;
+ window.V71=window.V71||{};if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
+ const V82=window.V82=window.V82||{appWatchId:null,dragging:false,leadRoad:null,leadFetch:null,lastBuilderPaint:0};
+ function trackingEnabled(){return !!navigator.geolocation&&db?.settings?.liveTracking!==false}
+ function validPos(){const p=V66.lastPos;return p&&Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng))?{lat:Number(p.lat),lng:Number(p.lng)}:null}
+ function firstBuilderStop(){return db.stops.find(s=>s.id===currentRouteStops?.[0])||null}
+ function leadFallback(){const pos=validPos(),first=firstBuilderStop();if(!pos||!first)return {distance:0,duration:0,source:'none'};const distance=haversine(pos.lat,pos.lng,Number(first.lat),Number(first.lng))*1.22;return {distance,duration:(distance/1000)/38*3600,source:'estimate'}}
+ function currentLeadMetrics(){const pos=validPos(),first=firstBuilderStop(),road=V82.leadRoad;if(pos&&first&&road&&road.stopId===first.id&&Date.now()-road.at<60000&&pointDistance(pos,road.pos)<180)return {distance:road.distance,duration:road.duration,source:'road'};return leadFallback()}
+ window.getBuilderOrigin=validPos;
+ window.builderLeadMetrics=currentLeadMetrics;
+ function paintBuilderLive(){
+  if(document.body.dataset.view!=='routeBuilderPage'||V82.dragging)return;
+  const lead=currentLeadMetrics();const first=document.querySelector('#pageRouteOrder [data-first-leg="1"]');
+  if(first){const b=first.querySelector('b');const sm=first.querySelector('small');if(b)b.textContent=validPos()?'≈ '+formatDistance(lead.distance):'0 km';if(sm)sm.textContent=validPos()?(lead.source==='road'?'KONUMUNDAN':'KONUMUNDAN ≈'):'BAŞLANGIÇ'}
+  document.querySelectorAll('#pageRouteOrder [data-eta-index]').forEach(el=>{const i=Number(el.dataset.etaIndex);if(Number.isFinite(i))el.textContent=estimateBuilderEta(i)});
+  updateBuilderSummary();
+ }
+ async function refreshLeadRoad(force=false){
+  if(document.body.dataset.view!=='routeBuilderPage'||V82.dragging)return;const pos=validPos(),first=firstBuilderStop();if(!pos||!first)return;
+  const old=V82.leadRoad;if(!force&&old&&old.stopId===first.id&&Date.now()-old.at<25000&&pointDistance(pos,old.pos)<90)return;
+  const key=first.id+'|'+pos.lat.toFixed(4)+','+pos.lng.toFixed(4);if(V82.leadFetch===key)return;V82.leadFetch=key;
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),7000);try{
+   const coords=`${pos.lng},${pos.lat};${first.lng},${first.lat}`;const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=false&steps=false',{signal:ctrl.signal});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json(),r=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;if(!r)throw new Error('rota yok');V82.leadRoad={stopId:first.id,pos:{...pos},distance:Number(r.distance)||0,duration:Number(r.duration)||0,at:Date.now()};paintBuilderLive()
+  }catch(e){console.warn('İlk durak yol mesafesi yaklaşık kullanılacak',e)}finally{clearTimeout(timer);if(V82.leadFetch===key)V82.leadFetch=null}
+ }
+ function updateAppPosition(pos){const c=pos?.coords||{},p={lat:Number(c.latitude),lng:Number(c.longitude)};if(!Number.isFinite(p.lat)||!Number.isFinite(p.lng))return;V66.lastPos=p;V66.lastGpsAt=Date.now();const raw=Math.max(0,(Number(c.speed)||0)*3.6);V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.58+raw*.42:raw;if(Number.isFinite(Number(c.heading)))V66.heading=Number(c.heading);if(document.body.dataset.view==='routeBuilderPage'){const now=Date.now();if(now-V82.lastBuilderPaint>500){V82.lastBuilderPaint=now;paintBuilderLive()}refreshLeadRoad(false)}}
+ window.startAppLocationTracking=function(silent=true){if(!trackingEnabled()||V82.appWatchId!==null)return;try{V82.appWatchId=navigator.geolocation.watchPosition(updateAppPosition,err=>{console.warn('Canlı konum',err);if(!silent&&err?.code===1)toast('Konum izni gerekli')},{enableHighAccuracy:true,maximumAge:1000,timeout:15000})}catch(e){console.warn('Konum izleme başlatılamadı',e)}};
+ window.stopAppLocationTracking=function(){if(V82.appWatchId!==null){navigator.geolocation.clearWatch(V82.appWatchId);V82.appWatchId=null}};
+ const priorShow=window.showView;window.showView=function(id,opts={}){priorShow(id,opts);if(id==='navigationPage')stopAppLocationTracking();else if(trackingEnabled())startAppLocationTracking(true);if(id==='routeBuilderPage')setTimeout(()=>{paintBuilderLive();refreshLeadRoad(true)},80);if(id==='contacts')setTimeout(()=>{try{renderStops()}catch(_){}},40)};
+ const priorSaveNav=window.saveNavSettings;window.saveNavSettings=function(){priorSaveNav();if(db.settings.liveTracking!==false&&document.body.dataset.view!=='navigationPage')startAppLocationTracking(true);else if(db.settings.liveTracking===false)stopAppLocationTracking()};
+ window.renderPageRouteChoices=function(){normalizeCurrentRouteStops();const el=document.getElementById('pageRouteChoices');if(!el)return;const q=(document.getElementById('pageRouteSearch')?.value||'').toLocaleLowerCase('tr-TR');const rows=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')).toLocaleLowerCase('tr-TR').includes(q));el.innerHTML=rows.length?rows.map(s=>`<label class="builder-choice"><input type="checkbox" ${currentRouteStops.includes(s.id)?'checked':''} onchange="togglePageRouteStop('${s.id}',this.checked)"><span class="builder-choice-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></span></label>`).join(''):'<div class="empty">Eşleşen durak yok.</div>'};
+ window.selectAllActiveStops=function(){currentRouteStops=db.stops.map(s=>s.id);normalizeCurrentRouteStops();renderPageRouteChoices();renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors()};
+ window.setManualRoutePosition=function(id){normalizeCurrentRouteStops();const old=currentRouteStops.indexOf(id);if(old<0)return;const answer=prompt(`Yeni sıra numarası (1-${currentRouteStops.length})`,String(old+1));if(answer===null)return;const n=Math.trunc(Number(answer));if(!Number.isFinite(n)||n<1||n>currentRouteStops.length)return toast('1 ile '+currentRouteStops.length+' arasında bir sıra numarası girin');if(n-1===old)return;currentRouteStops.splice(old,1);currentRouteStops.splice(n-1,0,id);renderPageRouteOrder();renderPageRouteChoices();updateBuilderSummary();refreshPlanSelectors();toast('Durak '+n+'. sıraya taşındı')};
+ window.estimateBuilderEta=function(i){const base=document.getElementById('pageRouteStart')?.value||'08:30',pts=currentRouteStops.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean),lead=currentLeadMetrics();let totalDist=lead.distance,cum=lead.distance;for(let x=1;x<pts.length;x++){const dist=haversine(pts[x-1].lat,pts[x-1].lng,pts[x].lat,pts[x].lng)*1.22;totalDist+=dist;if(x<=i)cum+=dist}if(i===0&&!lead.distance)cum=0;const metrics=routeFallbackMetrics(),totalDuration=metrics.duration+lead.duration;return clockAfter(base,totalDist?totalDuration*(cum/totalDist):0)};
+ window.updateBuilderSummary=function(){const base=routeFallbackMetrics(),lead=currentLeadMetrics(),distance=base.distance+lead.distance,duration=base.duration+lead.duration,d=document.getElementById('pageRouteDistance'),u=document.getElementById('pageRouteDuration'),a=document.getElementById('pageRouteArrival');if(d)d.textContent=currentRouteStops.length?'≈ '+formatDistance(distance):'—';if(u)u.textContent=currentRouteStops.length?'≈ '+formatDuration(duration):'—';if(a)a.textContent=currentRouteStops.length?'≈ '+clockAfter(document.getElementById('pageRouteStart')?.value||'08:30',duration):'—'};
+ window.renderPageRouteOrder=function(){normalizeCurrentRouteStops();const el=document.getElementById('pageRouteOrder');if(!el)return;if(!currentRouteStops.length){el.innerHTML='<div class="empty">Henüz durak seçilmedi. Rota için en az 2 durak seçin.</div>';refreshPlanSelectors();return}const temp={stopIds:[...currentRouteStops],...routeFallbackMetrics(currentRouteStops)},origin=validPos(),lead=currentLeadMetrics();el.innerHTML=currentRouteStops.map((id,i)=>{const s=db.stops.find(x=>x.id===id);if(!s)return '';const seg=i?segmentToStop(temp,i):lead,label=i?'ÖNCEKİNDEN':(origin?'KONUMUNDAN':'BAŞLANGIÇ'),distanceText=i||origin?('≈ '+formatDistance(seg.distance)):'0 km';return `<div class="drag-item" data-id="${s.id}"><span class="drag-handle" role="button" aria-label="${i+1}. durağı sürükle" title="Dokun ve sürükle">☷</span><button type="button" class="drag-num rd-order-number" title="Sıra numarasını elle değiştir" aria-label="${i+1}. sıra; değiştirmek için dokun" onclick="event.stopPropagation();setManualRoutePosition('${s.id}')">${i+1}</button><div class="drag-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></div><div class="eta-box rd-leg-chip" ${i===0?'data-first-leg="1"':''}><small>${label}</small><b>${distanceText}</b><em data-eta-index="${i}">${estimateBuilderEta(i)}</em></div><div class="drag-tools"><button class="remove" title="Rotadan çıkar" aria-label="Rotadan çıkar" onclick="event.stopPropagation();togglePageRouteStop('${s.id}',false);renderPageRouteChoices()">×</button></div></div>`}).join('');bindPointerSort(el);refreshPlanSelectors();setTimeout(()=>refreshLeadRoad(false),0)};
+ window.bindPointerSort=function(el){if(!el)return;let active=null,pointerId=null,lastY=0,raf=0;const cleanup=()=>{if(raf)cancelAnimationFrame(raf);raf=0;document.removeEventListener('pointermove',move,true);document.removeEventListener('pointerup',finish,true);document.removeEventListener('pointercancel',finish,true);document.documentElement.classList.remove('rd-route-sorting');if(active)active.classList.remove('rd-pointer-sorting');if(V82.dragging){syncRouteOrderFromDom(el);V82.dragging=false;paintBuilderLive();refreshLeadRoad(true)}active=null;pointerId=null};const reorder=()=>{raf=0;if(!active)return;const y=lastY;if(y<105)window.scrollBy(0,-16);else if(y>window.innerHeight-115)window.scrollBy(0,16);const siblings=[...el.querySelectorAll('.drag-item')].filter(x=>x!==active);let before=null;for(const node of siblings){const r=node.getBoundingClientRect();if(y<r.top+r.height/2){before=node;break}}if(before)el.insertBefore(active,before);else el.appendChild(active)};function move(e){if(!active||e.pointerId!==pointerId)return;e.preventDefault();lastY=e.clientY;if(!raf)raf=requestAnimationFrame(reorder)}function finish(e){if(!active||e.pointerId!==pointerId)return;e.preventDefault();cleanup()}el.querySelectorAll('.drag-handle').forEach(handle=>{handle.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();e.stopPropagation();window.getSelection?.()?.removeAllRanges?.();active=handle.closest('.drag-item');pointerId=e.pointerId;lastY=e.clientY;V82.dragging=true;document.documentElement.classList.add('rd-route-sorting');active.classList.add('rd-pointer-sorting');document.addEventListener('pointermove',move,{capture:true,passive:false});document.addEventListener('pointerup',finish,{capture:true,passive:false});document.addEventListener('pointercancel',finish,{capture:true,passive:false});navigator.vibrate?.(10)},{passive:false});handle.addEventListener('contextmenu',e=>e.preventDefault())})};
+ window.renderStops=function(){ensureV66Settings();const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR'),sort=document.getElementById('stopSort')?.value||'az',today=stopTodaySet();let arr=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')+' '+(s.contactPhone||'')+' '+(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));const counts={stopCountAll:arr.length,stopCountToday:arr.filter(s=>today.has(s.id)).length,stopCountDone:0,stopCountPending:0};Object.entries(counts).forEach(([id,v])=>{const n=document.getElementById(id);if(n)n.textContent=v});if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id));else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';arr=[...arr].sort((a,b)=>sort==='za'?b.name.localeCompare(a.name,'tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):a.name.localeCompare(b.name,'tr'));const el=document.getElementById('stopList');if(!el)return;if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';return}el.innerHTML=arr.map((s,i)=>{const expanded=V71.expandedStopId===s.id,region=stopRegionLabel(s),address=(s.address||'').trim(),phone=s.contactPhone||'Telefon belirtilmemiş';return `<article class="item rd-stop-v71 ${expanded?'expanded':''}" onclick="toggleStopCard('${s.id}')"><span class="rd-stop-seq">${i+1}</span><span class="rd-stop-type">${/market|market|süper|carrefour/i.test(s.name)?'🛒':'▦'}</span><div class="rd-stop-copy"><h3>${esc(s.name)}</h3><p>⌖ ${esc(region)}</p><small>${esc(address||region)}</small><small class="rd-stop-phone">☎ ${esc(phone)}</small></div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()"><button class="rd-stop-quick-btn" title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="rd-stop-quick-btn danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')">⌫</button></div><span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()"><button onclick="openCallPanel('${s.id}')">☎ Ara</button><button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">🧭 Git</button><button onclick="openRouteBuilderWithStop('${s.id}')">➤ Rotaya Ekle</button></div></article>`}).join('');if(map)refreshMainMapMarkers()};
+ document.addEventListener('selectstart',e=>{if(e.target.closest('.drag-item,.drag-handle'))e.preventDefault()});
+ const authGate=document.getElementById('authGate');
+ function maybeStartLocation(){if(!authGate?.classList.contains('open')&&document.body.dataset.view!=='navigationPage')startAppLocationTracking(true)}
+ if(authGate)new MutationObserver(maybeStartLocation).observe(authGate,{attributes:true,attributeFilter:['class']});
+ setTimeout(()=>{try{maybeStartLocation();renderStops();paintBuilderLive()}catch(e){console.warn(e)}},120);
 })();
 </script>
 
