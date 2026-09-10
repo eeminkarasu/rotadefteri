@@ -1,0 +1,29 @@
+RotaDefteri v7.9 Test Sonuçları
+
+PASS | index.html: JavaScript syntax
+PASS | index.html: duplicate DOM IDs
+PASS | index.html: persistent guest autostart
+PASS | index.html: auth gate no-flash
+PASS | index.html: Google async loader
+PASS | index.html: Places lazy load
+PASS | index.html: map preconnect
+PASS | index.html: map warmup
+PASS | index.html: marker batching
+PASS | index.html: SW registration v7.9
+PASS | rotadefteri.html: JavaScript syntax
+PASS | rotadefteri.html: duplicate DOM IDs
+PASS | rotadefteri.html: persistent guest autostart
+PASS | rotadefteri.html: auth gate no-flash
+PASS | rotadefteri.html: Google async loader
+PASS | rotadefteri.html: Places lazy load
+PASS | rotadefteri.html: map preconnect
+PASS | rotadefteri.html: map warmup
+PASS | rotadefteri.html: marker batching
+PASS | rotadefteri.html: SW registration v7.9
+PASS | index.html: writeCloud unchanged
+PASS | rotadefteri.html: writeCloud unchanged
+PASS | firebase-config.js: unchanged
+PASS | firestore.rules: unchanged
+PASS | index.html == rotadefteri.html
+PASS | Service Worker build v7.9
+PASS | Old SW build string absent

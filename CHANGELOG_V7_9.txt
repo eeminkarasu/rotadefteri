@@ -1,0 +1,13 @@
+RotaDefteri v7.9 — Hızlı Harita & Kalıcı Misafir
+
+- Misafir modu artık her uygulama açılışında giriş ekranı göstermez.
+- Misafir tercihi, kullanıcı açıkça giriş yapana / hesaba geçene kadar cihazda hatırlanır.
+- Eski 24 saatlik misafir tercihi otomatik olarak yeni kalıcı tercihe taşınır.
+- Google Maps alan adlarına preconnect/dns-prefetch eklendi.
+- Google Maps motoru kullanıcı uygulamayı kullanırken boş zamanda arka planda hazırlanır.
+- Places kütüphanesi ana Google Maps yüklemesinden çıkarıldı; yalnızca durak ekleme/düzenleme sırasında dinamik yüklenir.
+- Gizli Duraklar haritası uygulama açılışında gereksiz yere oluşturulmaz.
+- 486+ durak işaretçisi tek seferde ana thread'i kilitlemek yerine parçalar halinde eklenir.
+- Harita açıldığında önce taban harita görünür, işaretçiler kademeli gelir.
+- OSRM ve harita servislerine bağlantı hazırlığı hızlandırıldı.
+- Firebase/Firestore senkronizasyon veri modeli değiştirilmedi.

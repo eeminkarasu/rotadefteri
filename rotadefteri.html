@@ -11,7 +11,14 @@
 <meta name="apple-mobile-web-app-title" content="Karasu Hava Yolları">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<title>RotaDefteri v6.7 — Kompakt Rota Detayı</title>
+<link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://router.project-osrm.org" crossorigin>
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link rel="dns-prefetch" href="//maps.googleapis.com">
+<link rel="dns-prefetch" href="//maps.gstatic.com">
+<link rel="dns-prefetch" href="//router.project-osrm.org">
+<title>RotaDefteri v7.9 — Hızlı Harita & Kalıcı Misafir</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{
@@ -480,6 +487,13 @@ body.nav-active::after{display:none}
 @media(max-width:600px){.rd-page-head-nav{align-items:flex-start!important}.rd-head-cancel{padding:10px 11px;font-size:12px}.rd-save-cancel-row,.rd-modal-save-row{grid-template-columns:1fr 1.35fr}.rd-visible-back{width:42px!important;height:42px!important;min-width:42px!important;flex-basis:42px!important}.page-head h2{line-height:1.1}.guest-mode-banner{margin-top:2px!important}}
 </style>
 
+<style>
+/* v7.9 auth boot: hatırlanan misafirde hiç giriş ekranı flaşı gösterme */
+.rd-skip-auth-gate #authGate{display:none!important}
+.auth-gate.auth-pending .rd-auth-shell{display:none!important}
+.auth-gate.auth-pending::after{content:"RotaDefteri\A Oturum kontrol ediliyor…";white-space:pre;position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:min(320px,82vw);padding:24px 20px;border-radius:22px;text-align:center;line-height:1.8;font-weight:800;color:#e9f6ff;background:linear-gradient(180deg,rgba(10,29,49,.96),rgba(5,16,29,.98));border:1px solid rgba(73,182,255,.28);box-shadow:0 22px 60px rgba(0,0,0,.28)}
+</style>
+<script>try{const g=localStorage.getItem('rotadefteri-guest-autostart-v2')==='1',legacy=Number(localStorage.getItem('rotadefteri-guest-access-until-v1')||0)>Date.now();if(g||legacy)document.documentElement.classList.add('rd-skip-auth-gate')}catch(_){}</script>
 </head>
 <body>
 <div class="app">
@@ -630,7 +644,7 @@ body.nav-active::after{display:none}
 <div id="routeNoteModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">TESLİMAT NOTU</span><h3 id="routeNoteTitle">Durak notu</h3></div><button class="close" onclick="cancelRouteNoteModal()" aria-label="Vazgeç">×</button></div><div class="field"><label>Bu rota için teslimat notu</label><textarea id="routeNoteText" rows="6" placeholder="Örn. Güvenliğe bırak, arka kapıdan gir..."></textarea></div><div class="rd-save-cancel-row"><button class="rd-cancel-action" onclick="cancelRouteNoteModal()">Vazgeç</button><button class="start-route-btn" onclick="saveRouteStopNote()">📎 Notu Kaydet</button></div></div></div>
 <div id="stopActionModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">DURAK İŞLEMLERİ</span><h3 id="stopActionTitle">Durak</h3></div><button class="close" onclick="closeModal('stopActionModal')">×</button></div><div class="rd-action-list"><button onclick="editActionStop()">✎ Durak bilgilerini düzenle</button><button onclick="callActionStop()">☎ İrtibat kişisini ara</button><button class="danger" onclick="removeActionStop()">⌫ Rotadan kaldır</button><button class="danger" onclick="deleteActionStopRecord()">🗑 Durak kaydını sil</button></div></div></div>
 
-<div id="authGate" class="auth-gate open rd-auth-v71">
+<div id="authGate" class="auth-gate open rd-auth-v71 auth-pending">
   <div class="auth-card rd-auth-shell" id="authCard">
     <section id="authWelcomeScreen" class="rd-auth-welcome">
       <button class="rd-auth-skip" onclick="enterGuestMode()">Daha sonra →</button>
@@ -655,7 +669,7 @@ body.nav-active::after{display:none}
       <div class="auth-links"><button class="auth-link" id="authModeBtn" onclick="toggleAuthMode()">Hesabın yok mu? Hesap oluştur</button></div>
       <div class="auth-divider">veya</div>
       <button class="guest-login-btn" onclick="enterGuestMode()">👤 Misafir olarak devam et</button>
-      <div class="guest-note"><b>NOT:</b> Sisteme giriş yapmadan kullanırsanız bilgileriniz yalnızca bu cihazda tutulur. Tarayıcı verileri temizlenirse, uygulama kaldırılırsa veya site verileri silinirse kaybolabilir. Misafir olarak devam ettikten sonra giriş ekranı yaklaşık 24 saat boyunca yeniden gösterilmez.</div>
+      <div class="guest-note"><b>NOT:</b> Sisteme giriş yapmadan kullanırsanız bilgileriniz yalnızca bu cihazda tutulur. Tarayıcı verileri temizlenirse, uygulama kaldırılırsa veya site verileri silinirse kaybolabilir. Misafir olarak devam ettikten sonra giriş ekranı tekrar tekrar gösterilmez. İstediğiniz zaman üstteki “Giriş yap” düğmesinden hesabınıza geçebilirsiniz.</div>
       <div id="authStatus" class="auth-status">Giriş servisi hazırlanıyor…</div><div class="auth-status" style="opacity:.62;margin-top:5px">Giriş altyapısı: EMAIL/MİSAFİR + FIRESTORE</div>
       <div id="authConfigHelp" class="auth-config-help" style="display:none">Firebase giriş bilgisi burada gösterilecek.</div>
     </section>
@@ -685,7 +699,7 @@ function normalizeDb(){
 function load(){
  try{const x=JSON.parse(localStorage.getItem(KEY));if(x)db={...db,...x,settings:{...db.settings,...(x.settings||{})}}}catch(e){console.warn('Yerel veri okunamadı',e)}
  if(window.GOOGLE_MAPS_API_KEY && window.GOOGLE_MAPS_API_KEY.indexOf('BURAYA_')!==0) db.settings.googleMapsKey=window.GOOGLE_MAPS_API_KEY;
- normalizeDb();applyTheme();updateStats();initMainMap();
+ normalizeDb();applyTheme();updateStats();warmMapEngine();
  const theme=document.getElementById('themeSelect'),unit=document.getElementById('unitSelect'),mapSel=document.getElementById('mapSelect'),gkey=document.getElementById('googleMapsKey');
  if(theme)theme.value=db.settings.theme;if(unit)unit.value=db.settings.unit;if(mapSel)mapSel.value=db.settings.map;if(gkey)gkey.value=db.settings.googleMapsKey||'';
 }
@@ -695,7 +709,7 @@ function showView(id){
  const target=document.getElementById(id);if(!target)return;target.classList.add('active');
  document.body.dataset.view=id;
  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',!!b.dataset.view&&b.dataset.view===id));
- if(id==='contacts'){setTimeout(()=>{initMainMap();invalidateMainMap();},50)}
+ if(id==='contacts'){warmMapEngine();const d=document.getElementById('stopsMapDetails');if(d?.open)setTimeout(()=>{initMainMap();invalidateMainMap();},30)}
  if(id==='mapHubPage'){setTimeout(()=>initDashboardMap().catch(()=>{}),70)}
  if(id==='historyPage'){setTimeout(()=>renderHistoryPage(),30)}
  if(id==='home'){setTimeout(()=>renderDashboardHome(),20)}
@@ -711,9 +725,9 @@ function getOpenRoute(){return getActiveRouteList().find(r=>routeFinishedCount(r
 function smartNavigateHome(){const open=getOpenRoute();if(open)return openNavigation(open.id);if(db.routes.length)return openRouteBuilder();toast('Önce bir rota oluşturun')}
 function openMapHub(){showView('mapHubPage')}
 function toggleStopsMapInline(){
- const details=document.getElementById('stopsMapDetails'),btn=document.getElementById('stopsMapToggleBtn');if(!details)return;details.open=!details.open;
- if(btn){const t=btn.querySelector('span');if(t)t.textContent=details.open?'Haritayı gizlemek için tıklayınız':'Haritayı görmek için tıklayınız'}
- if(details.open){setTimeout(async()=>{try{await initMainMap();invalidateMainMap();details.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){console.warn('Durak haritası açılamadı',e);toast('Harita açılamadı')}} ,80)}
+ warmMapEngine();const details=document.getElementById('stopsMapDetails'),btn=document.getElementById('stopsMapToggleBtn');if(!details)return;details.open=!details.open;
+ if(btn){const t=btn.querySelector('span');if(t)t.textContent=details.open?'Harita hazırlanıyor…':'Haritayı görmek için tıklayınız';btn.disabled=details.open}
+ if(details.open){setTimeout(async()=>{try{await initMainMap();invalidateMainMap();if(btn){const t=btn.querySelector('span');if(t)t.textContent='Haritayı gizlemek için tıklayınız';btn.disabled=false}details.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){if(btn){const t=btn.querySelector('span');if(t)t.textContent='Haritayı görmek için tıklayınız';btn.disabled=false}console.warn('Durak haritası açılamadı',e);toast('Harita açılamadı')}} ,20)}
 }
 function showHistoryPage(refresh=false){showView('historyPage');if(refresh)renderHistoryPage()}
 function renderDashboardHome(){const userName=getHomeUserName(),greet=document.getElementById('homeGreeting'),name=document.getElementById('homeProfileName'),role=document.getElementById('homeProfileRole'),avatar=document.getElementById('homeProfileAvatar'),dateEl=document.getElementById('homeDateText'),tr=document.getElementById('homeTotalRoutes'),ts=document.getElementById('statStops'),rem=document.getElementById('homeRemainingDistance'),backup=document.getElementById('statBackup'),detail=document.getElementById('homeDetailText'),profileEmail=(document.getElementById('profileEmail')?.textContent||'');if(greet)greet.textContent=(new Date().getHours()<12?'Günaydın, ':new Date().getHours()<18?'İyi günler, ':'İyi akşamlar, ')+userName+'!';if(name)name.textContent=userName;if(role)role.textContent=/yalnızca bu cihazda/i.test(profileEmail)?'Misafir Modu':'Saha Ekibi';if(avatar){avatar.textContent=(userName[0]||'R').toLocaleUpperCase('tr-TR');avatar.style.backgroundImage=''}if(dateEl)dateEl.textContent=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',weekday:'long'});const active=getActiveRouteList(),open=getOpenRoute(),remaining=active.reduce((sum,r)=>sum+Math.max(0,(routeRemainingScheduled(r).distance||0)),0);if(tr)tr.textContent=String(active.length||db.routes.length||0);if(ts)ts.textContent=String(db.stops.length);if(rem)rem.textContent=remaining?formatDistance(remaining):'—';if(backup)backup.textContent='Son senkron: '+(db.lastSyncAt?new Date(db.lastSyncAt).toLocaleString('tr-TR'):'—');if(detail)detail.textContent=open?`${open.name} rotası için ${routeFinishedCount(open)}/${open.stopIds.length} durak işlendi.`:'Disiplinli rotalar, büyük başarılar getirir.'}
@@ -731,14 +745,14 @@ function saveSettings(){
  db.settings.googleMapsKey=document.getElementById('googleMapsKey')?.value.trim()||db.settings.googleMapsKey||'';
  if(oldKey!==db.settings.googleMapsKey){googleReadyPromise=null;googlePickerMap=null;googlePickerMarker=null}
  persist();applyTheme();
- if(oldMap!==db.settings.map||oldKey!==db.settings.googleMapsKey){destroyMainMap();setTimeout(()=>initMainMap(),30)}
+ if(oldMap!==db.settings.map||oldKey!==db.settings.googleMapsKey){destroyMainMap();mapWarmScheduled=false;warmMapEngine();const d=document.getElementById('stopsMapDetails');if(d?.open)setTimeout(()=>initMainMap(),30)}
  toast('Ayarlar kaydedildi')
 }
-let mainMapProvider=null,mainMapMarkers=[],mainInfoWindow=null,navMapProvider=null,navStopMarkers=[],navTrafficLayer=null;
+let mainMapProvider=null,mainMapMarkers=[],mainInfoWindow=null,mainMarkerRenderToken=0,navMapProvider=null,navStopMarkers=[],navTrafficLayer=null;
 function tileUrl(){return db.settings.map==='hot'?'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png':'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
 function makeMap(el,center=[40.195,29.06],zoom=10){const m=L.map(el).setView(center,zoom);L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları'}).addTo(m);return m}
 function destroyMainMap(){
- mainMapMarkers.forEach(x=>{try{mainMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});mainMapMarkers=[];
+ mainMarkerRenderToken++;mainMapMarkers.forEach(x=>{try{mainMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});mainMapMarkers=[];
  const host=document.getElementById('map');
  if(map&&mainMapProvider==='leaflet'){try{map.remove()}catch(_){}}
  map=null;mainMapProvider=null;mainInfoWindow=null;if(host)host.innerHTML=''
@@ -764,7 +778,12 @@ function addStopMarker(m,s){
  }
  const marker=L.marker([s.lat,s.lng]).addTo(m).bindPopup('<b>'+esc(s.name)+'</b><br>'+(esc(s.address||stopRegionLabel(s))));mainMapMarkers.push(marker);return marker
 }
-function refreshMainMapMarkers(){if(!map)return;mainMapMarkers.forEach(x=>{try{mainMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});mainMapMarkers=[];db.stops.forEach(s=>addStopMarker(map,s))}
+function refreshMainMapMarkers(){
+ if(!map)return;const token=++mainMarkerRenderToken;mainMapMarkers.forEach(x=>{try{mainMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});mainMapMarkers=[];
+ const pts=db.stops.filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)));if(!pts.length)return;
+ try{if(mainMapProvider==='google'){const bounds=new google.maps.LatLngBounds();pts.forEach(s=>bounds.extend({lat:Number(s.lat),lng:Number(s.lng)}));map.fitBounds(bounds,{top:34,right:34,bottom:34,left:34})}else{map.fitBounds(L.latLngBounds(pts.map(s=>[Number(s.lat),Number(s.lng)])),{padding:[24,24]})}}catch(_){}
+ let i=0;const batch=()=>{if(token!==mainMarkerRenderToken||!map)return;const end=Math.min(i+60,pts.length);for(;i<end;i++)addStopMarker(map,pts[i]);if(i<pts.length){if('requestIdleCallback' in window)requestIdleCallback(batch,{timeout:120});else setTimeout(batch,0)}};batch();
+}
 async function focusStop(id){const st=db.stops.find(x=>x.id===id);if(!st)return;showView('contacts');setTimeout(async()=>{await initMainMap();if(!map)return;if(mainMapProvider==='google'){map.setCenter({lat:st.lat,lng:st.lng});map.setZoom(16);const marker=mainMapMarkers.find(m=>m.getTitle?.()===st.name&&Math.abs(m.getPosition().lat()-st.lat)<1e-7);if(marker){mainInfoWindow?.setContent('<b>'+esc(st.name)+'</b>');mainInfoWindow?.open({map,anchor:marker})}}else{map.setView([st.lat,st.lng],16);L.popup().setLatLng([st.lat,st.lng]).setContent('<b>'+esc(st.name)+'</b>').openOn(map)}},70)}
 async function loadGoogleMaps(){
  if(googleReadyPromise)return googleReadyPromise;
@@ -772,12 +791,18 @@ async function loadGoogleMaps(){
  if(!key)return Promise.reject(new Error('Google Maps API anahtarı girilmemiş'));
  googleReadyPromise=new Promise((resolve,reject)=>{
   if(window.google?.maps){resolve(window.google.maps);return}
-  const cb='__rdGoogleInit_'+Date.now();
+  const cb='__rdGoogleMapsReadyV79';
   const timer=setTimeout(()=>{try{delete window[cb]}catch(_){window[cb]=undefined}googleReadyPromise=null;reject(new Error('Google Maps yükleme zaman aşımı'))},15000);
   window[cb]=()=>{clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}resolve(window.google.maps)};
-  const sc=document.createElement('script');sc.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&callback='+cb;sc.async=true;sc.defer=true;sc.onerror=()=>{clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}googleReadyPromise=null;sc.remove();reject(new Error('Google Maps yüklenemedi'))};document.head.appendChild(sc);
+  const sc=document.createElement('script');sc.dataset.rdGoogleMaps='1';sc.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&loading=async&callback='+cb;sc.async=true;sc.defer=true;sc.onerror=()=>{clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}googleReadyPromise=null;sc.remove();reject(new Error('Google Maps yüklenemedi'))};document.head.appendChild(sc);
  });
  return googleReadyPromise;
+}
+let mapWarmScheduled=false;
+function warmMapEngine(){
+ if(mapWarmScheduled||db.settings.map!=='google'||!(db.settings.googleMapsKey||'').trim())return;mapWarmScheduled=true;
+ const run=()=>loadGoogleMaps().catch(e=>{mapWarmScheduled=false;console.warn('Google Maps arka plan hazırlığı ertelendi',e)});
+ if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1800});else setTimeout(run,350);
 }
 async function initGooglePickerMap(lat,lng){
  await loadGoogleMaps();
@@ -811,7 +836,7 @@ function destroyDashboardMap(){dashboardMapMarkers.forEach(x=>{try{dashboardMapP
 async function initDashboardMap(){const host=document.getElementById('dashboardMap');if(!host)return;const center=[40.195,29.06],zoom=db.stops.length?8:6,wantsGoogle=db.settings.map==='google';if(wantsGoogle){try{await loadGoogleMaps();if(dashboardMapProvider!=='google'||!dashboardMap){destroyDashboardMap();dashboardMap=new google.maps.Map(host,{center:{lat:center[0],lng:center[1]},zoom,mapTypeId:'roadmap',streetViewControl:false,mapTypeControl:false,fullscreenControl:true,gestureHandling:'greedy'});dashboardMapProvider='google';dashboardInfoWindow=new google.maps.InfoWindow()}refreshDashboardMapMarkers();return}catch(e){console.warn('Dashboard haritasında Google açılamadı',e)}}if(dashboardMapProvider!=='leaflet'||!dashboardMap){destroyDashboardMap();dashboardMap=makeMap('dashboardMap',center,zoom);dashboardMapProvider='leaflet'}refreshDashboardMapMarkers()}
 function refreshDashboardMapMarkers(){if(!dashboardMap)return;dashboardMapMarkers.forEach(x=>{try{dashboardMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});dashboardMapMarkers=[];const pts=db.stops.filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)));if(dashboardMapProvider==='google'){let bounds=null;pts.forEach(s=>{const marker=new google.maps.Marker({map:dashboardMap,position:{lat:Number(s.lat),lng:Number(s.lng)},title:s.name});marker.addListener('click',()=>{dashboardInfoWindow?.setContent('<b>'+esc(s.name)+'</b><br>'+(esc(s.address||stopRegionLabel(s))));dashboardInfoWindow?.open({map:dashboardMap,anchor:marker})});dashboardMapMarkers.push(marker);bounds=bounds||new google.maps.LatLngBounds();bounds.extend(marker.getPosition())});if(bounds)dashboardMap.fitBounds(bounds,{top:40,right:40,bottom:40,left:40});return}let bounds=[];pts.forEach(s=>{const marker=L.marker([s.lat,s.lng]).addTo(dashboardMap).bindPopup('<b>'+esc(s.name)+'</b><br>'+(esc(s.address||stopRegionLabel(s))));dashboardMapMarkers.push(marker);bounds.push([s.lat,s.lng])});if(bounds.length)dashboardMap.fitBounds(bounds,{padding:[24,24]})}
 async function openStopModal(id=null){
- editingStopId=id;document.getElementById('stopModalTitle').textContent=id?'Durak Düzenle':'Durak Ekle';const s=id?db.stops.find(x=>x.id===id):null;
+ warmMapEngine();editingStopId=id;document.getElementById('stopModalTitle').textContent=id?'Durak Düzenle':'Durak Ekle';const s=id?db.stops.find(x=>x.id===id):null;
  document.getElementById('stopName').value=s?.name||'';document.getElementById('stopAddress').value=s?.address||'';document.getElementById('stopLat').value=s?.lat??'';document.getElementById('stopLng').value=s?.lng??'';document.getElementById('stopContactName').value=s?.contactName||'';document.getElementById('stopContactPhone').value=s?.contactPhone||'';document.getElementById('stopNote').value=s?.note||'';document.getElementById('stopModal').classList.add('open');
  setTimeout(async()=>{try{const lat=Number(s?.lat)||40.195,lng=Number(s?.lng)||29.06;await initGooglePickerMap(lat,lng);setPickerGoogle(lat,lng)}catch(e){console.warn('Google Maps picker kullanılamadı, OSM devrede',e);googlePickerMap=null;googlePickerMarker=null;if(pickerMap)pickerMap.remove();pickerMap=makeMap('stopPickerMap',s?[Number(s.lat),Number(s.lng)]:[40.195,29.06],s?15:10);pickerMap.on('click',e=>setPicker(e.latlng.lat,e.latlng.lng));if(s)setPicker(Number(s.lat),Number(s.lng));addMapSearch(pickerMap,'stopPickerMap');if((db.settings.googleMapsKey||'').trim())toast('Google Maps açılamadı; OpenStreetMap kullanılıyor')}},80);
 }
@@ -1014,29 +1039,29 @@ showView('home');
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
-      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v7-8-nav-cancel'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=7.8.0',{updateViaCache:'none'});
+      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v7-9-fast-map-guest-stay'))await caches.delete(k)}}
+      const reg=await navigator.serviceWorker.register('./sw.js?v=7.9.0',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
-      let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;if(sessionStorage.getItem('rd75-sw-reloaded')!=='1'){sessionStorage.setItem('rd75-sw-reloaded','1');location.reload()}});
+      let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;if(sessionStorage.getItem('rd79-sw-reloaded')!=='1'){sessionStorage.setItem('rd79-sw-reloaded','1');location.reload()}});
     }catch(e){console.warn('Service worker güncellenemedi',e)}
   });
 }
 </script>
 <script>
 (function(){
-  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};const GUEST_ACCESS_KEY='rotadefteri-guest-access-until-v1',GUEST_ACCESS_MS=24*60*60*1000;let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false,guestSession=false,authSignupMode=false,guestTransferRequested=false,firebaseReady=false,firebaseBooting=false;
+  const CONFIG=window.ROTADEFTERI_FIREBASE_CONFIG||{};const GUEST_ACCESS_KEY='rotadefteri-guest-autostart-v2',LEGACY_GUEST_ACCESS_KEY='rotadefteri-guest-access-until-v1';let rdAuth=null,rdFs=null,rdUser=null,rdSyncTimer=null,rdSyncInFlight=false,rdSyncAgain=false,rdDirty=false,rdRefreshInFlight=false,guestSession=false,authSignupMode=false,guestTransferRequested=false,firebaseReady=false,firebaseBooting=false;
   const authGate=document.getElementById('authGate'),authStatus=document.getElementById('authStatus'),configHelp=document.getElementById('authConfigHelp');
   const cloudState={stops:new Map(),routes:new Map(),settings:null};
   const clone=x=>JSON.parse(JSON.stringify(x));const canonical=x=>Array.isArray(x)?x.map(canonical):(x&&typeof x==='object'?Object.keys(x).sort().reduce((o,k)=>(o[k]=canonical(x[k]),o),{}):x);const stable=x=>JSON.stringify(canonical(x??null));const configured=()=>!!(CONFIG.apiKey&&CONFIG.authDomain&&CONFIG.projectId&&CONFIG.appId);
-  function setStatus(t){if(authStatus)authStatus.textContent=t}function showGate(v){if(authGate)authGate.classList.toggle('open',!!v)}
-  function guestAccessValid(){try{return Number(localStorage.getItem(GUEST_ACCESS_KEY)||0)>Date.now()}catch(_){return false}}
-  function rememberGuestAccess(){try{localStorage.setItem(GUEST_ACCESS_KEY,String(Date.now()+GUEST_ACCESS_MS))}catch(_){}}
-  function clearGuestAccess(){try{localStorage.removeItem(GUEST_ACCESS_KEY)}catch(_){}}
+  function setStatus(t){if(authStatus)authStatus.textContent=t}function showGate(v){if(authGate)authGate.classList.toggle('open',!!v)}function finishAuthPending(){authGate?.classList.remove('auth-pending');document.documentElement.classList.remove('rd-skip-auth-gate')}
+  function guestAccessValid(){try{if(localStorage.getItem(GUEST_ACCESS_KEY)==='1')return true;const legacy=Number(localStorage.getItem(LEGACY_GUEST_ACCESS_KEY)||0);if(legacy>Date.now()){localStorage.setItem(GUEST_ACCESS_KEY,'1');localStorage.removeItem(LEGACY_GUEST_ACCESS_KEY);return true}return false}catch(_){return false}}
+  function rememberGuestAccess(){try{localStorage.setItem(GUEST_ACCESS_KEY,'1');localStorage.removeItem(LEGACY_GUEST_ACCESS_KEY)}catch(_){}}
+  function clearGuestAccess(){try{localStorage.removeItem(GUEST_ACCESS_KEY);localStorage.removeItem(LEGACY_GUEST_ACCESS_KEY)}catch(_){}}
   function loadScriptTimed(src,timeout=8000){return new Promise((resolve,reject)=>{if(document.querySelector('script[data-rd-src="'+src+'"]')){const s=document.querySelector('script[data-rd-src="'+src+'"]');if(s.dataset.loaded==='1')return resolve();s.addEventListener('load',()=>resolve(),{once:true});s.addEventListener('error',()=>reject(new Error('SDK yüklenemedi')),{once:true});return}const s=document.createElement('script');s.src=src;s.async=true;s.dataset.rdSrc=src;let done=false;const timer=setTimeout(()=>{if(done)return;done=true;reject(new Error('SDK yükleme zaman aşımı'))},timeout);s.onload=()=>{if(done)return;done=true;clearTimeout(timer);s.dataset.loaded='1';resolve()};s.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('SDK yüklenemedi'))};document.head.appendChild(s)})}
   async function ensureFirebaseSdk(){if(window.firebase?.auth&&window.firebase?.firestore)return;await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js');await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js');await loadScriptTimed('https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js')}
-  function activateGuestLocal({remember=false,quiet=false}={}){guestSession=true;rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(remember)rememberGuestAccess();loadGuestLocal();updateProfile(null,true);setGuestBanner(true);hideAuthHelp();setStatus('Misafir modu • yalnızca bu cihazda');showGate(false);setTimeout(()=>window.rdApplyStartupView?.(true),60);if(!quiet){if(guestHasData())toast('Bu cihazdaki misafir verileri açıldı');else toast('Misafir modu açıldı')}}
+  function activateGuestLocal({remember=false,quiet=false}={}){guestSession=true;rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(remember)rememberGuestAccess();loadGuestLocal();updateProfile(null,true);setGuestBanner(true);hideAuthHelp();setStatus('Misafir modu • yalnızca bu cihazda');showGate(false);finishAuthPending();setTimeout(()=>window.rdApplyStartupView?.(true),60);if(!quiet){if(guestHasData())toast('Bu cihazdaki misafir verileri açıldı');else toast('Misafir modu açıldı')}}
   function cacheOnly(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){console.warn('Yerel önbellek yazılamadı',e)}updateStats()}
   function stateFromDb(){cloudState.stops=new Map(db.stops.map(x=>[x.id,clone(x)]));cloudState.routes=new Map(db.routes.map(x=>[x.id,clone(x)]));cloudState.settings=clone(db.settings)}
   function stateFromRemote(remote){cloudState.stops=new Map((remote.stops||[]).map(x=>[x.id,clone(x)]));cloudState.routes=new Map((remote.routes||[]).map(x=>[x.id,clone(x)]));cloudState.settings=remote.settings?clone(remote.settings):null}
@@ -1057,7 +1082,7 @@ if ('serviceWorker' in navigator) {
   function defaultGuestDb(){return {stops:[],routes:[],settings:{theme:'dark',unit:'km',map:'google',googleMapsKey:(window.GOOGLE_MAPS_API_KEY||''),autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue',startupView:'home',routeWidth:10},lastBackup:null,lastSyncAt:null}}
   function loadGuestLocal(){
     KEY='rotadefteri-guest';let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
-    const base=defaultGuestDb();db=saved?{...base,...saved,settings:{...base.settings,...(saved.settings||{})}}:base;if(window.GOOGLE_MAPS_API_KEY)db.settings.googleMapsKey=window.GOOGLE_MAPS_API_KEY;normalizeDb();applyTheme();updateStats();renderStops();renderRoutes();initMainMap();
+    const base=defaultGuestDb();db=saved?{...base,...saved,settings:{...base.settings,...(saved.settings||{})}}:base;if(window.GOOGLE_MAPS_API_KEY)db.settings.googleMapsKey=window.GOOGLE_MAPS_API_KEY;normalizeDb();applyTheme();updateStats();renderStops();renderRoutes();warmMapEngine();
   }
   function updateProfile(user,guest=false){
     const n=document.getElementById('profileName'),e=document.getElementById('profileEmail'),a=document.getElementById('profileAvatar'),note=document.getElementById('profileSyncNote'),btn=document.getElementById('signOutBtn'),card=document.getElementById('profileCard');
@@ -1088,9 +1113,9 @@ if ('serviceWorker' in navigator) {
       const base=defaultGuestDb();db=seed?{...base,...seed,settings:{...base.settings,...(seed.settings||{})}}:{...base,stops:[],routes:[]};normalizeDb();
       if(seed){await writeCloud();if(guestCanTransfer){toast('Misafir verileriniz yeni hesabınıza aktarıldı');localStorage.setItem('rotadefteri-guest-last-migrated',new Date().toISOString())}}else{stateFromDb();db.lastSyncAt=new Date().toISOString();cacheOnly()}
     }
-    guestTransferRequested=false;applyTheme();updateStats();renderStops();renderRoutes();initMainMap();const a=document.getElementById('themeSelect'),b=document.getElementById('unitSelect'),c=document.getElementById('mapSelect'),d=document.getElementById('googleMapsKey');if(a)a.value=db.settings.theme||'dark';if(b)b.value=db.settings.unit||'km';if(c)c.value=db.settings.map||'google';if(d)d.value=db.settings.googleMapsKey||'';
+    guestTransferRequested=false;applyTheme();updateStats();renderStops();renderRoutes();warmMapEngine();const a=document.getElementById('themeSelect'),b=document.getElementById('unitSelect'),c=document.getElementById('mapSelect'),d=document.getElementById('googleMapsKey');if(a)a.value=db.settings.theme||'dark';if(b)b.value=db.settings.unit||'km';if(c)c.value=db.settings.map||'google';if(d)d.value=db.settings.googleMapsKey||'';
   }
-  async function refreshCloud(){if(!rdUser||!rdFs||rdDirty||rdSyncInFlight||rdRefreshInFlight)return;rdRefreshInFlight=true;try{const remote=await fetchCloud(rdUser.uid);db.stops=remote.stops;db.routes=remote.routes;if(remote.settings)db.settings={...db.settings,...remote.settings};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();renderStops();renderRoutes();initMainMap();setStatus('Bulut senkronizasyonu hazır')}catch(e){console.warn('Arka plan yenilemesi başarısız',e)}finally{rdRefreshInFlight=false}}
+  async function refreshCloud(){if(!rdUser||!rdFs||rdDirty||rdSyncInFlight||rdRefreshInFlight)return;rdRefreshInFlight=true;try{const remote=await fetchCloud(rdUser.uid);db.stops=remote.stops;db.routes=remote.routes;if(remote.settings)db.settings={...db.settings,...remote.settings};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();renderStops();renderRoutes();warmMapEngine();setStatus('Bulut senkronizasyonu hazır')}catch(e){console.warn('Arka plan yenilemesi başarısız',e)}finally{rdRefreshInFlight=false}}
   window.toggleAuthMode=function(){authSignupMode=!authSignupMode;const card=document.getElementById('authCard'),btn=document.getElementById('emailAuthBtn'),mode=document.getElementById('authModeBtn'),title=document.getElementById('authTitle'),sub=document.getElementById('authSubtitle'),pw=document.getElementById('authPassword');card?.classList.toggle('signup',authSignupMode);if(btn)btn.textContent=authSignupMode?'Hesap Oluştur':'Giriş Yap';if(mode)mode.textContent=authSignupMode?'Zaten hesabın var mı? Giriş yap':'Hesabın yok mu? Hesap oluştur';if(title)title.textContent=authSignupMode?'Hesap Oluştur':'RotaDefteri';if(sub)sub.textContent=authSignupMode?'Yeni hesabınızla durak ve rotalarınızı güvenli şekilde senkronize edin.':'Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.';if(pw)pw.autocomplete=authSignupMode?'new-password':'current-password';hideAuthHelp();setStatus(authSignupMode?'Yeni hesap bilgilerinizi girin':'E-posta ve şifrenizle giriş yapın')};
   window.submitEmailAuth=async function(){
     if(!rdAuth){setStatus(firebaseBooting?'Giriş servisi hazırlanıyor…':'Firebase bağlantısı kurulamadı. İnterneti kontrol edin veya misafir olarak devam edin.');showAuthHelp('E-posta ile giriş servisi henüz hazır değil. Birkaç saniye sonra tekrar deneyin veya misafir modunu kullanın.');return;}hideAuthHelp();const email=(document.getElementById('authEmail')?.value||'').trim(),password=document.getElementById('authPassword')?.value||'',name=(document.getElementById('authName')?.value||'').trim(),remember=document.getElementById('rememberMe')?.checked!==false;if(!email||!password){showAuthHelp('E-posta ve şifre alanlarını doldurun.');return}if(authSignupMode&&!name){showAuthHelp('Hesap oluşturmak için ad soyad alanını doldurun.');return}if(password.length<6){showAuthHelp('Şifre en az 6 karakter olmalıdır.');return}
@@ -1101,24 +1126,24 @@ if ('serviceWorker' in navigator) {
   };
   window.resetPassword=async function(){if(!rdAuth){setStatus(firebaseBooting?'Giriş servisi hazırlanıyor…':'Firebase bağlantısı kurulamadı');showAuthHelp('Şifre sıfırlama servisi henüz hazır değil.');return;}const email=(document.getElementById('authEmail')?.value||'').trim();if(!email){showAuthHelp('Şifre sıfırlama bağlantısı için önce e-posta adresinizi yazın.');document.getElementById('authEmail')?.focus();return}try{await rdAuth.sendPasswordResetEmail(email);hideAuthHelp();setStatus('Şifre sıfırlama e-postası gönderildi');toast('Şifre sıfırlama bağlantısı gönderildi')}catch(e){const t=authErrorText(e);showAuthHelp(t);setStatus(t.replace(/<[^>]+>/g,''))}};
   window.enterGuestMode=function(){activateGuestLocal({remember:true,quiet:false})};
-  window.openAuthGate=function(){if(authSignupMode)window.toggleAuthMode();showGate(true);setStatus('Hesabınızla giriş yapın veya misafir olarak devam edin');hideAuthHelp();if(typeof showAuthWelcome==='function')setTimeout(()=>showAuthWelcome(),0)};
+  window.openAuthGate=function(){if(authSignupMode)window.toggleAuthMode();finishAuthPending();showGate(true);setStatus('Hesabınızla giriş yapın veya misafir olarak devam edin');hideAuthHelp();if(typeof showAuthWelcome==='function')setTimeout(()=>showAuthWelcome(),0)};
   window.signOutUser=async function(){if(!rdAuth){window.openAuthGate();return}if(!rdUser){window.openAuthGate();return}try{if(rdDirty)await writeCloud();guestSession=false;clearGuestAccess();await rdAuth.signOut();toast('Hesaptan çıkış yapıldı')}catch(e){console.error(e);toast('Çıkış yapılamadı')}};
   async function bootstrapFirebase(){
     if(firebaseBooting||firebaseReady)return;firebaseBooting=true;
-    if(!configured()){firebaseBooting=false;setStatus('Firebase yapılandırması eksik');showAuthHelp('ZIP içindeki <b>firebase-config.js</b> dosyasında Firebase Web App yapılandırmasını kontrol edin. Misafir modu yine kullanılabilir.');if(!guestAccessValid())showGate(true);return}
+    if(!configured()){firebaseBooting=false;finishAuthPending();setStatus('Firebase yapılandırması eksik');showAuthHelp('ZIP içindeki <b>firebase-config.js</b> dosyasında Firebase Web App yapılandırmasını kontrol edin. Misafir modu yine kullanılabilir.');if(!guestAccessValid())showGate(true);return}
     try{
       setStatus('Giriş servisi hazırlanıyor…');
       await ensureFirebaseSdk();
       if(!window.firebase)throw new Error('Firebase SDK yüklenemedi');
       if(!firebase.apps.length)firebase.initializeApp(CONFIG);rdAuth=firebase.auth();rdFs=firebase.firestore();rdAuth.useDeviceLanguage();firebaseReady=true;firebaseBooting=false;setStatus('Giriş servisi hazır');
       rdAuth.onAuthStateChanged(async user=>{
-        if(user){guestSession=false;clearGuestAccess();setGuestBanner(false);rdUser=user;hideAuthHelp();updateProfile(user,false);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();initMainMap();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''));showGate(false)}}else{KEY='rotadefteri-user-'+user.uid;const base=defaultGuestDb();db={...base,stops:[],routes:[]};normalizeDb();stateFromDb();cacheOnly();renderStops();renderRoutes();initMainMap();setStatus('Buluta erişilemedi. Hesap açık; yerel kullanım devam ediyor.');showGate(false);toast('Firestore erişimi başarısız; kullanıcı önbelleği açıldı')}}}
-        else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else{guestSession=false;loadGuestLocal();updateProfile(null,true);setGuestBanner(false);setStatus('E-posta ile giriş yapın veya misafir olarak devam edin');showGate(true)}}
+        if(user){guestSession=false;clearGuestAccess();setGuestBanner(false);rdUser=user;hideAuthHelp();updateProfile(user,false);setStatus('Verileriniz yükleniyor…');showGate(true);try{await readCloud(user);setStatus('Bulut senkronizasyonu hazır');showGate(false)}catch(e){console.error(e);const cached=localStorage.getItem('rotadefteri-user-'+user.uid);if(cached){try{db={...db,...JSON.parse(cached)};normalizeDb();KEY='rotadefteri-user-'+user.uid;stateFromDb();renderStops();renderRoutes();warmMapEngine();setStatus('Çevrimdışı önbellek kullanılıyor');showGate(false);toast('Buluta erişilemedi; önbellek açıldı')}catch(_){setStatus('Veriler yüklenemedi: '+(e.message||''));showGate(false)}}else{KEY='rotadefteri-user-'+user.uid;const base=defaultGuestDb();db={...base,stops:[],routes:[]};normalizeDb();stateFromDb();cacheOnly();renderStops();renderRoutes();warmMapEngine();setStatus('Buluta erişilemedi. Hesap açık; yerel kullanım devam ediyor.');showGate(false);toast('Firestore erişimi başarısız; kullanıcı önbelleği açıldı')}}}
+        else{rdUser=null;rdDirty=false;clearTimeout(rdSyncTimer);if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else{guestSession=false;loadGuestLocal();updateProfile(null,true);setGuestBanner(false);finishAuthPending();setStatus('E-posta ile giriş yapın veya misafir olarak devam edin');showGate(true)}}
       });
       window.addEventListener('focus',refreshCloud);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloud()});window.addEventListener('online',()=>{if(rdDirty)window.rdScheduleCloudSync();else refreshCloud()});
-    }catch(e){firebaseBooting=false;firebaseReady=false;console.error('Firebase bootstrap',e);setStatus('Firebase bağlantısı kurulamadı');showAuthHelp('Firebase servislerine şu anda erişilemiyor. İnternet bağlantısını kontrol edin. Misafir modu ile uygulamayı kullanmaya devam edebilirsiniz.');if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else showGate(true)}
+    }catch(e){firebaseBooting=false;firebaseReady=false;console.error('Firebase bootstrap',e);setStatus('Firebase bağlantısı kurulamadı');showAuthHelp('Firebase servislerine şu anda erişilemiyor. İnternet bağlantısını kontrol edin. Misafir modu ile uygulamayı kullanmaya devam edebilirsiniz.');if(guestAccessValid()){activateGuestLocal({remember:false,quiet:true})}else{finishAuthPending();showGate(true)}}
   }
-  // Son 24 saat içinde misafir modu seçildiyse uygulamayı bekletmeden aç.
+  // Misafir modu daha önce seçildiyse kullanıcı tekrar giriş ekranına zorlanmadan uygulamayı aç.
   if(guestAccessValid())activateGuestLocal({remember:false,quiet:true});
   // Firebase'i arka planda başlat; CDN gecikmesi uygulamayı kilitlemez.
   bootstrapFirebase();
@@ -1264,8 +1289,8 @@ async function updateApproachRoute(r,pos,force=false){
 }
 function refreshNavVisual(r){if(!navMap)return;const center=V66.lastPos?{lat:V66.lastPos.lat,lng:V66.lastPos.lng}:null,zoom=navZoom();drawNavigationRoute(r);if(center)navSetView(center,zoom,false);if(V66.lastPos){const hd=guidanceBearing(r,V66.lastPos);animateNavMarker(V66.lastPos.lat,V66.lastPos.lng,Number.isFinite(V66.heading)?V66.heading:hd);updateApproachRoute(r,V66.lastPos,true)}}
 function currentNavRoute(){return V66.directRoute&&V66.directRoute.id===currentRouteId?V66.directRoute:db.routes.find(x=>x.id===currentRouteId)}
-function navigateDirectToStop(sid){ensureV66Settings();const st=db.stops.find(x=>x.id===sid);if(!st)return toast('Durak bulunamadı');clearTimeout(V66.autoSwitchTimer);stopLiveTracking();V66.directMetrics=null;V66.approachTargetId=null;V66.approachPos=null;const now=new Date().toISOString();V66.directRoute={id:'__direct__'+sid,name:st.name,stopIds:[sid],completedStopIds:[],skippedStopIds:[],stopNotes:{},completed:false,geometry:null,distance:0,duration:0,legDistances:[],legDurations:[],_direct:true,_transient:true};currentRouteId=V66.directRoute.id;navIndex=0;navTracking=true;showView('navigationPage');setTimeout(()=>initNavigation(V66.directRoute),70);toast(st.name+' için tek hedefli güzergâh açıldı')}
-function openNavigation(routeId){ensureV66Settings();const r=db.routes.find(x=>x.id===routeId);if(!r||!r.stopIds?.length)return;clearTimeout(V66.autoSwitchTimer);V66.directRoute=null;V66.directMetrics=null;document.getElementById('navigationPage')?.classList.remove('rd-direct-nav');currentRouteId=routeId;const requested=V66.requestedNavStopId,requestedIndex=requested?r.stopIds.indexOf(requested):-1;navIndex=requestedIndex>=0?requestedIndex:routePendingIndex(r);V66.requestedNavStopId=null;navTracking=true;showView('navigationPage');setTimeout(()=>initNavigation(r),70)}
+function navigateDirectToStop(sid){warmMapEngine();ensureV66Settings();const st=db.stops.find(x=>x.id===sid);if(!st)return toast('Durak bulunamadı');clearTimeout(V66.autoSwitchTimer);stopLiveTracking();V66.directMetrics=null;V66.approachTargetId=null;V66.approachPos=null;const now=new Date().toISOString();V66.directRoute={id:'__direct__'+sid,name:st.name,stopIds:[sid],completedStopIds:[],skippedStopIds:[],stopNotes:{},completed:false,geometry:null,distance:0,duration:0,legDistances:[],legDurations:[],_direct:true,_transient:true};currentRouteId=V66.directRoute.id;navIndex=0;navTracking=true;showView('navigationPage');setTimeout(()=>initNavigation(V66.directRoute),70);toast(st.name+' için tek hedefli güzergâh açıldı')}
+function openNavigation(routeId){warmMapEngine();ensureV66Settings();const r=db.routes.find(x=>x.id===routeId);if(!r||!r.stopIds?.length)return;clearTimeout(V66.autoSwitchTimer);V66.directRoute=null;V66.directMetrics=null;document.getElementById('navigationPage')?.classList.remove('rd-direct-nav');currentRouteId=routeId;const requested=V66.requestedNavStopId,requestedIndex=requested?r.stopIds.indexOf(requested):-1;navIndex=requestedIndex>=0?requestedIndex:routePendingIndex(r);V66.requestedNavStopId=null;navTracking=true;showView('navigationPage');setTimeout(()=>initNavigation(r),70)}
 async function initNavigation(r){
  ensureV66Settings();const hadWatch=navWatchId!==null;destroyNavigationMap();V66.approachTargetId=null;document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r?._direct);const pts=r.stopIds.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);if(!pts.length)return;const target=currentTarget(r)||pts[0],center=V66.lastPos?{lat:V66.lastPos.lat,lng:V66.lastPos.lng}:{lat:target.lat,lng:target.lng},zoom=V66.lastPos?17:15;
  if(db.settings.map==='google'){
