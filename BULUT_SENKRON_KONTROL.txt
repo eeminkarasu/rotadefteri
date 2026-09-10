@@ -1,0 +1,19 @@
+RotaDefteri v8.4.2 — Bulut Senkronizasyonu Güvenlik Düzeltmesi
+
+Tespit edilen ana sorun:
+- Rota hesaplanınca GeoJSON geometry.coordinates alanı [[boylam,enlem], ...] biçiminde iç içe dizi oluşturuyor.
+- Cloud Firestore Standard sürümünde bir array doğrudan başka bir array içeremez.
+- Önceki sürüm rota nesnesini geometry ile birlikte Firestore'a yazmaya çalıştığı için senkronizasyon invalid-argument hatasıyla kesilebiliyordu.
+
+v8.4.2 önlemleri:
+- geometry artık yalnızca cihazdaki yerel önbellekte tutulur; Firestore'a gönderilmez.
+- Mesafe, süre, durak sırası, tamamlanan/atlanan duraklar, notlar ve ayarlar bulutta kalmaya devam eder.
+- Yeni cihazda geometry yoksa navigasyon yol çizgisini OSRM'den arka planda yeniden hesaplar.
+- Geçici ağ hatalarında otomatik artan bekleme süreleriyle yeniden deneme yapılır.
+- Çevrimdışıyken yazma zorlanmaz; değişiklikler cihazda bekletilir ve internet gelince tekrar senkronize edilir.
+- Büyük yazma batch'leri 300 işlem parçalarına düşürüldü, mobil ağ yazma zaman aşımı 30 saniyeye çıkarıldı.
+- İzin/kurallar kaynaklı hatalarda sürekli uyarı spam'i ve hızlı tekrar döngüsü engellendi.
+
+Önemli:
+- ZIP içindeki firestore.rules dosyası doğru UID bazlı kullanıcı kuralını içerir; ancak GitHub Pages'e dosya yüklemek Firebase Rules'u otomatik olarak yayınlamaz.
+- Eğer uygulama v8.4.2'de hâlâ 'Firestore erişim izni reddedildi' durumunu gösterirse, firestore.rules içeriği Firebase Console / Firebase CLI üzerinden ayrıca deploy edilmelidir.
