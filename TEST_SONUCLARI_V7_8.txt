@@ -1,0 +1,23 @@
+RotaDefteri v7.8 Test Sonuçları
+
+[OK] index.html JavaScript syntax
+[OK] rotadefteri.html JavaScript syntax
+[OK] index.html ve rotadefteri.html birebir aynı
+[OK] Yinelenen HTML id yok
+[OK] Inline onclick fonksiyon referansları tanımlı
+[OK] Rota oluşturma: Geri + Vazgeç mevcut
+[OK] Durak Ekle/Düzenle: Kaydet + Vazgeç mevcut
+[OK] Teslimat notu: Kaydet + Vazgeç mevcut
+[OK] İrtibat: Kaydet ve Ara + Vazgeç mevcut
+[OK] Rotalarım sayfası Geri mevcut
+[OK] Ayarlar sayfası Geri mevcut
+[OK] Google Maps API alanı Kaydet + Vazgeç mevcut
+[OK] Service Worker syntax
+[OK] manifest.webmanifest JSON
+[OK] Rotalar.json JSON
+[OK] Firestore writeCloud v7.7 ile birebir aynı
+[OK] Firestore fetchCloud v7.7 ile birebir aynı
+[OK] Firestore readCloud v7.7 ile birebir aynı
+[OK] Firestore refreshCloud v7.7 ile birebir aynı
+[OK] firebase-config.js değişmedi
+[OK] firestore.rules değişmedi

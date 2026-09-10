@@ -1,0 +1,20 @@
+RotaDefteri v7.8 - Geri / Vazgeç / Stabilite
+
+- Rotalarım ve Ayarlar ekranlarına görünür Geri tuşu eklendi.
+- Duraklar, Rota Detay, Harita ve Geçmiş geri tuşları gerçek önceki görünümü kullanacak şekilde düzenlendi.
+- Görünüm değiştirildiğinde ekran otomatik yukarı alınır; üstteki geri düğmesinin kaybolması önlendi.
+- Rota oluşturma / rota sıralama ekranına hem üstte hem altta Vazgeç eklendi.
+- Vazgeç, kaydedilmemiş rota taslağını iptal eder; düzenlenen mevcut rotayı kaydetmeden geri döner.
+- Kaydedilmemiş rota değişikliği varsa yanlışlıkla çıkmayı önlemek için onay sorulur.
+- Durak Ekle / Düzenle ekranına Vazgeç eklendi. X düğmesi de güvenli iptal gibi çalışır.
+- Durak taslağı değiştirilmişse çıkmadan önce onay sorulur.
+- Durak modalı kapanırken Leaflet / Google picker nesneleri temizlenir; gereksiz harita örneklerinin bellekte kalması önlenir.
+- Teslimat Notu ekranına Vazgeç eklendi.
+- İrtibat ekranına Vazgeç eklendi.
+- Rehber / VCF seçiminde kişi artık önce taslak alanlarına gelir; Kaydet ve Ara basılmadan durak verisi ve Firestore değişmez.
+- Google Maps API anahtarı alanına Vazgeç eklendi; değişiklik kaydedilmeden geri alınabilir.
+- Misafir uyarısı sticky/örtüşen konumdan çıkarıldı; sayfa başlıklarını kapatma riski azaltıldı.
+- Görünüm geçmişi maksimum 16 kayıtla sınırlandırıldı; sınırsız büyüme engellendi.
+- Rota hesaplama devam ederken ikinci hesaplama veya iptal ile çakışma engellendi.
+- Service Worker build v7-8-nav-cancel olarak yenilendi.
+- Firebase/Firestore writeCloud, fetchCloud, readCloud ve refreshCloud motorları değiştirilmedi.

@@ -1,0 +1,11 @@
+RotaDefteri v7.7
+
+- Duraklar > Git artık hiçbir kayıtlı rotayı açmaz.
+- Git her zaman yalnızca seçilen tek durağa geçici güzergah oluşturur.
+- Geçici güzergah db.routes, localStorage rota listesi veya Firestore rotalarına kaydedilmez.
+- Geri tuşu geçici navigasyonu tamamen kapatıp Duraklar ekranına döner.
+- Tek hedef modunda önceki/sonraki durak ve gidildi/gidilmedi kontrolleri gizlenir; veri değiştirilmez.
+- Tek hedef mesafe/süre OSRM yol hesabından güncellenir; hesap başarısızsa güvenli mesafe tahmini kullanılır.
+- Rehber seçimi destekleyen tarayıcılarda Contact Picker API kullanılır.
+- iPhone Safari/PWA'da tam Kişiler erişimi tarayıcı tarafından sunulmadığı için .vcf/manual fallback açıkça gösterilir.
+- Firebase/Firestore senkronizasyon motoru değiştirilmedi.
