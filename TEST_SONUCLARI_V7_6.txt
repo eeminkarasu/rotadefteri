@@ -1,0 +1,25 @@
+RotaDefteri v7.6 TEST SONUCLARI
+
+PASS - index.html JavaScript
+PASS - rotadefteri.html JavaScript
+PASS - index.html = rotadefteri.html
+PASS - firebase-config.js unchanged
+PASS - firestore.rules unchanged
+PASS - manifest.webmanifest unchanged
+PASS - writeCloud sync unchanged
+PASS - fetchCloud sync unchanged
+PASS - readCloud sync unchanged
+PASS - refreshCloud sync unchanged
+PASS - contains navigateDirectToStop
+PASS - contains importContactVCard
+PASS - contains clearStopContact
+PASS - contains deleteRouteFromDetail
+PASS - contains deleteActionStopRecord
+PASS - contains 🧭 Git
+PASS - contains ⌫ Sil
+PASS - contains Rotayı sil
+PASS - contains İrtibatı Sil
+PASS - SW build v7-6-actions
+PASS - No old v7.5 SW registration
+
+Sonuc: 21/21 kontrol basarili.

@@ -1,0 +1,11 @@
+RotaDefteri v7.6 - Actions / Contact / Direct Navigation Fix
+
+- Rota kartlarına yeniden Sil butonu eklendi.
+- Rota detay ekranına Rotayı sil butonu eklendi.
+- Durak kartı açıldığında Ara / Git / Düzenle / Rotaya Ekle / Sil işlemleri sunuluyor.
+- Git: Durak açık bir rotadaysa o rotanın ilgili durağından uygulama içi navigasyonu açar. Açık rota yoksa geçici Hızlı Git navigasyonu açar; Firestore'a yeni rota yazmaz.
+- Rehberden seç: Contact Picker API destekleyen cihazlarda yerel rehber seçicisi kullanılır. iPhone/Safari desteklemediğinde hata vermek yerine .vcf kişi kartı seçme yedeğine düşer.
+- Manuel kişi alanlarına iOS/Android autocomplete ipuçları eklendi.
+- İrtibatı Sil butonu eklendi.
+- Direct navigasyon rotası senkronizasyona eklenmez.
+- Service Worker cache sürümü v7-6-actions.

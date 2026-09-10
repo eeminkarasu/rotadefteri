@@ -1,4 +1,4 @@
-const BUILD='v7-5-clean';
+const BUILD='v7-6-actions';
 const SHELL_CACHE='rotadefteri-shell-'+BUILD;
 const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
 const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg'];
