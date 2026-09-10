@@ -454,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v7.6";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v8.3";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -646,6 +646,9 @@ body.nav-active::after{display:none}
 <div id="callModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">İRTİBAT</span><h3>Durak kişisi</h3></div><button class="close" onclick="cancelCallModal()" aria-label="Vazgeç">×</button></div><div id="callExisting" class="rd-contact-preview"></div><div class="rd-call-actions"><button class="rd-call-primary" id="callNowBtn" onclick="callSavedContact()">☎ Şimdi Ara</button><button class="dark-btn" id="contactPickerBtn" onclick="pickContactFromPhone()">▣ Rehberden seç</button></div><input id="vcardContactInput" type="file" accept=".vcf,text/vcard,text/x-vcard" hidden onchange="importContactVCard(this)"><div class="rd-divider"><span>veya manuel gir</span></div><div class="field"><label>Kişi adı ve soyadı</label><input id="manualContactName" autocomplete="name" placeholder="Ad Soyad"></div><div class="field"><label>Telefon numarası</label><input id="manualContactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div><div class="rd-contact-save-row rd-contact-save-row-v78"><button class="start-route-btn" onclick="saveManualContact()">Kaydet ve Ara</button><button class="rd-contact-clear" onclick="clearStopContact()">⌫ İrtibatı Sil</button><button class="rd-cancel-action" onclick="cancelCallModal()">Vazgeç</button></div><p class="muted rd-modal-help" id="contactPickerHelp">Android/uyumlu tarayıcılarda rehberden seçim yapılır. iPhone/Safari'de destek yoksa kişi kartı (.vcf) seçme ekranı açılır.</p></div></div>
 <div id="routeNoteModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">TESLİMAT NOTU</span><h3 id="routeNoteTitle">Durak notu</h3></div><button class="close" onclick="cancelRouteNoteModal()" aria-label="Vazgeç">×</button></div><div class="field"><label>Bu rota için teslimat notu</label><textarea id="routeNoteText" rows="6" placeholder="Örn. Güvenliğe bırak, arka kapıdan gir..."></textarea></div><div class="rd-save-cancel-row"><button class="rd-cancel-action" onclick="cancelRouteNoteModal()">Vazgeç</button><button class="start-route-btn" onclick="saveRouteStopNote()">📎 Notu Kaydet</button></div></div></div>
 <div id="stopActionModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">DURAK İŞLEMLERİ</span><h3 id="stopActionTitle">Durak</h3></div><button class="close" onclick="closeModal('stopActionModal')">×</button></div><div class="rd-action-list"><button onclick="editActionStop()">✎ Durak bilgilerini düzenle</button><button onclick="callActionStop()">☎ İrtibat kişisini ara</button><button class="danger" onclick="removeActionStop()">⌫ Rotadan kaldır</button><button class="danger" onclick="deleteActionStopRecord()">🗑 Durak kaydını sil</button></div></div></div>
+
+
+<div id="navRoutePickerModal" class="modal rd-sheet-modal rd-nav-picker-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">NAVİGASYON</span><h3>Rota seç</h3><p class="muted rd-nav-picker-help">Navigasyonda açmak istediğiniz rotayı seçin.</p></div><button class="close" onclick="closeModal('navRoutePickerModal')" aria-label="Kapat">×</button></div><div id="navRoutePickerList" class="rd-nav-picker-list"></div><button class="rd-nav-picker-new" onclick="closeModal('navRoutePickerModal');openRouteBuilder()">＋ Yeni rota oluştur</button></div></div>
 
 <div id="authGate" class="auth-gate open rd-auth-v71 auth-pending">
   <div class="auth-card rd-auth-shell" id="authCard">
@@ -1450,7 +1453,7 @@ setTimeout(()=>{if(document.getElementById('authGate')?.classList.contains('open
 </script>
 
 <script id="rd-v75-runtime-guard">
-window.RD_BUILD='8.2.0-drag-order-liveloc-ui';
+window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';
 document.body.dataset.build=window.RD_BUILD;
 (function(){
   // Legacy modals may survive in a stale DOM snapshot; force-close them.
@@ -1495,7 +1498,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </style>
 <script id="rd-v82-runtime">
 (function(){
- window.RD_BUILD='8.2.0-drag-order-liveloc-ui';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';document.body.dataset.build=window.RD_BUILD;
  window.V71=window.V71||{};if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
  const V82=window.V82=window.V82||{appWatchId:null,dragging:false,leadRoad:null,leadFetch:null,lastBuilderPaint:0};
  function trackingEnabled(){return !!navigator.geolocation&&db?.settings?.liveTracking!==false}
@@ -1538,6 +1541,115 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
  function maybeStartLocation(){if(!authGate?.classList.contains('open')&&document.body.dataset.view!=='navigationPage')startAppLocationTracking(true)}
  if(authGate)new MutationObserver(maybeStartLocation).observe(authGate,{attributes:true,attributeFilter:['class']});
  setTimeout(()=>{try{maybeStartLocation();renderStops();paintBuilderLive()}catch(e){console.warn(e)}},120);
+})();
+</script>
+
+
+<style id="rd-v83-ui">
+/* v8.3 — rota seçici, kompakt rota detayı ve harita yedekleme */
+.rd-nav-picker-modal .rd-sheet{max-width:560px!important}
+.rd-nav-picker-help{margin:5px 0 0!important}
+.rd-nav-picker-list{display:flex;flex-direction:column;gap:9px;max-height:min(58vh,560px);overflow:auto;padding:2px 1px 8px}
+.rd-nav-picker-item{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:10px;text-align:left;border:1px solid rgba(90,153,217,.22);border-radius:16px;background:rgba(11,31,52,.86);color:#fff;padding:11px 12px}
+.rd-nav-picker-item>span{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(24,169,255,.12);color:#55c5ff;font-weight:900}
+.rd-nav-picker-item b,.rd-nav-picker-item small{display:block}.rd-nav-picker-item b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-nav-picker-item small{font-size:11px;color:#8fa9c7;margin-top:3px}.rd-nav-picker-item em{font-style:normal;color:#58c6ff;font-size:24px}
+.rd-nav-picker-new{width:100%;min-height:46px;border:1px dashed rgba(74,176,242,.38);border-radius:14px;background:rgba(20,89,140,.12);color:#6fd5ff;font-weight:850;margin-top:4px}
+
+.rd-route-detail-page>.page-head{min-height:62px!important;padding-bottom:6px!important}
+.rd-route-detail-page .rd-page-sub{display:none!important}
+.rd-route-overview-compact{padding:12px 13px!important;border-radius:20px!important;margin-bottom:10px!important}
+.rd-route-overview-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.rd-route-mini-info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(120,164,220,.10)}
+.rd-route-mini-info>div{min-width:0;padding:5px 6px;border-right:1px solid rgba(120,164,220,.10)}.rd-route-mini-info>div:last-child{border-right:0}
+.rd-route-mini-info small,.rd-route-mini-info strong{display:block}.rd-route-mini-info small{font-size:8px;letter-spacing:.04em;color:#8097b4;white-space:nowrap}.rd-route-mini-info strong{font-size:13px;margin-top:2px;color:#f6fbff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-route-status-actions{display:flex;align-items:center;gap:6px}
+.rd-route-count-pill{min-width:66px;min-height:42px;border:1px solid rgba(73,191,255,.24);border-radius:14px;background:rgba(19,92,143,.13);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 8px;color:#eaf7ff}
+.rd-route-count-pill b{font-size:15px;line-height:1}.rd-route-count-pill small{font-size:8px;color:#7dcfff;margin-top:3px;white-space:nowrap}
+.rd-route-icon-action{width:42px;height:42px;border-radius:14px;border:1px solid rgba(67,181,255,.32);background:rgba(20,99,163,.20);color:#52c8ff;font-size:20px;display:grid;place-items:center;padding:0}
+.rd-route-icon-action.nav{background:linear-gradient(135deg,#159dff,#225fff);border-color:#2cbaff;color:#fff}
+.rd-route-overview-compact .route-progress{height:5px!important;margin-top:8px!important}
+.rd-route-detail-list{padding:13px!important}
+.rd-route-detail-list .rd-stop-list-head{margin-bottom:6px!important}
+.rd-route-detail-page .rd-detail-tools{margin-top:8px!important}
+.rd-route-detail-page>.start-route-btn{display:none!important}
+
+.rd-map-fallback-toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);z-index:9000;background:rgba(7,21,36,.94);border:1px solid rgba(52,183,255,.30);color:#dff5ff;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.3)}
+@media(max-width:620px){
+ .rd-route-overview-top{grid-template-columns:1fr!important}
+ .rd-route-status-actions{justify-content:flex-end;margin-top:-2px}
+ .rd-route-mini-info{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .rd-route-mini-info small{font-size:7px}.rd-route-mini-info strong{font-size:11px}
+ .rd-route-count-pill{min-width:60px}.rd-route-icon-action{width:38px;height:38px;border-radius:12px;font-size:18px}
+}
+</style>
+<script id="rd-v83-runtime">
+(function(){
+  window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';document.body.dataset.build=window.RD_BUILD;
+
+  function validRoutes(){return (db.routes||[]).filter(r=>Array.isArray(r.stopIds)&&r.stopIds.some(id=>db.stops.some(s=>s.id===id)))}
+  window.openNavRoutePicker=function(){
+    const routes=validRoutes();
+    if(!routes.length){toast('Navigasyon için önce rota oluşturun');openRouteBuilder();return}
+    const list=document.getElementById('navRoutePickerList');if(!list)return;
+    const sorted=[...routes].sort((a,b)=>{
+      const ao=a.completed?1:0,bo=b.completed?1:0;if(ao!==bo)return ao-bo;
+      return String(b.updatedAt||b.createdAt||b.date||'').localeCompare(String(a.updatedAt||a.createdAt||a.date||''));
+    });
+    list.innerHTML=sorted.map((r,i)=>{const total=r.stopIds?.length||0,finished=routeFinishedCount(r),remain=Math.max(0,total-finished);return `<button class="rd-nav-picker-item" onclick="selectNavigationRoute('${r.id}')"><span>${i+1}</span><div><b>${esc(r.name||'İsimsiz rota')}</b><small>${r.date?new Date(r.date+'T00:00:00').toLocaleDateString('tr-TR'):''} • ${total} durak • ${remain} kalan${r.completed?' • tamamlandı':''}</small></div><em>›</em></button>`}).join('');
+    document.getElementById('navRoutePickerModal')?.classList.add('open');
+  };
+  window.selectNavigationRoute=function(id){closeModal('navRoutePickerModal');setTimeout(()=>openNavigation(id),80)};
+  window.smartNavigateHome=function(){openNavRoutePicker()};
+
+  function safeLegMetrics(r){
+    const ids=r?.stopIds||[],n=Math.max(0,ids.length-1),fallback=[];
+    for(let i=0;i<n;i++){const a=db.stops.find(s=>s.id===ids[i]),b=db.stops.find(s=>s.id===ids[i+1]);fallback.push(a&&b?haversine(Number(a.lat),Number(a.lng),Number(b.lat),Number(b.lng))*1.22:0)}
+    const raw=Array.isArray(r?.legDistances)?r.legDistances.slice(0,n).map(Number):[];
+    const rawValid=raw.length===n&&raw.every(x=>Number.isFinite(x)&&x>=0);
+    const rawSum=rawValid?raw.reduce((a,b)=>a+b,0):Infinity,fbSum=fallback.reduce((a,b)=>a+b,0),reference=Number(r?.distance)||fbSum;
+    let distances=rawValid?raw:fallback;
+    const absurd=rawValid&&((reference>0&&rawSum>reference*2.5)||(fbSum>0&&rawSum>fbSum*4)||raw.some((d,i)=>fallback[i]>500&&d>fallback[i]*10));
+    if(absurd)distances=fallback;
+    const sum=distances.reduce((a,b)=>a+b,0);
+    let durations=Array.isArray(r?.legDurations)?r.legDurations.slice(0,n).map(Number):[];
+    if(durations.length!==n||durations.some(x=>!Number.isFinite(x)||x<0)||absurd){const total=Number(r?.duration)||((sum/1000)/42*3600);durations=distances.map(d=>sum?total*d/sum:0)}
+    return {distances,durations};
+  }
+  window.legMetrics=function(r){return safeLegMetrics(r)};
+  window.routeRemainingScheduled=function(r){const idx=routePendingIndex(r),m=safeLegMetrics(r);let distance=m.distances.slice(Math.max(0,idx-1)).reduce((a,b)=>a+b,0),duration=m.durations.slice(Math.max(0,idx-1)).reduce((a,b)=>a+b,0);const total=Number(r?.distance)||0;if(total>0&&distance>total*1.6){const pending=Math.max(0,(r.stopIds?.length||0)-idx),ratio=(r.stopIds?.length||0)?pending/(r.stopIds.length):1;distance=total*Math.min(1,Math.max(.05,ratio));duration=(Number(r.duration)||0)*Math.min(1,Math.max(.05,ratio))}return {distance,duration}};
+  window.remainingMetrics=function(r,pos){
+    const idx=navIndex,target=currentTarget(r);
+    if(r?._direct){if(V66.directMetrics&&Number.isFinite(V66.directMetrics.distance))return {targetDistance:Math.max(0,V66.directMetrics.distance),distance:Math.max(0,V66.directMetrics.distance),duration:Math.max(0,V66.directMetrics.duration||0)};let d=0;if(pos&&target)d=haversine(Number(pos.lat),Number(pos.lng),Number(target.lat),Number(target.lng))*1.18;return {targetDistance:d,distance:d,duration:d?(d/1000)/38*3600:0}}
+    const m=safeLegMetrics(r);let firstDistance=0,firstDuration=0;
+    if(pos&&target){firstDistance=haversine(Number(pos.lat),Number(pos.lng),Number(target.lat),Number(target.lng))*1.17;const avgSpeed=Math.max(20,Math.min(70,(r.distance&&r.duration)?(r.distance/1000)/(r.duration/3600):38));firstDuration=(firstDistance/1000)/avgSpeed*3600}else if(idx>0){firstDistance=m.distances[idx-1]||0;firstDuration=m.durations[idx-1]||0}
+    const afterDist=m.distances.slice(idx).reduce((a,b)=>a+b,0),afterDur=m.durations.slice(idx).reduce((a,b)=>a+b,0);let distance=firstDistance+afterDist,duration=firstDuration+afterDur;
+    const total=Number(r.distance)||0;if(total>0&&distance>Math.max(total*1.8,total+firstDistance*1.2)){distance=Math.max(firstDistance,Math.min(distance,total+firstDistance));const avgSpeed=Math.max(20,Math.min(70,(r.distance&&r.duration)?(r.distance/1000)/(r.duration/3600):38));duration=(distance/1000)/avgSpeed*3600}
+    return {targetDistance:firstDistance,distance,duration};
+  };
+
+  window.renderRouteDetailPage=function(id){
+    ensureV66Settings();const r=db.routes.find(x=>x.id===id);if(!r)return;currentRouteId=id;document.getElementById('routeDetailTitle').textContent=r.name;
+    const done=new Set(r.completedStopIds||[]),skipped=new Set(r.skippedStopIds||[]),total=r.stopIds.length,finished=routeFinishedCount(r),remain=routeRemainingScheduled(r),pct=total?Math.round(finished/total*100):0,showDone=!!V66.showCompletedByRoute[id],pendingIds=r.stopIds.filter(sid=>!done.has(sid)),doneIds=r.stopIds.filter(sid=>done.has(sid));
+    const pendingHtml=pendingIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('')||'<div class="empty">Tamamlanmamış durak kalmadı.</div>',doneHtml=doneIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('');
+    document.getElementById('routeDetailContent').innerHTML=`<div class="route-detail-card rd-route-overview-compact"><div class="rd-route-overview-top"><div class="rd-route-mini-info"><div><small>TOPLAM</small><strong>${r.distance?formatDistance(r.distance):'—'}</strong></div><div><small>KALAN</small><strong>${r.completed?'0 km':formatDistance(remain.distance||0)}</strong></div><div><small>BAŞLANGIÇ</small><strong>${r.startTime||'08:30'}</strong></div><div><small>VARIŞ</small><strong>${routeArrival(r)}</strong></div></div><div class="rd-route-status-actions"><div class="rd-route-count-pill"><b>${finished}/${total}</b><small>İŞLENDİ</small></div><button class="rd-route-icon-action" title="Planla" aria-label="Rotayı planla" onclick="openRoutePlanner('${r.id}')">⚡</button><button class="rd-route-icon-action nav" title="Navigasyon" aria-label="Navigasyonu aç" onclick="openNavigation('${r.id}')">➤</button></div></div><div class="route-progress"><div style="width:${pct}%"></div></div></div><div class="route-detail-card rd-route-detail-list"><div class="builder-title rd-stop-list-head"><div><b>Duraklar</b><span>Tamamlanmamış duraklar üstte tutulur</span></div>${doneIds.length?`<button class="rd-completed-toggle" onclick="toggleCompletedStops('${r.id}')">${showDone?'Tamamlananları gizle':'Tamamlananları göster'} (${doneIds.length})</button>`:''}</div>${pendingHtml}${doneIds.length&&showDone?`<div class="rd-completed-section"><div class="rd-completed-section-title"><span>TAMAMLANAN DURAKLAR</span><span>${doneIds.length}</span></div>${doneHtml}</div>`:''}</div><div class="builder-select-actions rd-detail-tools"><button type="button" onclick="editRouteOrder('${r.id}')">☷ Sırayı düzenle</button><button type="button" onclick="recalculateRoute('${r.id}')">↻ Güzergâhı güncelle</button><button type="button" onclick="openGoogleMapsNavigation('${r.id}')">↗ Google Haritalar</button><button type="button" class="rd-delete-inline" onclick="deleteRouteFromDetail('${r.id}')">⌫ Rotayı sil</button></div>`;
+  };
+
+  const googleFailureKey='rd-google-map-session-failed-v1';
+  function showMapFallbackNote(msg){const old=document.querySelector('.rd-map-fallback-toast');if(old)old.remove();const n=document.createElement('div');n.className='rd-map-fallback-toast';n.textContent=msg;document.body.appendChild(n);setTimeout(()=>n.remove(),3600)}
+  function markGoogleFailed(reason){try{sessionStorage.setItem(googleFailureKey,'1')}catch(_){}console.warn('Google Maps fallback:',reason);showMapFallbackNote('Google Maps doğrulanamadı • OpenStreetMap yedeğine geçildi')}
+  function googleSessionFailed(){try{return sessionStorage.getItem(googleFailureKey)==='1'}catch(_){return false}}
+  window.gm_authFailure=function(){markGoogleFailed('gm_authFailure');const r=currentNavRoute();if(r&&document.body.dataset.view==='navigationPage')setTimeout(()=>initNavigation(r),80)};
+  function detectGoogleDevOverlay(){const host=document.getElementById('navMap');if(!host)return false;const txt=(host.innerText||'').toLocaleLowerCase('tr-TR');return txt.includes('for development purposes only')||txt.includes('yalnızca geliştirme amaçlı')||txt.includes('bu web sitesi sizin mi')}
+  window.initNavigation=async function(r){
+    ensureV66Settings();const hadWatch=navWatchId!==null;destroyNavigationMap();V66.approachTargetId=null;document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r?._direct);const pts=r.stopIds.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);if(!pts.length)return;const target=currentTarget(r)||pts[0],center=V66.lastPos?{lat:V66.lastPos.lat,lng:V66.lastPos.lng}:{lat:target.lat,lng:target.lng},zoom=V66.lastPos?17:15;
+    if(db.settings.map==='google'&&!googleSessionFailed()){
+      try{await loadGoogleMaps();navMap=new google.maps.Map(document.getElementById('navMap'),{center,zoom,mapTypeId:'roadmap',streetViewControl:false,mapTypeControl:false,fullscreenControl:false,zoomControl:false,gestureHandling:'greedy',disableDefaultUI:true});navMapProvider='google';navMap.addListener('dragstart',()=>{navTracking=false});try{navTrafficLayer=new google.maps.TrafficLayer();navTrafficLayer.setMap(navMap)}catch(_){}setTimeout(()=>{if(navMapProvider==='google'&&detectGoogleDevOverlay()){markGoogleFailed('development overlay');const rr=currentNavRoute();if(rr)initNavigation(rr)}},1800)}catch(e){markGoogleFailed(e);}
+    }
+    if(!navMap){navMap=makeMap('navMap',[center.lat,center.lng],zoom);navMapProvider='leaflet';navMap.on('dragstart',()=>{navTracking=false})}
+    drawNavigationRoute(r);document.getElementById('navRouteName').textContent=r.name;updateNavPanel(r,V66.lastPos);setTimeout(()=>{if(navMapProvider==='leaflet')navMap.invalidateSize();else if(window.google?.maps)google.maps.event.trigger(navMap,'resize')},40);if(V66.lastPos){const hd=Number.isFinite(V66.heading)?V66.heading:guidanceBearing(r,V66.lastPos);animateNavMarker(V66.lastPos.lat,V66.lastPos.lng,hd);updateApproachRoute(r,V66.lastPos,true)}else primeNavigationPosition(r);if(db.settings.liveTracking!==false){startLiveTracking();if(hadWatch)toast('Canlı konum takibi devam ediyor')}else document.getElementById('navSpeed').textContent='—';speakNav('Navigasyon başladı. Hedef '+(target?.name||''));
+  };
+
+  setTimeout(()=>{try{if(document.body.dataset.view==='routeDetailPage'&&currentRouteId)renderRouteDetailPage(currentRouteId)}catch(e){console.warn(e)}},0);
 })();
 </script>
 
