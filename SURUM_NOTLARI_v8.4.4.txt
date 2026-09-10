@@ -1,0 +1,10 @@
+RotaDefteri v8.4.4 — Compact Stop Actions
+
+- Durak kartları yaklaşık 70–78 px minimum yüksekliğe indirildi.
+- Durak ve rota adları tek satır + üç nokta ile yatay tutuluyor; uzun isimler kartı aşağı büyütmüyor.
+- Boş/tekrarlayan adres ve “Telefon belirtilmemiş” satırları gösterilmiyor.
+- Durak kartına 4 hızlı ikon eklendi: Google Haritalar konumu, düzenle, çöp kutusu ile sil, + ile rotaya ekle.
+- + butonu rota oluştur/düzenle ekranını seçilen durak önceden seçili şekilde açar.
+- Konum butonu koordinat varsa doğrudan koordinatı, yoksa ad/adres bilgisini Google Haritalar'da açar.
+- Mevcut çoklu seçim, Firebase/bulut güvenli senkronizasyon ve 6 renk paketi korunmuştur.
+- Service Worker önbellek sürümü v8.4.4 olarak yenilenmiştir.
