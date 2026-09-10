@@ -1450,7 +1450,7 @@ setTimeout(()=>{if(document.getElementById('authGate')?.classList.contains('open
 </script>
 
 <script id="rd-v75-runtime-guard">
-window.RD_BUILD='7.8.0-nav-cancel-stable';
+window.RD_BUILD='8.1.0-stops-drag-liveloc';
 document.body.dataset.build=window.RD_BUILD;
 (function(){
   // Legacy modals may survive in a stale DOM snapshot; force-close them.
@@ -1461,6 +1461,201 @@ document.body.dataset.build=window.RD_BUILD;
   window.addEventListener('pageshow',()=>{try{if(document.body.dataset.view==='contacts')renderStops();if(document.body.dataset.view==='routes')renderRoutes()}catch(e){console.warn('Sayfa yenileme ertelendi',e)}});
   window.addEventListener('unhandledrejection',e=>console.error('RotaDefteri async hata',e.reason));
   window.addEventListener('error',e=>console.error('RotaDefteri hata',e.error||e.message));
+})();
+</script>
+
+
+<style id="rd-v81-stop-order-live-style">
+.rd-stop-filter-chips{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.rd-stop-filter-chips [data-stop-filter="done"],.rd-stop-filter-chips [data-stop-filter="pending"]{display:none!important}
+.rd-stop-quick-actions{display:flex;align-items:center;gap:6px;justify-self:end}
+.rd-stop-quick-actions .rd-stop-quick-btn{width:40px;height:40px;border-radius:14px;border:1px solid rgba(24,169,255,.42);background:rgba(7,105,174,.08);color:#29a7ff;font-size:18px;font-weight:900;display:grid;place-items:center}
+.rd-stop-quick-actions .rd-stop-quick-btn.danger{border-color:rgba(255,102,126,.42);background:rgba(125,32,39,.14);color:#ff9faf}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn{width:38px!important;height:38px!important;border-radius:13px!important}
+.drag-list,.drag-item,.drag-item *{user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important}
+.drag-item{touch-action:pan-y;cursor:grab}
+.drag-item .drag-main,.drag-item .eta-box{pointer-events:none}
+.drag-item .drag-tools,.drag-item .drag-handle{pointer-events:auto}
+.drag-item.rd-pointer-sorting,.drag-item.dragging{cursor:grabbing;box-shadow:0 0 0 2px rgba(24,169,255,.32),0 16px 34px rgba(0,0,0,.24)}
+.drag-handle{display:grid;place-items:center;min-width:22px;font-size:22px;color:#7ed2ff}
+.drag-tools{display:flex;gap:6px}
+.drag-tools .remove{width:36px;height:36px;border:0;border-radius:12px;background:#61262c;color:#fff;font-size:22px;line-height:1;display:grid;place-items:center}
+@media(max-width:600px){
+  .rd-stop-filter-chips{display:grid!important;grid-template-columns:1fr 1fr!important;overflow:visible!important}
+  .rd-stop-filter-chips button{min-width:0!important}
+  .rd-stop-quick-actions{gap:5px}
+  .rd-stop-quick-actions .rd-stop-quick-btn{width:34px;height:34px;font-size:16px;border-radius:12px}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:38px 42px minmax(0,1fr) 74px 16px!important}
+}
+</style>
+
+<script id="rd-v81-runtime">
+(function(){
+  window.RD_BUILD='8.1.0-stops-drag-liveloc';
+  document.body.dataset.build=window.RD_BUILD;
+  window.V71=window.V71||{};
+  if(['done','pending'].includes(V71.stopFilter)) V71.stopFilter='all';
+
+  let appWatchId=null;
+  let builderRefreshRaf=0;
+  function trackingEnabled(){return !!navigator.geolocation && db?.settings?.liveTracking!==false}
+  function queueBuilderRefresh(){
+    if(document.body.dataset.view!=='routeBuilderPage')return;
+    cancelAnimationFrame(builderRefreshRaf);
+    builderRefreshRaf=requestAnimationFrame(()=>{
+      try{renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors()}catch(e){console.warn('Builder konum yenilemesi ertelendi',e)}
+    });
+  }
+  function updateAppPosition(pos){
+    const c=pos?.coords||{};
+    const current={lat:Number(c.latitude),lng:Number(c.longitude)};
+    if(!Number.isFinite(current.lat)||!Number.isFinite(current.lng))return;
+    V66.lastPos=current;
+    V66.lastGpsAt=Date.now();
+    const rawSpeed=Math.max(0,(Number(c.speed)||0)*3.6);
+    V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.58+rawSpeed*.42:rawSpeed;
+    if(Number.isFinite(Number(c.heading)))V66.heading=Number(c.heading);
+    queueBuilderRefresh();
+  }
+  window.startAppLocationTracking=function(silent=true){
+    if(!trackingEnabled())return;
+    if(appWatchId!==null)return;
+    try{appWatchId=navigator.geolocation.watchPosition(updateAppPosition,err=>{console.warn('Arka plan konum izleme',err);if(!silent&&err?.code===1)toast('Konum izni gerekli')},{enableHighAccuracy:true,maximumAge:1000,timeout:15000})}catch(e){console.warn('Konum izleme başlatılamadı',e)}
+  };
+  window.stopAppLocationTracking=function(){if(appWatchId!==null){navigator.geolocation.clearWatch(appWatchId);appWatchId=null}};
+  window.getBuilderOrigin=function(){return V66.lastPos&&Number.isFinite(V66.lastPos.lat)&&Number.isFinite(V66.lastPos.lng)?V66.lastPos:null};
+  window.builderLeadMetrics=function(){
+    normalizeCurrentRouteStops();
+    const origin=getBuilderOrigin();
+    const first=db.stops.find(s=>s.id===currentRouteStops?.[0]);
+    if(!origin||!first)return {distance:0,duration:0};
+    const distance=haversine(origin.lat,origin.lng,Number(first.lat),Number(first.lng))*1.22;
+    return {distance,duration:(distance/1000)/38*3600};
+  };
+
+  const previousShowView=window.showView;
+  window.showView=function(id,opts={}){
+    previousShowView(id,opts);
+    if(id==='navigationPage')stopAppLocationTracking(); else if(trackingEnabled())startAppLocationTracking(true);
+    if(id==='routeBuilderPage')setTimeout(queueBuilderRefresh,50);
+    if(id==='contacts')setTimeout(()=>{try{renderStops()}catch(e){}},40);
+  };
+  const previousSaveNavSettings=window.saveNavSettings;
+  window.saveNavSettings=function(){previousSaveNavSettings();if(db.settings.liveTracking!==false){if(document.body.dataset.view!=='navigationPage')startAppLocationTracking(true)}else stopAppLocationTracking()};
+
+  window.renderPageRouteChoices=function(){
+    normalizeCurrentRouteStops();
+    const el=document.getElementById('pageRouteChoices');
+    if(!el)return;
+    const q=(document.getElementById('pageRouteSearch')?.value||'').toLocaleLowerCase('tr-TR');
+    const rows=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')).toLocaleLowerCase('tr-TR').includes(q));
+    el.innerHTML=rows.length?rows.map(s=>`<label class="builder-choice"><input type="checkbox" ${currentRouteStops.includes(s.id)?'checked':''} onchange="togglePageRouteStop('${s.id}',this.checked)"><span class="builder-choice-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></span></label>`).join(''):'<div class="empty">Eşleşen durak yok.</div>';
+  };
+  window.selectAllActiveStops=function(){currentRouteStops=db.stops.map(s=>s.id);normalizeCurrentRouteStops();renderPageRouteChoices();renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors()};
+
+  window.estimateBuilderEta=function(i){
+    const base=document.getElementById('pageRouteStart')?.value||'08:30';
+    const pts=currentRouteStops.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);
+    const lead=builderLeadMetrics();
+    let totalDist=lead.distance,cum=lead.distance;
+    for(let x=1;x<pts.length;x++){
+      const dist=haversine(pts[x-1].lat,pts[x-1].lng,pts[x].lat,pts[x].lng)*1.22;
+      totalDist+=dist;
+      if(x<=i)cum+=dist;
+    }
+    if(i===0&&!lead.distance)cum=0;
+    const metrics=routeFallbackMetrics();
+    const totalDuration=metrics.duration+lead.duration;
+    const seconds=totalDist?totalDuration*(cum/totalDist):0;
+    return clockAfter(base,seconds);
+  };
+  window.updateBuilderSummary=function(){
+    const base=routeFallbackMetrics(),lead=builderLeadMetrics();
+    const totalDistance=base.distance+lead.distance,totalDuration=base.duration+lead.duration;
+    const d=document.getElementById('pageRouteDistance'),u=document.getElementById('pageRouteDuration'),a=document.getElementById('pageRouteArrival');
+    if(d)d.textContent=currentRouteStops.length?'≈ '+formatDistance(totalDistance):'—';
+    if(u)u.textContent=currentRouteStops.length?'≈ '+formatDuration(totalDuration):'—';
+    if(a)a.textContent=currentRouteStops.length?'≈ '+clockAfter(document.getElementById('pageRouteStart')?.value||'08:30',totalDuration):'—';
+  };
+  window.renderPageRouteOrder=function(){
+    normalizeCurrentRouteStops();
+    const el=document.getElementById('pageRouteOrder');
+    if(!el)return;
+    if(!currentRouteStops.length){el.innerHTML='<div class="empty">Henüz durak seçilmedi. Rota için en az 2 durak seçin.</div>';refreshPlanSelectors();return}
+    const temp={stopIds:[...currentRouteStops],...routeFallbackMetrics(currentRouteStops)};
+    const origin=getBuilderOrigin();
+    const lead=builderLeadMetrics();
+    el.innerHTML=currentRouteStops.map((id,i)=>{
+      const s=db.stops.find(x=>x.id===id); if(!s)return '';
+      const seg=i?segmentToStop(temp,i):lead;
+      const label=i?'ÖNCEKİNDEN':(origin?'KONUMUNDAN':'BAŞLANGIÇ');
+      const distanceText=i||origin?('≈ '+formatDistance(seg.distance)):('0 km');
+      return `<div class="drag-item" data-id="${s.id}"><span class="drag-handle" title="Bas ve sürükle">☷</span><span class="drag-num">${i+1}</span><div class="drag-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></div><div class="eta-box rd-leg-chip"><small>${label}</small><b>${distanceText}</b><em>${estimateBuilderEta(i)}</em></div><div class="drag-tools"><button class="remove" title="Rotadan çıkar" onclick="event.stopPropagation();togglePageRouteStop('${s.id}',false);renderPageRouteChoices()">×</button></div></div>`;
+    }).join('');
+    bindPointerSort(el);refreshPlanSelectors();
+  };
+
+  window.bindPointerSort=function(el){
+    if(!el)return;
+    let active=null,pointerId=null,sorting=false;
+    const finish=(e)=>{
+      if(e&&pointerId!==null&&e.pointerId!==pointerId)return;
+      if(active){active.style.pointerEvents='';active.style.zIndex='';active.style.touchAction='';active.classList.remove('rd-pointer-sorting','dragging')}
+      if(sorting)syncRouteOrderFromDom(el);
+      active=null;pointerId=null;sorting=false;
+    };
+    el.querySelectorAll('.drag-item').forEach(item=>{
+      if(item.dataset.sortBound==='1')return;
+      item.dataset.sortBound='1';
+      item.addEventListener('dragstart',ev=>ev.preventDefault());
+      item.addEventListener('pointerdown',e=>{
+        if(e.pointerType==='mouse'&&e.button!==0)return;
+        if(e.target.closest('button,input,select,textarea,label,a')&&!e.target.closest('.drag-handle'))return;
+        active=item;pointerId=e.pointerId;sorting=true;
+        active.classList.add('rd-pointer-sorting','dragging');
+        active.style.pointerEvents='none';active.style.zIndex='15';active.style.touchAction='none';
+        try{item.setPointerCapture(pointerId)}catch(_){try{e.target.setPointerCapture(pointerId)}catch(__){}}
+        e.preventDefault();
+      },{passive:false});
+      item.addEventListener('pointermove',e=>{
+        if(!sorting||!active||e.pointerId!==pointerId)return;
+        e.preventDefault();
+        const y=e.clientY;
+        if(y<96)window.scrollBy(0,-14);else if(y>window.innerHeight-110)window.scrollBy(0,14);
+        const target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.drag-item');
+        if(!target||target===active||target.parentElement!==el)return;
+        const r=target.getBoundingClientRect();
+        el.insertBefore(active,e.clientY<r.top+r.height/2?target:target.nextSibling);
+      },{passive:false});
+      item.addEventListener('pointerup',finish);
+      item.addEventListener('pointercancel',finish);
+      item.addEventListener('lostpointercapture',finish);
+    });
+  };
+
+  window.renderStops=function(){
+    ensureV66Settings();
+    const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR');
+    const sort=document.getElementById('stopSort')?.value||'az';
+    const visited=stopVisitedSet(),today=stopTodaySet();
+    let arr=db.stops.filter(s=>(s.name+' '+(s.address||'')+' '+(s.contactName||'')+' '+(s.contactPhone||'')+' '+(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));
+    const all=arr.length,todayCount=arr.filter(s=>today.has(s.id)).length;
+    const counts={stopCountAll:all,stopCountToday:todayCount,stopCountDone:0,stopCountPending:0};
+    Object.entries(counts).forEach(([id,v])=>{const node=document.getElementById(id);if(node)node.textContent=v});
+    if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id)); else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
+    arr=[...arr].sort((a,b)=>sort==='za'?b.name.localeCompare(a.name,'tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):a.name.localeCompare(b.name,'tr'));
+    const el=document.getElementById('stopList');
+    if(!el)return;
+    if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';return}
+    el.innerHTML=arr.map((s,i)=>{
+      const expanded=V71.expandedStopId===s.id,region=stopRegionLabel(s),address=(s.address||'').trim(),phone=s.contactPhone||'Telefon belirtilmemiş';
+      return `<article class="item rd-stop-v71 ${expanded?'expanded':''}" onclick="toggleStopCard('${s.id}')"><span class="rd-stop-seq">${i+1}</span><span class="rd-stop-type">${/market|market|süper|carrefour/i.test(s.name)?'🛒':'▦'}</span><div class="rd-stop-copy"><h3>${esc(s.name)}</h3><p>⌖ ${esc(region)}</p><small>${esc(address||region)}</small><small class="rd-stop-phone">☎ ${esc(phone)}</small></div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()"><button class="rd-stop-quick-btn" title="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="rd-stop-quick-btn danger" title="Sil" onclick="deleteStop('${s.id}')">⌫</button></div><span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()"><button onclick="openCallPanel('${s.id}')">☎ Ara</button><button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">🧭 Git</button><button onclick="openRouteBuilderWithStop('${s.id}')">➤ Rotaya Ekle</button></div></article>`;
+    }).join('');
+    if(map)refreshMainMapMarkers();
+  };
+
+  document.addEventListener('selectstart',e=>{if(e.target.closest('.drag-item'))e.preventDefault()});
+  setTimeout(()=>{try{if(document.body.dataset.view!=='navigationPage')startAppLocationTracking(true);renderStops();queueBuilderRefresh()}catch(e){console.warn(e)}},120);
 })();
 </script>
 
