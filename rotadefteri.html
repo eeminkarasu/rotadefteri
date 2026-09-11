@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.4.2-cloud-sync-safe">
+<meta name="rd-build" content="v8.4.6-stop-actions-bulk-route">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
 <meta name="description" content="RotaDefteri — kullanıcıya özel durak, rota ve canlı navigasyon yönetimi">
@@ -20,7 +20,7 @@
 <link rel="dns-prefetch" href="//maps.googleapis.com">
 <link rel="dns-prefetch" href="//maps.gstatic.com">
 <link rel="dns-prefetch" href="//router.project-osrm.org">
-<title>RotaDefteri v8.4.2 — Güvenli Bulut Senkronizasyonu</title>
+<title>RotaDefteri v8.4.6 — Durak İşlemleri ve Toplu Rota</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <style>
@@ -722,7 +722,7 @@ body.theme-dark{background:radial-gradient(circle at 60% 0%,var(--rd-accent-glow
   <div class="rd-stops-head"><button class="rd-v71-back" onclick="goBackView('home')" aria-label="Geri">‹</button><div class="rd-stops-title"><h2>Duraklar</h2><p>Rotalarındaki tüm durakları görüntüle ve yönet.</p></div><div class="rd-stops-head-actions"><button class="rd841-stop-select-head" id="stopSelectToggle" onclick="rd841ToggleStopMode()" title="Durak seç" aria-label="Durak seç">☑</button><button class="rd-map-see" id="stopsMapToggleBtn" onclick="toggleStopsMapInline()">🗺 <span>Haritayı görmek için tıklayınız</span></button><button class="rd-add-stop" onclick="openStopModal()" aria-label="Durak ekle">＋</button></div></div>
   <div class="rd-stop-search-row"><div class="rd-stop-search"><span>⌕</span><input id="stopSearch" placeholder="Durak adı, müşteri veya adres ara..." oninput="renderStops()"></div><button class="rd-stop-sort-btn" id="stopSortBtn" onclick="cycleStopSort()" title="Sıralama">☷</button><select id="stopSort" hidden onchange="renderStops()"><option value="az">A–Z</option><option value="za">Z–A</option><option value="newest">En yeni</option><option value="oldest">En eski</option></select></div>
   <div class="rd-stop-filter-chips"><button class="active" data-stop-filter="all" onclick="setStopFilter('all')">Tümü <b id="stopCountAll">0</b></button><button data-stop-filter="today" onclick="setStopFilter('today')">Bugün <b id="stopCountToday">0</b></button><button data-stop-filter="done" onclick="setStopFilter('done')">✓ Gidildi <b id="stopCountDone">0</b></button><button data-stop-filter="pending" onclick="setStopFilter('pending')">◷ Gidilmedi <b id="stopCountPending">0</b></button></div>
-  <div class="rd841-selection-bar" id="stopSelectionBar"><b id="stopSelectionCount">0 durak seçili</b><button onclick="rd841SelectAllStops()">Tümü</button><button class="danger" onclick="rd841BulkDeleteStops()">⌫ Sil</button><button onclick="rd841ToggleStopMode(false)">Vazgeç</button></div>
+  <div class="rd841-selection-bar" id="stopSelectionBar"><b id="stopSelectionCount">0 durak seçili</b><button onclick="rd841SelectAllStops()">Tümü</button><button class="route-create" onclick="rd846CreateRouteFromSelectedStops()">➤ Rota oluştur</button><button class="danger" onclick="rd841BulkDeleteStops()">⌫ Sil</button><button onclick="rd841ToggleStopMode(false)">Vazgeç</button></div>
   <div id="stopList" class="list khy-stop-list rd-v71-stop-list"></div>
   <details id="stopsMapDetails" class="khy-map-card rd-map-details rd-map-inline"><summary><span>⌖ Durak Haritası</span><small>Haritayı gizlemek için kapatın</small></summary><div id="map"></div></details>
 </section>
@@ -787,7 +787,7 @@ body.theme-dark{background:radial-gradient(circle at 60% 0%,var(--rd-accent-glow
 <section id="routeDetailPage" class="view khy-page full-page rd-route-detail-page"><div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('routes')" aria-label="Geri">‹</button><div><span class="eyebrow">ROTA DETAY</span><h2 id="routeDetailTitle">Rota</h2><p class="rd-page-sub">Durak durumu, teslimat notu, km ve tahmini varış.</p></div></div><div id="routeDetailContent"></div></section>
 <section id="navigationPage" class="view navigation-view rd-navigation-view rd-nav-clean rd-nav-v71">
   <div id="navMap"></div>
-  <div class="rd-nav-instruction-v71"><button class="rd-nav-exit-v71" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button><span class="rd-big-turn" id="navTurnIcon">➤</span><div class="rd-nav-instruction-copy"><strong id="navNextDistance">—</strong><b id="navNextName">—</b><small id="navNextMeta">—</small><div class="rd-nav-stop-state"><button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button><button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button></div></div></div>
+  <div class="rd-nav-instruction-v71"><button class="rd-nav-exit-v71" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button><span class="rd-big-turn" id="navTurnIcon">➤</span><div class="rd-nav-instruction-copy"><strong id="navNextDistance">—</strong><b id="navNextName">—</b><small id="navNextMeta">—</small><div class="rd-nav-stop-state"><button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button><button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button><button id="navGoogleBtn" class="google" onclick="navOpenCurrentInGoogleMaps()" title="Google Haritalar'da yol tarifi" aria-label="Durağa Google Haritalar ile git"><span class="rd-mini-icon rd-i-nav" aria-hidden="true"></span></button><button id="navDeleteStopBtn" class="delete" onclick="navDeleteCurrentStop()" title="Durağı sil" aria-label="Durağı sil"><span class="rd-mini-icon rd-i-trash" aria-hidden="true"></span></button></div></div></div>
   <div class="rd-nav-speed-card-v71" id="navSpeedGauge"><div class="rd-speed-ring"><div><b id="navSpeed">0</b><span>km/sa</span></div></div></div>
   <button class="rd-nav-call-card-v71" onclick="openCallPanel()" title="Durağı ara" aria-label="Durağın irtibat kişisini ara"><span>☎</span></button>
   <div class="rd-nav-route-chip"><span>●</span><div><b id="navRouteName">Navigasyon</b><small id="navStopCounter">1 / 1</small></div></div>
@@ -2009,6 +2009,143 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
   if(typeof baseRenderStops==='function')window.renderStops=function(){const out=baseRenderStops.apply(this,arguments);try{enhanceStops()}catch(e){console.error('Durak seçim görünümü',e)}return out};
   if(typeof baseRenderDetail==='function')window.renderRouteDetailPage=function(){const out=baseRenderDetail.apply(this,arguments);try{enhanceDetail()}catch(e){console.error('Rota detay seçim görünümü',e)}return out};
   setTimeout(()=>{try{enhanceRoutes();enhanceStops();enhanceDetail()}catch(e){console.error('v8.4.1 UI başlangıç',e)}},0);
+})();
+</script>
+
+
+<style id="rd846-stop-actions-bulk-route">
+/* v8.4.6 — navigasyon/durak hızlı işlemleri + toplu rota oluşturma */
+.rd-i-nav{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M21.7 2.3a1 1 0 0 0-1.05-.23l-17 7a1 1 0 0 0 .1 1.9l7.23 2.07 2.07 7.23a1 1 0 0 0 .9.72h.06a1 1 0 0 0 .9-.58l7-17a1 1 0 0 0-.21-1.11ZM13 16.65l-1.17-4.08 4.74-4.74-4.08 4.08-4.08-1.17 10.75-4.43L13 16.65Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M21.7 2.3a1 1 0 0 0-1.05-.23l-17 7a1 1 0 0 0 .1 1.9l7.23 2.07 2.07 7.23a1 1 0 0 0 .9.72h.06a1 1 0 0 0 .9-.58l7-17a1 1 0 0 0-.21-1.11ZM13 16.65l-1.17-4.08 4.74-4.74-4.08 4.08-4.08-1.17 10.75-4.43L13 16.65Z'/%3E%3C/svg%3E");
+}
+.rd-nav-stop-state{gap:4px!important}
+.rd-nav-stop-state button{width:28px!important;height:28px!important;min-width:28px!important;border-radius:9px!important}
+.rd-nav-stop-state button.google{border-color:rgba(66,168,255,.42)!important;color:#68c8ff!important;background:rgba(28,119,196,.16)!important}
+.rd-nav-stop-state button.delete{border-color:rgba(255,92,107,.38)!important;color:#ff9ba5!important;background:rgba(175,39,57,.17)!important}
+.rd-nav-stop-state .rd-mini-icon{width:13px!important;height:13px!important}
+.rd-route-stop-actions{gap:5px!important;flex-wrap:nowrap!important}
+.rd-route-stop-actions .mini-btn{width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+.rd-route-stop-actions .mini-btn.edit{border-color:rgba(55,220,200,.3)!important;background:rgba(24,133,121,.16)!important;color:#74eadc!important}
+.rd-route-stop-actions .mini-btn.google{border-color:rgba(242,160,64,.32)!important;background:rgba(174,101,24,.15)!important;color:#ffc77d!important}
+.rd-route-stop-actions .rd-mini-icon{width:15px!important;height:15px!important}
+#stopSelectionBar .route-create{border-color:rgba(var(--rd-accent-rgb),.42)!important;background:rgba(var(--rd-accent-rgb),.15)!important;color:#e7f7ff!important}
+@media(max-width:620px){
+ #stopSelectionBar.active{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
+ #stopSelectionBar b{grid-column:1/-1!important;width:100%!important;margin:0 0 1px!important}
+ #stopSelectionBar button{width:100%!important;min-width:0!important;padding:0 5px!important;font-size:9px!important;white-space:nowrap!important}
+ .rd-route-stop-actions{margin-left:40px!important}
+}
+@media(max-width:390px){
+ .rd-nav-stop-state{gap:3px!important}
+ .rd-nav-stop-state button{width:26px!important;height:26px!important;min-width:26px!important}
+ .rd-route-stop-actions .mini-btn{width:32px!important;height:32px!important;min-width:32px!important}
+ #stopSelectionBar button{font-size:8.5px!important;padding:0 3px!important}
+}
+</style>
+
+<script id="rd846-stop-actions-bulk-route-runtime">
+(function(){
+ 'use strict';
+ window.RD_BUILD='8.4.6-stop-actions-bulk-route';
+ document.body.dataset.build=window.RD_BUILD;
+
+ function currentStopId(){
+   const r=typeof currentNavRoute==='function'?currentNavRoute():null;
+   if(!r||!Array.isArray(r.stopIds)||!r.stopIds.length)return null;
+   const idx=Math.max(0,Math.min(r.stopIds.length-1,Number(navIndex)||0));
+   return r.stopIds[idx]||null;
+ }
+ function googleDirectionsUrl(st){
+   if(!st)return '';
+   const lat=Number(st.lat),lng=Number(st.lng);
+   const destination=Number.isFinite(lat)&&Number.isFinite(lng)?`${lat},${lng}`:[st.name,st.address,typeof stopRegionLabel==='function'?stopRegionLabel(st):''].filter(Boolean).join(' ');
+   if(!String(destination).trim())return '';
+   return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+encodeURIComponent(destination);
+ }
+ function openExternal(url){
+   if(!url)return false;
+   const opened=window.open(url,'_blank','noopener,noreferrer');
+   if(!opened)location.href=url;
+   return true;
+ }
+ window.openStopDirectionsInGoogleMaps=function(id){
+   const st=(db.stops||[]).find(x=>x.id===id);
+   if(!st)return toast('Durak bulunamadı');
+   const url=googleDirectionsUrl(st);
+   if(!url)return toast('Bu durağın konum bilgisi yok');
+   openExternal(url);
+ };
+ window.navOpenCurrentInGoogleMaps=function(){
+   const sid=currentStopId();
+   if(!sid)return toast('Hedef durak bulunamadı');
+   window.openStopDirectionsInGoogleMaps(sid);
+ };
+ window.navDeleteCurrentStop=function(){
+   const r=typeof currentNavRoute==='function'?currentNavRoute():null,sid=currentStopId(),st=(db.stops||[]).find(x=>x.id===sid);
+   if(!sid||!st)return toast('Silinecek hedef durak bulunamadı');
+   if(!confirm('“'+st.name+'” durağını silmek istediğinize emin misiniz? Bu durak tüm rotalardan da kaldırılacak.'))return;
+   const deletingDirect=!!r?._direct;
+   db.stops=(db.stops||[]).filter(x=>x.id!==sid);
+   const now=new Date().toISOString();
+   db.routes=(db.routes||[]).map(route=>{
+     const stopIds=(route.stopIds||[]).filter(id=>id!==sid);
+     const completedStopIds=(route.completedStopIds||[]).filter(id=>id!==sid);
+     const skippedStopIds=(route.skippedStopIds||[]).filter(id=>id!==sid);
+     const stopNotes=route.stopNotes?Object.fromEntries(Object.entries(route.stopNotes).filter(([id])=>id!==sid)):route.stopNotes;
+     const completed=stopIds.length>0&&new Set([...completedStopIds,...skippedStopIds]).size===stopIds.length;
+     return {...route,stopIds,completedStopIds,skippedStopIds,stopNotes,completed,updatedAt:now};
+   }).filter(route=>(route.stopIds||[]).length);
+   try{persist()}catch(e){console.error('Durak silme kaydı',e);return toast('Durak silinemedi: kayıt hatası')}
+   try{renderStops?.();renderRoutes?.()}catch(e){console.error('Durak silme görünümü',e)}
+   window.rdSyncNow?.().catch(()=>{});
+   if(deletingDirect){
+     V66.directRoute=null;V66.directMetrics=null;currentRouteId=null;
+     stopLiveTracking?.();destroyNavigationMap?.();
+     showView('contacts');toast('Durak silindi');return;
+   }
+   const live=currentRouteId?(db.routes||[]).find(x=>x.id===currentRouteId):null;
+   if(!live||!live.stopIds?.length){
+     stopLiveTracking?.();destroyNavigationMap?.();currentRouteId=null;showView('routes');toast('Durak silindi');return;
+   }
+   navIndex=Math.max(0,Math.min(navIndex,live.stopIds.length-1));
+   const pending=typeof routePendingIndex==='function'?routePendingIndex(live):navIndex;
+   if(Number.isFinite(pending))navIndex=Math.max(0,Math.min(pending,live.stopIds.length-1));
+   updateNavPanel(live,V66.lastPos);refreshNavVisual(live);focusNavigationTarget(false);toast('Durak silindi • navigasyon güncellendi');
+ };
+
+ // Rota detay kartı: tik + çarpı + düzenle + Google Haritalar.
+ window.renderRouteStopCompact=function(r,sid,i,done,skipped){
+   const st=(db.stops||[]).find(x=>x.id===sid),isDone=done.has(sid),isSkipped=skipped.has(sid),state=isDone?'done':isSkipped?'skipped':'',note=(r.stopNotes?.[sid]||st?.note||'').trim(),seg=segmentToStop(r,i),region=stopRegionLabel(st);
+   return `<div class="route-stop-row ${state}"><button class="rd-note-left ${note?'has-note':''}" title="Teslimat notu" onclick="openRouteNote('${r.id}','${sid}')">📎</button><span class="route-num2">${isDone?'✓':isSkipped?'×':i+1}</span><div class="route-stop-main"><b>${esc(st?.name||'Silinmiş durak')}</b><small>${esc(region)}${st?.contactName?' • '+esc(st.contactName):''}${st?.contactPhone?' • '+esc(st.contactPhone):''}</small></div><div class="eta-box rd-eta"><small>${i?'MESAFE':'BAŞLANGIÇ'}</small><b>${i?formatDistance(seg.distance):'0 km'}</b><em>◷ ${estimateRouteStopEta(r,i)}</em></div><div class="route-stop-actions rd-route-stop-actions"><button class="mini-btn ok" title="Gidildi" aria-label="Gidildi" onclick="setStopState('${r.id}','${sid}','done')">✓</button><button class="mini-btn no" title="Gidilmedi" aria-label="Gidilmedi" onclick="setStopState('${r.id}','${sid}','skipped')">×</button><button class="mini-btn edit" title="Durağı düzenle" aria-label="Durağı düzenle" onclick="editStop('${sid}')"><span class="rd-mini-icon rd-i-edit" aria-hidden="true"></span></button><button class="mini-btn google" title="Google Haritalar'da yol tarifi" aria-label="Google Haritalar'da yol tarifi" onclick="openStopDirectionsInGoogleMaps('${sid}')"><span class="rd-mini-icon rd-i-nav" aria-hidden="true"></span></button></div>${note?`<div class="rd-stop-note-wide">📎 ${esc(note)}</div>`:''}</div>`;
+ };
+
+ // Duraklar toplu seçiminden seçili duraklarla rota oluşturucuya geç.
+ window.rd846CreateRouteFromSelectedStops=function(){
+   const S=window.RD841,ids=S?[...S.stopSelected].filter(id=>(db.stops||[]).some(s=>s.id===id)):[];
+   if(ids.length<2)return toast('Rota oluşturmak için en az 2 durak seçin');
+   if(S){S.stopMode=false;S.stopSelected.clear()}
+   V66.builderReturnView='contacts';
+   openRouteBuilder();
+   setTimeout(()=>{
+     currentRouteStops=[...ids];
+     normalizeCurrentRouteStops();
+     const title=document.querySelector('#routeBuilderPage .page-head h2');if(title)title.textContent='Toplu Rota Oluştur';
+     renderPageRouteChoices();renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors();updatePlanControls();
+     toast(ids.length+' durak rota oluşturucuya eklendi');
+   },60);
+ };
+
+ // Rota detayından düzenlenen durağın yeni bilgisini detay ekranında da anında göster.
+ if(typeof window.saveStop==='function'){
+   const rd846SaveStop=window.saveStop;
+   window.saveStop=function(){
+     const detailWasOpen=document.body.dataset.view==='routeDetailPage',rid=currentRouteId;
+     const out=rd846SaveStop.apply(this,arguments);
+     if(detailWasOpen&&rid)setTimeout(()=>{if((db.routes||[]).some(r=>r.id===rid))window.renderRouteDetailPage?.(rid)},0);
+     return out;
+   };
+ }
 })();
 </script>
 
