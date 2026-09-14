@@ -1,7 +1,7 @@
 {
   "name": "RotaDefteri",
   "short_name": "RotaDefteri",
-  "description": "Karasu Hava Yolları RotaDefteri v8.4.7 — gidiş yönüne dönen ve konumu merkezde tutan navigasyon",
+  "description": "Karasu Hava Yolları RotaDefteri v8.4.6 — sabit konum takibi, GPS sıçrama filtresi ve sürüş yönüne dönen navigasyon haritası",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
