@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.4.10-smart-nav-active-resume">
+<meta name="rd-build" content="v8.4.11-nav-next-stops-sheet">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
 <meta name="description" content="RotaDefteri — kullanıcıya özel durak, rota ve canlı navigasyon yönetimi">
@@ -20,7 +20,7 @@
 <link rel="dns-prefetch" href="//maps.googleapis.com">
 <link rel="dns-prefetch" href="//maps.gstatic.com">
 <link rel="dns-prefetch" href="//router.project-osrm.org">
-<title>RotaDefteri v8.4.10 — Akıllı Navigasyon</title>
+<title>RotaDefteri v8.4.11 — Akıllı Navigasyon</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <style>
@@ -454,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v8.4.10";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v8.4.11";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -683,13 +683,7 @@ body.theme-dark{background:radial-gradient(circle at 60% 0%,var(--rd-accent-glow
 
 <style id="rd849-smart-nav-style">
 /* v8.4.10: only smart navigation / active-route additions */
-.rd849-summary-toggle{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 142px);z-index:1150;width:42px;height:42px;border-radius:13px;border:1px solid rgba(77,179,255,.28);background:rgba(7,25,43,.84);color:#7bd7ff;font-size:20px;font-weight:900;display:grid;place-items:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.rd849-nav-summary{position:absolute;left:14px;right:14px;bottom:calc(174px + env(safe-area-inset-bottom));z-index:1140;padding:12px;border-radius:18px;border:1px solid rgba(86,164,224,.24);background:rgba(5,20,35,.92);box-shadow:0 16px 38px rgba(0,0,0,.30);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transform:translateY(14px);opacity:0;pointer-events:none;transition:.18s ease}
-.rd849-nav-summary.open{transform:translateY(0);opacity:1;pointer-events:auto}
-.rd849-summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.rd849-summary-head b{font-size:14px;color:#fff}.rd849-summary-head span{font-size:11px;color:#7fd8ff}.rd849-summary-metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}.rd849-summary-metrics div{background:rgba(255,255,255,.05);border:1px solid rgba(120,170,220,.12);border-radius:12px;padding:8px 10px}.rd849-summary-metrics small,.rd849-summary-metrics strong{display:block}.rd849-summary-metrics small{font-size:9px;color:#8199b7}.rd849-summary-metrics strong{margin-top:2px;font-size:13px;color:#fff}.rd849-next-list{display:grid;gap:6px}.rd849-next-stop{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 8px;border-radius:11px;background:rgba(255,255,255,.035)}.rd849-next-stop i{width:26px;height:26px;border-radius:9px;background:rgba(31,157,255,.18);color:#74d6ff;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:900}.rd849-next-stop b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:#edf7ff}.rd849-next-stop small{font-size:10px;color:#8da4be;white-space:nowrap}.rd849-next-empty{font-size:11px;color:#8fa5bd;padding:8px 2px}
-.rd849-today-btn{border:1px solid rgba(255,183,64,.35)!important;background:rgba(255,153,30,.10)!important;color:#ffd08a!important}.rd849-today-btn.active{background:linear-gradient(135deg,#ffad31,#ff7a1a)!important;border-color:#ffc35a!important;color:#fff!important}.rd849-today-badge{display:inline-flex;align-items:center;gap:4px;margin-left:7px;padding:3px 7px;border-radius:999px;background:rgba(255,159,31,.14);border:1px solid rgba(255,181,64,.26);color:#ffc164;font-size:9px;font-weight:900;vertical-align:middle}.rd849-nav-picker-today{outline:1px solid rgba(255,176,54,.42);background:linear-gradient(90deg,rgba(255,152,31,.10),rgba(8,28,48,.85))!important}.rd849-nav-picker-today div b:after{content:'BUGÜN';margin-left:7px;padding:2px 6px;border-radius:999px;background:#f59b23;color:#fff;font-size:8px;vertical-align:2px}
-.rd849-resume-note{position:absolute;top:calc(env(safe-area-inset-top) + 188px);left:50%;transform:translateX(-50%);z-index:1135;padding:7px 10px;border-radius:999px;background:rgba(8,29,46,.82);border:1px solid rgba(70,192,255,.20);color:#9bddff;font-size:10px;font-weight:800;pointer-events:none;opacity:0;transition:.18s}.rd849-resume-note.show{opacity:1}
-@media(max-width:440px){.rd849-summary-toggle{top:calc(env(safe-area-inset-top) + 136px);width:38px;height:38px}.rd849-nav-summary{bottom:calc(164px + env(safe-area-inset-bottom));left:10px;right:10px;padding:10px}}
+.rd849-summary-toggle{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 82px);transform:translateX(-50%);z-index:1155;width:62px;height:42px;border-radius:13px;border:1px solid rgba(77,179,255,.30);background:rgba(7,25,43,.84);color:#8bdeff;font-size:26px;font-weight:900;display:grid;place-items:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 7px 18px rgba(0,0,0,.18);transition:.16s ease}.rd849-summary-toggle.open{background:rgba(10,42,70,.94);border-color:rgba(77,179,255,.46);color:#c7f1ff}.rd849-nav-summary{position:absolute;left:9px;right:9px;top:calc(env(safe-area-inset-top) + 132px);bottom:calc(116px + env(safe-area-inset-bottom));z-index:1150;padding:10px;border-radius:18px;border:1px solid rgba(86,164,224,.27);background:rgba(5,20,35,.95);box-shadow:0 18px 42px rgba(0,0,0,.34);backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px);transform:translateY(-8px) scale(.985);opacity:0;pointer-events:none;transition:.18s ease;display:flex;flex-direction:column;min-height:0;overflow:hidden}.rd849-nav-summary.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}.rd849-summary-head{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-bottom:8px}.rd849-summary-head b{font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd849-summary-head span{font-size:10px;color:#7fd8ff;white-space:nowrap}.rd849-summary-close{width:30px;height:30px;border-radius:9px;border:1px solid rgba(100,173,231,.22);background:rgba(255,255,255,.055);color:#a9e9ff;font-size:18px;display:grid;place-items:center;padding:0}.rd849-summary-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;flex:none}.rd849-summary-metrics div{background:rgba(255,255,255,.045);border:1px solid rgba(120,170,220,.12);border-radius:11px;padding:7px 9px}.rd849-summary-metrics small,.rd849-summary-metrics strong{display:block}.rd849-summary-metrics small{font-size:8px;color:#8199b7;letter-spacing:.04em}.rd849-summary-metrics strong{margin-top:2px;font-size:12px;color:#fff}.rd849-next-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;padding-right:1px}.rd849-next-stop{display:grid;grid-template-columns:28px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:2px 7px;align-items:center;padding:8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(115,164,210,.10);flex:none}.rd849-next-stop.current{background:rgba(24,141,255,.10);border-color:rgba(48,173,255,.23)}.rd849-next-stop>i{grid-column:1;grid-row:1/3;width:28px;height:28px;border-radius:9px;background:rgba(31,157,255,.18);color:#74d6ff;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:900}.rd849-next-copy{grid-column:2;grid-row:1/3;min-width:0}.rd849-next-copy b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:#edf7ff}.rd849-next-copy small{display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;color:#8da4be}.rd849-next-actions{grid-column:3;grid-row:1/3;display:flex;align-items:center;gap:4px}.rd849-next-actions button{width:30px;height:30px;border-radius:9px;border:1px solid rgba(108,171,231,.20);padding:0;display:grid;place-items:center;font-size:16px;font-weight:900;color:#fff;background:rgba(255,255,255,.05)}.rd849-next-actions .done{border-color:rgba(37,211,126,.34);color:#6ff0ad;background:rgba(25,170,97,.12)}.rd849-next-actions .skip{border-color:rgba(255,92,107,.32);color:#ff8b96;background:rgba(213,64,78,.12)}.rd849-next-actions .map{border-color:rgba(41,182,255,.30);color:#88e2ff;background:rgba(16,123,182,.12)}.rd849-next-empty{font-size:11px;color:#8fa5bd;padding:12px 4px;text-align:center}@media(max-width:440px){.rd849-summary-toggle{top:calc(env(safe-area-inset-top) + 80px);width:58px;height:40px;font-size:24px}.rd849-nav-summary{left:7px;right:7px;top:calc(env(safe-area-inset-top) + 127px);bottom:calc(108px + env(safe-area-inset-bottom));padding:9px}.rd849-next-stop{padding:7px}.rd849-next-actions button{width:28px;height:28px;font-size:15px}.rd849-next-actions{gap:3px}}
 </style>
 </head>
 <body>
@@ -1260,7 +1254,7 @@ showView('home');
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
-      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-10-auth-startup-stable'))await caches.delete(k)}}
+      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
       const reg=await navigator.serviceWorker.register('./sw.js?v=8.4.10',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
@@ -1979,7 +1973,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.4.10-auth-startup-stable';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.4.11-nav-next-stops-sheet';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2327,7 +2321,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.4.10-auth-startup-stable';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.4.11-nav-next-stops-sheet';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2365,15 +2359,16 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 
  function ensureSummaryUi(){
    const page=document.getElementById('navigationPage');if(!page)return;
-   if(!document.getElementById('rd849SummaryToggle')){const b=document.createElement('button');b.id='rd849SummaryToggle';b.className='rd849-summary-toggle';b.type='button';b.title='Rota özeti';b.setAttribute('aria-label','Rota özetini aç');b.textContent='☰';b.onclick=()=>window.toggleNavQuickSummary();page.appendChild(b)}
-   if(!document.getElementById('rd849NavSummary')){const d=document.createElement('div');d.id='rd849NavSummary';d.className='rd849-nav-summary';d.innerHTML='<div class="rd849-summary-head"><b>Rota özeti</b><span id="rd849SummaryCount">—</span></div><div class="rd849-summary-metrics"><div><small>KALAN MESAFE</small><strong id="rd849SummaryKm">—</strong></div><div><small>TAHMİNİ VARIŞ</small><strong id="rd849SummaryEta">—</strong></div></div><div id="rd849NextStops" class="rd849-next-list"></div>';page.appendChild(d)}
+   if(!document.getElementById('rd849SummaryToggle')){const b=document.createElement('button');b.id='rd849SummaryToggle';b.className='rd849-summary-toggle';b.type='button';b.title='Sıradaki durakları göster';b.setAttribute('aria-label','Sıradaki durakları göster');b.textContent='⌄';b.onclick=()=>window.toggleNavQuickSummary();page.appendChild(b)}
+   if(!document.getElementById('rd849NavSummary')){const d=document.createElement('div');d.id='rd849NavSummary';d.className='rd849-nav-summary';d.innerHTML='<div class="rd849-summary-head"><b>Sıradaki duraklar</b><span id="rd849SummaryCount">—</span><button type="button" class="rd849-summary-close" onclick="toggleNavQuickSummary(false)" title="Kapat" aria-label="Sıradaki durakları kapat">⌃</button></div><div class="rd849-summary-metrics"><div><small>KALAN MESAFE</small><strong id="rd849SummaryKm">—</strong></div><div><small>TAHMİNİ VARIŞ</small><strong id="rd849SummaryEta">—</strong></div></div><div id="rd849NextStops" class="rd849-next-list"></div>';page.appendChild(d)}
  }
- window.toggleNavQuickSummary=function(force){ensureSummaryUi();R.summaryOpen=typeof force==='boolean'?force:!R.summaryOpen;document.getElementById('rd849NavSummary')?.classList.toggle('open',R.summaryOpen);renderNavQuickSummary()};
+ window.toggleNavQuickSummary=function(force){ensureSummaryUi();R.summaryOpen=typeof force==='boolean'?force:!R.summaryOpen;const panel=document.getElementById('rd849NavSummary'),toggle=document.getElementById('rd849SummaryToggle');panel?.classList.toggle('open',R.summaryOpen);toggle?.classList.toggle('open',R.summaryOpen);if(toggle){toggle.textContent=R.summaryOpen?'⌃':'⌄';toggle.title=R.summaryOpen?'Sıradaki durakları kapat':'Sıradaki durakları göster';toggle.setAttribute('aria-label',toggle.title)}renderNavQuickSummary()};
+ window.rd850NavStopAction=function(sid,state){const r=currentNavRoute?.();if(!r||r._direct||r.completed)return;if(!sid)return;const currentSid=r.stopIds?.[navIndex];if(sid===currentSid){navMarkCurrent(state);return}setStopState(r.id,sid,state);R.reroute=null;try{updateNavPanel(r,V66.lastPos);renderNavQuickSummary();saveSession('sheet-state')}catch(_){} };
  function renderNavQuickSummary(){
-   ensureSummaryUi();const r=currentNavRoute?.();if(!r)return;const resolved=resolvedSet(r),pending=[];for(let i=Math.max(0,navIndex);i<(r.stopIds||[]).length;i++){const id=r.stopIds[i];if(resolved.has(id))continue;const s=db.stops.find(x=>x.id===id);if(s)pending.push({s,i});if(pending.length>=3)break}
+   ensureSummaryUi();const r=currentNavRoute?.();if(!r)return;const resolved=resolvedSet(r),pending=[];for(let i=Math.max(0,navIndex);i<(r.stopIds||[]).length;i++){const id=r.stopIds[i];if(resolved.has(id))continue;const s=db.stops.find(x=>x.id===id);if(s)pending.push({s,i})}
    const m=remainingMetrics(r,V66.lastPos),km=document.getElementById('rd849SummaryKm'),eta=document.getElementById('rd849SummaryEta'),cnt=document.getElementById('rd849SummaryCount'),list=document.getElementById('rd849NextStops');
-   if(km)km.textContent=m?.distance?formatDistance(Math.max(0,m.distance)):'—';if(eta)eta.textContent=m?.duration?new Date(Date.now()+m.duration*1000).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'—';if(cnt)cnt.textContent=Math.max(0,(r.stopIds?.length||0)-routeFinishedCount(r))+' durak kaldı';
-   if(list)list.innerHTML=pending.length?pending.map(({s,i},j)=>`<div class="rd849-next-stop"><i>${i+1}</i><b>${esc(s.name)}</b><small>${j===0?'Sıradaki':(j+1)+'. sonraki'}</small></div>`).join(''):'<div class="rd849-next-empty">Kalan durak bulunmuyor.</div>';
+   if(km)km.textContent=m?.distance?formatDistance(Math.max(0,m.distance)):'—';if(eta)eta.textContent=m?.duration?new Date(Date.now()+m.duration*1000).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'—';if(cnt)cnt.textContent=pending.length+' durak kaldı';
+   if(list)list.innerHTML=pending.length?pending.map(({s,i},j)=>{const region=typeof stopRegionLabel==='function'?stopRegionLabel(s):'';const etaText=typeof estimateRouteStopEta==='function'?estimateRouteStopEta(r,i):'';const meta=[region,etaText?'◷ '+etaText:''].filter(Boolean).join(' • ');return `<div class="rd849-next-stop ${j===0?'current':''}"><i>${i+1}</i><div class="rd849-next-copy"><b title="${esc(s.name)}">${esc(s.name)}</b><small>${esc(meta||'Sıradaki durak')}</small></div><div class="rd849-next-actions"><button type="button" class="done" title="Gidildi" aria-label="${esc(s.name)} gidildi" onclick="rd850NavStopAction('${s.id}','done')">✓</button><button type="button" class="skip" title="Gidilmedi" aria-label="${esc(s.name)} gidilmedi" onclick="rd850NavStopAction('${s.id}','skipped')">×</button><button type="button" class="map" title="Google Haritalar\'da aç" aria-label="${esc(s.name)} Google Haritalar'da aç" onclick="openStopInGoogleMaps('${s.id}')">⌖</button></div></div>`}).join(''):'<div class="rd849-next-empty">Kalan durak bulunmuyor.</div>';
  }
 
  function flattenLeafletLayer(layer,out=[]){try{if(layer?.getLatLngs){const walk=v=>{if(Array.isArray(v))v.forEach(walk);else if(v&&finite(Number(v.lat))&&finite(Number(v.lng)))out.push({lat:Number(v.lat),lng:Number(v.lng)})};walk(layer.getLatLngs())}else if(layer?.getLayers)layer.getLayers().forEach(x=>flattenLeafletLayer(x,out))}catch(_){}return out}
@@ -2433,7 +2428,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
  // Lightweight resume watchdog; unlike map initialization it never recalculates the route.
  setInterval(()=>{if(document.body.dataset.view!=='navigationPage'||document.hidden)return;const r=currentNavRoute?.();if(!r)return;if(db.settings.liveTracking!==false&&navWatchId===null)startLiveTracking();if(now()-R.lastSessionSaveAt>12000)saveSession('watchdog');clearTodayIfFinished(r)},7000);
 
- ensureSummaryUi();setTimeout(()=>{try{renderRoutes();renderDashboardHome();if(!document.getElementById('authGate')?.classList.contains('open'))attemptRestore('boot')}catch(e){console.warn('v8.4.10 başlangıç',e)}},220);
+ ensureSummaryUi();setTimeout(()=>{try{renderRoutes();renderDashboardHome();if(!document.getElementById('authGate')?.classList.contains('open'))attemptRestore('boot')}catch(e){console.warn('v8.4.11 başlangıç',e)}},220);
 })();
 </script>
 
