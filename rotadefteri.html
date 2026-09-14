@@ -454,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v8.4.6";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v8.4.7";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -936,7 +936,7 @@ function saveSettings(){
 }
 let mainMapProvider=null,mainMapMarkers=[],mainInfoWindow=null,mainMarkerRenderToken=0,navMapProvider=null,navStopMarkers=[],navTrafficLayer=null;
 function tileUrl(){return db.settings.map==='hot'?'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png':'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
-function makeMap(el,center=[40.195,29.06],zoom=10){const m=L.map(el).setView(center,zoom);L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları'}).addTo(m);return m}
+function makeMap(el,center=[40.195,29.06],zoom=10){const m=L.map(el,{zoomAnimation:true,fadeAnimation:true,markerZoomAnimation:true,preferCanvas:true,inertia:true,inertiaDeceleration:3400,inertiaMaxSpeed:1250}).setView(center,zoom);L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları',updateWhenIdle:true,updateWhenZooming:false,keepBuffer:4,detectRetina:false}).addTo(m);return m}
 function destroyMainMap(){
  mainMarkerRenderToken++;mainMapMarkers.forEach(x=>{try{mainMapProvider==='google'?x.setMap(null):x.remove()}catch(_){}});mainMapMarkers=[];
  const host=document.getElementById('map');
@@ -1225,8 +1225,8 @@ showView('home');
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
-      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-6-nav-follow-heading-stable'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.4.6',{updateViaCache:'none'});
+      if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-7-nav-smooth-freepan'))await caches.delete(k)}}
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.4.7',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -1483,7 +1483,7 @@ async function updateRemainingNavigationRoute(r,pendingPts,weight){
  try{const result=await fetchOsrmRoute(pendingPts);if(token!==V66.navRouteToken||currentRouteId!==r.id||!result?.geometry?.coordinates?.length)return;navClearOverlay(navPolyline);if(navMapProvider==='google'){const path=result.geometry.coordinates.map(c=>({lat:Number(c[1]),lng:Number(c[0])}));navPolyline=new google.maps.Polyline({map:navMap,path,strokeColor:navRouteColor(),strokeOpacity:.88,strokeWeight:weight,geodesic:false,zIndex:5})}else navPolyline=L.geoJSON(result.geometry,{style:{weight,opacity:.82,color:navRouteColor(),lineCap:'round',lineJoin:'round'}}).addTo(navMap)}catch(e){/* kalan rota için geçici nokta çizgisi korunur */}
 }
 async function updateApproachRoute(r,pos,force=false){
- if(!navMap||!pos)return;const target=currentTarget(r);if(!target)return;const moved=V66.approachPos?pointDistance(pos,V66.approachPos):Infinity;if(!force&&V66.approachTargetId===target.id&&Date.now()-V66.approachAt<18000&&moved<90)return;V66.approachTargetId=target.id;V66.approachAt=Date.now();V66.approachPos={...pos};navClearOverlay(navApproachPolyline);navApproachPolyline=null;const straight=pointDistance(pos,{lat:target.lat,lng:target.lng});if(straight<35){if(r?._direct){V66.directMetrics={distance:straight,duration:0,updatedAt:Date.now()};updateNavPanel(r,pos)}return}const coords=`${pos.lng},${pos.lat};${target.lng},${target.lat}`,ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
+ if(!navMap||!pos)return;const target=currentTarget(r);if(!target)return;const moved=V66.approachPos?pointDistance(pos,V66.approachPos):Infinity;if(!force&&V66.approachTargetId===target.id&&Date.now()-V66.approachAt<30000&&moved<180)return;V66.approachTargetId=target.id;V66.approachAt=Date.now();V66.approachPos={...pos};navClearOverlay(navApproachPolyline);navApproachPolyline=null;const straight=pointDistance(pos,{lat:target.lat,lng:target.lng});if(straight<35){if(r?._direct){V66.directMetrics={distance:straight,duration:0,updatedAt:Date.now()};updateNavPanel(r,pos)}return}const coords=`${pos.lng},${pos.lat};${target.lng},${target.lat}`,ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
  try{const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=full&geometries=geojson&steps=false',{signal:ctrl.signal});const data=await res.json();const route=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;if(route?.geometry){if(navMapProvider==='google'){const path=route.geometry.coordinates.map(c=>({lat:Number(c[1]),lng:Number(c[0])}));navApproachPolyline=new google.maps.Polyline({map:navMap,path,strokeColor:navRouteColor(),strokeOpacity:.95,strokeWeight:7,zIndex:9})}else navApproachPolyline=L.geoJSON(route.geometry,{style:{weight:7,opacity:.92,color:navRouteColor(),lineCap:'round',lineJoin:'round'}}).addTo(navMap);if(r?._direct){V66.directMetrics={distance:Number(route.distance)||straight,duration:Number(route.duration)||0,updatedAt:Date.now()};r.distance=V66.directMetrics.distance;r.duration=V66.directMetrics.duration;updateNavPanel(r,pos)}}}
  catch(e){const fallbackDistance=straight*1.18,fallbackDuration=(fallbackDistance/1000)/38*3600;if(r?._direct){V66.directMetrics={distance:fallbackDistance,duration:fallbackDuration,updatedAt:Date.now()};r.distance=fallbackDistance;r.duration=fallbackDuration;updateNavPanel(r,pos)}if(navMapProvider==='google')navApproachPolyline=new google.maps.Polyline({map:navMap,path:[{lat:pos.lat,lng:pos.lng},{lat:target.lat,lng:target.lng}],strokeColor:navRouteColor(),strokeOpacity:.6,strokeWeight:4,zIndex:8});else navApproachPolyline=L.polyline([[pos.lat,pos.lng],[target.lat,target.lng]],{weight:4,opacity:.62,color:navRouteColor(),dashArray:'7 9'}).addTo(navMap)}finally{clearTimeout(timer)}
 }
@@ -1935,7 +1935,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.4.6-nav-follow-heading-stable';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.4.7-nav-smooth-freepan';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2013,291 +2013,223 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </script>
 
 
-<style id="rd846-navigation-stability-css">
-/* v8.4.6 — navigation follow/heading stability */
-#navMap.rd846-heading-map .leaflet-tile-pane,
-#navMap.rd846-heading-map .leaflet-overlay-pane,
-#navMap.rd846-heading-map .leaflet-shadow-pane,
-#navMap.rd846-heading-map .leaflet-marker-pane,
-#navMap.rd846-heading-map .leaflet-tooltip-pane,
-#navMap.rd846-heading-map .leaflet-popup-pane{
+<style id="rd847-navigation-smooth-css">
+/* v8.4.7 — smooth GPS follow + free pan/zoom + heading wrap fix */
+#navMap.rd847-heading-map .leaflet-tile-pane,
+#navMap.rd847-heading-map .leaflet-overlay-pane,
+#navMap.rd847-heading-map .leaflet-shadow-pane,
+#navMap.rd847-heading-map .leaflet-marker-pane,
+#navMap.rd847-heading-map .leaflet-tooltip-pane,
+#navMap.rd847-heading-map .leaflet-popup-pane{
   will-change:transform;
-  transition:transform .28s linear;
+  transition:transform .42s cubic-bezier(.22,.61,.36,1);
   backface-visibility:hidden;
   transform-style:preserve-3d;
 }
-#navMap.rd846-heading-map .rd-stop-marker{transition:transform .28s linear}
-.rd846-gps-state{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 228px);transform:translateX(-50%);z-index:4;pointer-events:none;background:rgba(8,19,31,.78);border:1px solid rgba(97,183,255,.22);border-radius:999px;padding:5px 9px;color:#c8def2;font-size:10px;opacity:0;transition:opacity .2s ease}
-.rd846-gps-state.show{opacity:1}
+#navMap.rd847-heading-map .rd-stop-marker{transition:transform .42s cubic-bezier(.22,.61,.36,1)}
+#navMap.rd847-manual-map{cursor:grab}
+#navMap.rd847-manual-map:active{cursor:grabbing}
+.rd847-gps-state{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 228px);transform:translateX(-50%);z-index:4;pointer-events:none;background:rgba(8,19,31,.82);border:1px solid rgba(97,183,255,.22);border-radius:999px;padding:5px 9px;color:#c8def2;font-size:10px;opacity:0;transition:opacity .2s ease;white-space:nowrap}
+.rd847-gps-state.show{opacity:1}
 </style>
-<script id="rd846-navigation-stability-engine">
+<script id="rd847-navigation-smooth-engine">
 (function(){
   'use strict';
-  if(window.RD846_NAV_PATCHED)return;
-  window.RD846_NAV_PATCHED=true;
+  if(window.RD847_NAV_PATCHED)return;
+  window.RD847_NAV_PATCHED=true;
 
-  const S=window.RD846Nav={
-    initSeq:0,
-    acceptedPos:null,
-    acceptedAt:0,
-    rawPos:null,
-    course:null,
-    mapBearing:null,
-    googleBearingApplied:false,
-    leafMoveHandler:null,
-    leafResizeHandler:null,
-    watchdog:null,
-    lastCenterAt:0,
-    lastGpsErrorAt:0,
-    lastStatusAt:0,
+  const S=window.RD847Nav={
+    initSeq:0,initPromise:null,initRouteId:null,initStartedAt:0,
+    acceptedPos:null,acceptedAt:0,rawPos:null,course:null,
+    mapBearing:null,visualBearing:null,lastBearingApplied:null,lastBearingAt:0,
+    googleBearingApplied:false,manualInteraction:false,programmaticMove:false,
+    interactionCleanup:null,mapEndHandler:null,watchdog:null,
+    lastCenterAt:0,lastGpsErrorAt:0,lastStatusAt:0,
+    markerFrame:0,lastMarkerAt:0,lastPanelAt:0,lastApproachRequestAt:0,
     fallbackInitPending:false
   };
 
   const norm=d=>((Number(d)%360)+360)%360;
   const angleDelta=(a,b)=>((norm(b)-norm(a)+540)%360)-180;
-  const smoothAngle=(from,to,factor=.34)=>norm(norm(from)+angleDelta(from,to)*factor);
+  const smoothAngle=(from,to,factor=.28)=>norm(norm(from)+angleDelta(from,to)*factor);
   const finite=n=>n!==null&&n!==undefined&&n!==''&&Number.isFinite(Number(n));
   const dist=(a,b)=>a&&b?haversine(Number(a.lat),Number(a.lng),Number(b.lat),Number(b.lng)):Infinity;
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 
   function statusNode(){
-    let n=document.getElementById('rd846GpsState');
-    if(!n){n=document.createElement('div');n.id='rd846GpsState';n.className='rd846-gps-state';document.getElementById('navigationPage')?.appendChild(n)}
+    let n=document.getElementById('rd847GpsState');
+    if(!n){n=document.createElement('div');n.id='rd847GpsState';n.className='rd847-gps-state';document.getElementById('navigationPage')?.appendChild(n)}
     return n;
   }
-  function navStatus(text,ms=1800){
+  function navStatus(text,ms=1700){
     const n=statusNode();if(!n)return;n.textContent=text;n.classList.add('show');
     clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('show'),ms);
   }
 
   function extractLeafletCourse(layer,pos){
-    if(!layer||!pos)return null;
-    const pts=[];
-    const push=v=>{
-      if(!v)return;
-      if(Array.isArray(v)){v.forEach(push);return}
-      if(finite(v.lat)&&finite(v.lng))pts.push({lat:Number(v.lat),lng:Number(v.lng)})
-    };
-    try{
-      if(typeof layer.getLatLngs==='function')push(layer.getLatLngs());
-      if(typeof layer.eachLayer==='function')layer.eachLayer(x=>{try{if(typeof x.getLatLngs==='function')push(x.getLatLngs())}catch(_){}});
-    }catch(_){ }
-    if(pts.length<2)return null;
-    let best=0,bestD=Infinity;
+    if(!layer||!pos)return null;const pts=[];
+    const push=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(push);return}if(finite(v.lat)&&finite(v.lng))pts.push({lat:Number(v.lat),lng:Number(v.lng)})};
+    try{if(typeof layer.getLatLngs==='function')push(layer.getLatLngs());if(typeof layer.eachLayer==='function')layer.eachLayer(x=>{try{if(typeof x.getLatLngs==='function')push(x.getLatLngs())}catch(_){}})}catch(_){}
+    if(pts.length<2)return null;let best=0,bestD=Infinity;
     for(let i=0;i<pts.length;i++){const d=dist(pos,pts[i]);if(d<bestD){bestD=d;best=i}}
-    let j=best+1;while(j<pts.length-1&&dist(pts[best],pts[j])<22)j++;
-    const q=pts[Math.min(j,pts.length-1)];return q&&bestD<180?bearingBetween(pos,q):null;
+    let j=best+1;while(j<pts.length-1&&dist(pts[best],pts[j])<28)j++;
+    const q=pts[Math.min(j,pts.length-1)];return q&&bestD<220?bearingBetween(pos,q):null;
   }
   function extractGoogleCourse(layer,pos){
     if(!layer||!pos||typeof layer.getPath!=='function')return null;
-    try{
-      const p=layer.getPath(),pts=[];for(let i=0;i<p.getLength();i++){const x=p.getAt(i);pts.push({lat:x.lat(),lng:x.lng()})}
-      if(pts.length<2)return null;let best=0,bestD=Infinity;
-      for(let i=0;i<pts.length;i++){const d=dist(pos,pts[i]);if(d<bestD){bestD=d;best=i}}
-      let j=best+1;while(j<pts.length-1&&dist(pts[best],pts[j])<22)j++;
-      return bestD<180?bearingBetween(pos,pts[Math.min(j,pts.length-1)]):null;
-    }catch(_){return null}
+    try{const p=layer.getPath(),pts=[];for(let i=0;i<p.getLength();i++){const x=p.getAt(i);pts.push({lat:x.lat(),lng:x.lng()})}if(pts.length<2)return null;let best=0,bestD=Infinity;for(let i=0;i<pts.length;i++){const d=dist(pos,pts[i]);if(d<bestD){bestD=d;best=i}}let j=best+1;while(j<pts.length-1&&dist(pts[best],pts[j])<28)j++;return bestD<220?bearingBetween(pos,pts[Math.min(j,pts.length-1)]):null}catch(_){return null}
   }
   function routeCourse(r,pos){
-    let b=null;
-    if(navMapProvider==='leaflet')b=extractLeafletCourse(navApproachPolyline,pos);
-    else if(navMapProvider==='google')b=extractGoogleCourse(navApproachPolyline,pos);
-    if(finite(b))return norm(b);
-    const g=r?.geometry?.coordinates;
-    if(Array.isArray(g)&&g.length>1){
-      let best=0,bestD=Infinity;
-      for(let i=0;i<g.length;i++){const q={lat:Number(g[i][1]),lng:Number(g[i][0])};if(!finite(q.lat)||!finite(q.lng))continue;const d=dist(pos,q);if(d<bestD){bestD=d;best=i}}
-      let j=best+1;while(j<g.length-1&&dist({lat:Number(g[best][1]),lng:Number(g[best][0])},{lat:Number(g[j][1]),lng:Number(g[j][0])})<25)j++;
-      if(bestD<220&&g[j])return bearingBetween(pos,{lat:Number(g[j][1]),lng:Number(g[j][0])});
-    }
+    let b=null;if(navMapProvider==='leaflet')b=extractLeafletCourse(navApproachPolyline,pos);else if(navMapProvider==='google')b=extractGoogleCourse(navApproachPolyline,pos);if(finite(b))return norm(b);
+    const g=r?.geometry?.coordinates;if(Array.isArray(g)&&g.length>1){let best=0,bestD=Infinity;for(let i=0;i<g.length;i++){const q={lat:Number(g[i][1]),lng:Number(g[i][0])};if(!finite(q.lat)||!finite(q.lng))continue;const d=dist(pos,q);if(d<bestD){bestD=d;best=i}}let j=best+1;while(j<g.length-1&&dist({lat:Number(g[best][1]),lng:Number(g[best][0])},{lat:Number(g[j][1]),lng:Number(g[j][0])})<32)j++;if(bestD<260&&g[j])return bearingBetween(pos,{lat:Number(g[j][1]),lng:Number(g[j][0])})}
     return r?guidanceBearing(r,pos):null;
   }
 
   function clearLeafletBearing(){
-    const host=document.getElementById('navMap');host?.classList.remove('rd846-heading-map');
-    if(!host)return;
+    const host=document.getElementById('navMap');host?.classList.remove('rd847-heading-map');if(!host)return;
     host.querySelectorAll('.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-shadow-pane,.leaflet-marker-pane,.leaflet-tooltip-pane,.leaflet-popup-pane').forEach(p=>{p.style.transform='';p.style.transformOrigin='';p.style.transition=''});
     host.querySelectorAll('.rd-stop-marker').forEach(p=>p.style.transform='');
+    S.lastBearingApplied=null;
   }
-  function applyLeafletBearing(deg){
+  function applyLeafletBearing(deg,force=false){
     if(navMapProvider!=='leaflet'||!navMap||!finite(deg))return;
-    const host=document.getElementById('navMap');if(!host)return;host.classList.add('rd846-heading-map');
-    const panes=navMap.getPanes?.();if(!panes)return;
-    const size=navMap.getSize?.(),mp=navMap._getMapPanePos?.()||{x:0,y:0};if(!size)return;
-    const ox=(size.x/2)-Number(mp.x||0),oy=(size.y/2)-Number(mp.y||0),rot=-norm(deg);
+    if(!navTracking||S.manualInteraction){clearLeafletBearing();return}
+    const target=norm(deg),now=performance.now();
+    if(!finite(S.visualBearing))S.visualBearing=target;else S.visualBearing=Number(S.visualBearing)+angleDelta(S.visualBearing,target);
+    const changed=!finite(S.lastBearingApplied)?999:Math.abs(Number(S.visualBearing)-Number(S.lastBearingApplied));
+    if(!force&&(changed<2.2||now-S.lastBearingAt<140))return;
+    S.lastBearingAt=now;S.lastBearingApplied=S.visualBearing;
+    const host=document.getElementById('navMap');if(!host)return;host.classList.add('rd847-heading-map');host.classList.remove('rd847-manual-map');
+    const panes=navMap.getPanes?.();if(!panes)return;const size=navMap.getSize?.(),mp=navMap._getMapPanePos?.()||{x:0,y:0};if(!size)return;
+    const ox=(size.x/2)-Number(mp.x||0),oy=(size.y/2)-Number(mp.y||0),visual=Number(S.visualBearing),rot=-visual;
     ['tilePane','overlayPane','shadowPane','markerPane','tooltipPane','popupPane'].forEach(k=>{const p=panes[k];if(!p)return;p.style.transformOrigin=`${ox}px ${oy}px`;p.style.transform=`rotate(${rot}deg)`});
-    host.querySelectorAll('.rd-stop-marker').forEach(el=>{el.style.transform=`rotate(${norm(deg)}deg)`});
-    const arrow=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(arrow)arrow.style.transform=`rotate(${norm(deg)}deg)`;
+    host.querySelectorAll('.rd-stop-marker').forEach(el=>{el.style.transform=`rotate(${visual}deg)`});
+    const arrow=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(arrow)arrow.style.transform=`rotate(${visual}deg)`;
   }
-  function applyMapBearing(deg){
-    if(!finite(deg)||!navMap)return;
-    const b=norm(deg);S.mapBearing=b;
+  function applyMapBearing(deg,force=false){
+    if(!finite(deg)||!navMap)return;const b=norm(deg);S.mapBearing=b;
+    if(S.manualInteraction||!navTracking){if(navMapProvider==='leaflet')clearLeafletBearing();else if(navMapProvider==='google'){try{navMap.setHeading?.(0);navMap.setTilt?.(0)}catch(_){}}return}
     if(navMapProvider==='google'){
       clearLeafletBearing();S.googleBearingApplied=false;
-      try{
-        if(typeof navMap.setHeading==='function'){
-          navMap.setHeading(b);
-          const got=typeof navMap.getHeading==='function'?Number(navMap.getHeading()):NaN;
-          S.googleBearingApplied=Number.isFinite(got)&&Math.abs(angleDelta(got,b))<8;
-        }
-      }catch(_){S.googleBearingApplied=false}
-    }else if(navMapProvider==='leaflet'){
-      S.googleBearingApplied=false;applyLeafletBearing(b);
-    }
+      try{navMap.setTilt?.(0);if(typeof navMap.setHeading==='function'){navMap.setHeading(b);const got=typeof navMap.getHeading==='function'?Number(navMap.getHeading()):NaN;S.googleBearingApplied=Number.isFinite(got)&&Math.abs(angleDelta(got,b))<10}}catch(_){S.googleBearingApplied=false}
+    }else if(navMapProvider==='leaflet'){S.googleBearingApplied=false;applyLeafletBearing(b,force)}
   }
 
-  const oldSetArrowHeading=setArrowHeading;
   setArrowHeading=function(deg){
     if(!finite(deg))return;V66.heading=norm(deg);
     if(navMapProvider==='google'&&navPositionMarker){navPositionMarker.setIcon(googleArrowIcon(S.googleBearingApplied?0:V66.heading));return}
-    const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(el)el.style.transform=`rotate(${V66.heading}deg)`;
+    const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(!el)return;
+    if(navMapProvider==='leaflet'&&navTracking&&!S.manualInteraction&&finite(S.visualBearing))el.style.transform=`rotate(${S.visualBearing}deg)`;else el.style.transform=`rotate(${V66.heading}deg)`;
   };
 
+  function cleanupInteractionBindings(){try{S.interactionCleanup?.()}catch(_){}S.interactionCleanup=null;if(S.mapEndHandler&&navMapProvider==='leaflet'&&navMap){try{navMap.off('moveend zoomend resize',S.mapEndHandler)}catch(_){}}S.mapEndHandler=null}
   const oldDestroy=destroyNavigationMap;
-  destroyNavigationMap=function(){
-    clearLeafletBearing();
-    if(S.leafMoveHandler&&navMapProvider==='leaflet'&&navMap){try{navMap.off('move zoom resize',S.leafMoveHandler)}catch(_){}}
-    S.leafMoveHandler=null;S.googleBearingApplied=false;
-    return oldDestroy();
-  };
+  destroyNavigationMap=function(){cleanupInteractionBindings();clearLeafletBearing();if(S.markerFrame)cancelAnimationFrame(S.markerFrame);S.markerFrame=0;S.googleBearingApplied=false;S.manualInteraction=false;S.visualBearing=null;return oldDestroy()};
 
-  function bindBearingRefresh(){
-    if(navMapProvider!=='leaflet'||!navMap)return;
-    if(S.leafMoveHandler){try{navMap.off('move zoom resize',S.leafMoveHandler)}catch(_){}}
-    S.leafMoveHandler=()=>{if(document.body.dataset.view==='navigationPage')requestAnimationFrame(()=>applyLeafletBearing(S.mapBearing||0))};
-    try{navMap.on('move zoom resize',S.leafMoveHandler)}catch(_){ }
-    applyLeafletBearing(S.mapBearing||0);
+  function enterManualMapMode(show=true){
+    if(document.body.dataset.view!=='navigationPage'||!navMap)return;
+    if(!S.manualInteraction||navTracking){S.manualInteraction=true;navTracking=false;const host=document.getElementById('navMap');host?.classList.add('rd847-manual-map');if(navMapProvider==='leaflet')clearLeafletBearing();else if(navMapProvider==='google'){try{navMap.setHeading?.(0);navMap.setTilt?.(0)}catch(_){}}if(show&&Date.now()-S.lastStatusAt>1800){S.lastStatusAt=Date.now();navStatus('Serbest harita • Konumu Ortala ile takibe dön',1800)}}
+  }
+  function bindMapInteraction(){
+    cleanupInteractionBindings();const host=document.getElementById('navMap');if(!host||!navMap)return;
+    const onPointer=()=>enterManualMapMode(true),opts={capture:true,passive:true};
+    host.addEventListener('pointerdown',onPointer,opts);host.addEventListener('touchstart',onPointer,opts);host.addEventListener('wheel',onPointer,opts);
+    S.interactionCleanup=()=>{host.removeEventListener('pointerdown',onPointer,true);host.removeEventListener('touchstart',onPointer,true);host.removeEventListener('wheel',onPointer,true)};
+    if(navMapProvider==='leaflet'){
+      S.mapEndHandler=()=>{if(!S.manualInteraction&&navTracking&&finite(S.mapBearing))requestAnimationFrame(()=>applyLeafletBearing(S.mapBearing,true))};
+      try{navMap.on('moveend zoomend resize',S.mapEndHandler)}catch(_){}
+    }
   }
 
   function acceptGps(coords,r){
-    const p={lat:Number(coords.latitude),lng:Number(coords.longitude)},now=Date.now();
-    if(!finite(p.lat)||!finite(p.lng))return null;
+    const p={lat:Number(coords.latitude),lng:Number(coords.longitude)},now=Date.now();if(!finite(p.lat)||!finite(p.lng))return null;
     const accuracy=finite(coords.accuracy)?Math.max(0,Number(coords.accuracy)):999;
-    if(S.acceptedPos){
-      const dt=Math.max(.25,(now-S.acceptedAt)/1000),d=dist(S.acceptedPos,p),reported=Math.max(0,(Number(coords.speed)||0)*3.6),implied=d/dt*3.6;
-      if(accuracy>250)return null;
-      if(dt<7&&d>120&&implied>Math.max(150,reported+95))return null;
-      if(dt<3&&d>70&&reported<55&&accuracy>18)return null;
-    }
-    let out=p;
-    const speedKmh=Math.max(0,(Number(coords.speed)||0)*3.6);
-    if(S.acceptedPos&&speedKmh<10&&accuracy>8){const w=accuracy>45?.34:accuracy>25?.48:.62;out={lat:S.acceptedPos.lat+(p.lat-S.acceptedPos.lat)*w,lng:S.acceptedPos.lng+(p.lng-S.acceptedPos.lng)*w}}
-    const moved=S.acceptedPos?dist(S.acceptedPos,out):0;
-    let course=finite(coords.heading)&&speedKmh>=5?norm(Number(coords.heading)):null;
-    if(!finite(course)&&S.acceptedPos&&moved>=4)course=bearingBetween(S.acceptedPos,out);
-    if(!finite(course))course=routeCourse(r,out);
-    if(finite(course))S.course=finite(S.course)?smoothAngle(S.course,course,speedKmh>18?.42:.28):norm(course);
-    S.rawPos=p;S.acceptedPos=out;S.acceptedAt=now;
-    return {pos:out,course:S.course,accuracy,speedKmh,moved};
+    if(S.acceptedPos){const dt=Math.max(.25,(now-S.acceptedAt)/1000),d=dist(S.acceptedPos,p),reported=Math.max(0,(Number(coords.speed)||0)*3.6),implied=d/dt*3.6;if(accuracy>250)return null;if(dt<7&&d>120&&implied>Math.max(150,reported+95))return null;if(dt<3&&d>70&&reported<55&&accuracy>18)return null}
+    const speedKmh=Math.max(0,(Number(coords.speed)||0)*3.6);let out=p;
+    if(S.acceptedPos){let w=1;if(speedKmh<5)w=accuracy>35?.30:accuracy>18?.42:.55;else if(accuracy>45)w=.48;else if(accuracy>25)w=.62;else if(accuracy>14)w=.78;if(w<1)out={lat:S.acceptedPos.lat+(p.lat-S.acceptedPos.lat)*w,lng:S.acceptedPos.lng+(p.lng-S.acceptedPos.lng)*w}}
+    const moved=S.acceptedPos?dist(S.acceptedPos,out):0;let course=finite(coords.heading)&&speedKmh>=6?norm(Number(coords.heading)):null;
+    if(!finite(course)&&S.acceptedPos&&moved>=5)course=bearingBetween(S.acceptedPos,out);if(!finite(course))course=routeCourse(r,out);
+    if(finite(course)){const factor=speedKmh>45?.34:speedKmh>18?.28:speedKmh>6?.22:.14;S.course=finite(S.course)?smoothAngle(S.course,course,factor):norm(course)}
+    S.rawPos=p;S.acceptedPos=out;S.acceptedAt=now;return {pos:out,course:S.course,accuracy,speedKmh,moved};
   }
 
   function stableCenter(pos,force=false){
-    if(!navMap||!pos||(!navTracking&&!force))return;
-    const now=Date.now();if(!force&&now-S.lastCenterAt<220)return;S.lastCenterAt=now;
+    if(!navMap||!pos||(!navTracking&&!force)||S.manualInteraction)return;const now=Date.now();if(!force&&now-S.lastCenterAt<650)return;S.lastCenterAt=now;
     try{
-      const z=Math.max(16,Math.min(18,navZoom()||17));
-      if(navMapProvider==='google'){navMap.panTo({lat:Number(pos.lat),lng:Number(pos.lng)});if(force&&navMap.getZoom?.()<16)navMap.setZoom(17)}
-      else {const ll=L.latLng(Number(pos.lat),Number(pos.lng));if(force)navMap.setView(ll,z,{animate:false});else navMap.panTo(ll,{animate:true,duration:.18,noMoveStart:true})}
-    }catch(e){console.warn('Navigasyon merkezleme',e)}
+      if(navMapProvider==='google'){
+        const c=navMap.getCenter?.(),cur=c?{lat:c.lat(),lng:c.lng()}:null;if(force||!cur||dist(cur,pos)>7){S.programmaticMove=true;navMap.panTo({lat:Number(pos.lat),lng:Number(pos.lng)});setTimeout(()=>S.programmaticMove=false,520)}
+      }else{
+        const c=navMap.getCenter?.(),cur=c?{lat:c.lat,lng:c.lng}:null;if(force||!cur||dist(cur,pos)>7){const ll=L.latLng(Number(pos.lat),Number(pos.lng)),z=navMap.getZoom?.()||17;S.programmaticMove=true;if(force)navMap.setView(ll,z,{animate:false});else navMap.panTo(ll,{animate:true,duration:.42,easeLinearity:.28,noMoveStart:true});setTimeout(()=>{S.programmaticMove=false},500)}
+      }
+    }catch(e){S.programmaticMove=false;console.warn('Navigasyon merkezleme',e)}
   }
 
   animateNavMarker=function(lat,lng,heading){
-    if(!navMap||!finite(lat)||!finite(lng))return;
-    const hd=finite(heading)?norm(heading):(finite(S.course)?S.course:0);
+    if(!navMap||!finite(lat)||!finite(lng))return;const hd=finite(heading)?norm(heading):(finite(S.course)?S.course:0),to={lat:Number(lat),lng:Number(lng)},now=Date.now();
+    if(S.markerFrame)cancelAnimationFrame(S.markerFrame);S.markerFrame=0;
     if(navMapProvider==='google'){
-      if(!navPositionMarker){navPositionMarker=new google.maps.Marker({map:navMap,position:{lat:Number(lat),lng:Number(lng)},icon:googleArrowIcon(S.googleBearingApplied?0:hd),zIndex:9999,optimized:false});setArrowHeading(hd);return}
-      try{navPositionMarker.setPosition({lat:Number(lat),lng:Number(lng)})}catch(_){ }
-      setArrowHeading(hd);return;
+      if(!navPositionMarker){navPositionMarker=new google.maps.Marker({map:navMap,position:to,icon:googleArrowIcon(S.googleBearingApplied?0:hd),zIndex:9999,optimized:false});setArrowHeading(hd);S.lastMarkerAt=now;return}
+      const gp=navPositionMarker.getPosition?.(),from=gp?{lat:gp.lat(),lng:gp.lng()}:to,d=dist(from,to);if(d>350){navPositionMarker.setPosition(to);setArrowHeading(hd);S.lastMarkerAt=now;return}
+      const duration=clamp(S.lastMarkerAt?now-S.lastMarkerAt:800,480,1050),start=performance.now();
+      const tick=t=>{const x=Math.min(1,(t-start)/duration),e=1-Math.pow(1-x,3);try{navPositionMarker.setPosition({lat:from.lat+(to.lat-from.lat)*e,lng:from.lng+(to.lng-from.lng)*e})}catch(_){}if(x<1)S.markerFrame=requestAnimationFrame(tick);else S.markerFrame=0};S.markerFrame=requestAnimationFrame(tick);setArrowHeading(hd);S.lastMarkerAt=now;return;
     }
-    if(!navPositionMarker){navPositionMarker=L.marker([lat,lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false}).addTo(navMap);requestAnimationFrame(()=>{setArrowHeading(hd);applyLeafletBearing(S.mapBearing||hd)});return}
-    try{navPositionMarker.setLatLng([lat,lng])}catch(_){ }
-    setArrowHeading(hd);
+    if(!navPositionMarker){navPositionMarker=L.marker([to.lat,to.lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false}).addTo(navMap);requestAnimationFrame(()=>{setArrowHeading(hd);if(navTracking&&!S.manualInteraction)applyLeafletBearing(S.mapBearing||hd,true)});S.lastMarkerAt=now;return}
+    const fl=navPositionMarker.getLatLng?.(),from=fl?{lat:fl.lat,lng:fl.lng}:to,d=dist(from,to);if(d>350){try{navPositionMarker.setLatLng([to.lat,to.lng])}catch(_){}setArrowHeading(hd);S.lastMarkerAt=now;return}
+    const duration=clamp(S.lastMarkerAt?now-S.lastMarkerAt:800,500,1100),start=performance.now();
+    const tick=t=>{const x=Math.min(1,(t-start)/duration),e=1-Math.pow(1-x,3);try{navPositionMarker.setLatLng([from.lat+(to.lat-from.lat)*e,from.lng+(to.lng-from.lng)*e])}catch(_){}if(x<1)S.markerFrame=requestAnimationFrame(tick);else S.markerFrame=0};S.markerFrame=requestAnimationFrame(tick);setArrowHeading(hd);S.lastMarkerAt=now;
   };
 
   handleGpsPosition=function(pos,rArg=null,initial=false){
     try{
-      const r=rArg||currentNavRoute();if(!pos?.coords)return;
-      const accepted=acceptGps(pos.coords,r);if(!accepted){if(Date.now()-S.lastStatusAt>7000){S.lastStatusAt=Date.now();navStatus('GPS sıçraması filtrelendi')}return}
-      const current=accepted.pos,rawSpeed=accepted.speedKmh;
-      V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.62+rawSpeed*.38:rawSpeed;
-      const speedEl=document.getElementById('navSpeed');if(speedEl)speedEl.textContent=Math.round(V66.displayedSpeed);
-      let hd=finite(accepted.course)?accepted.course:routeCourse(r,current);if(!finite(hd))hd=finite(V66.heading)?V66.heading:0;
-      V66.lastPos=current;V66.lastGpsAt=Date.now();
-      if(finite(hd)){S.mapBearing=finite(S.mapBearing)?smoothAngle(S.mapBearing,hd,rawSpeed>18?.42:.30):norm(hd);applyMapBearing(S.mapBearing)}
-      animateNavMarker(current.lat,current.lng,hd);
-      stableCenter(current,initial);
-      if(r){updateNavPanel(r,current);updateApproachRoute(r,current,initial).catch?.(()=>{});checkAutoComplete(r,current.lat,current.lng)}
+      const r=rArg||currentNavRoute();if(!pos?.coords)return;const accepted=acceptGps(pos.coords,r);if(!accepted){if(Date.now()-S.lastStatusAt>7000){S.lastStatusAt=Date.now();navStatus('GPS sıçraması filtrelendi')}return}
+      const current=accepted.pos,rawSpeed=accepted.speedKmh;V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.72+rawSpeed*.28:rawSpeed;const speedEl=document.getElementById('navSpeed');if(speedEl)speedEl.textContent=Math.round(V66.displayedSpeed);
+      let hd=finite(accepted.course)?accepted.course:routeCourse(r,current);if(!finite(hd))hd=finite(V66.heading)?V66.heading:0;V66.lastPos=current;V66.lastGpsAt=Date.now();
+      animateNavMarker(current.lat,current.lng,hd);stableCenter(current,initial);
+      if(finite(hd)&&navTracking&&!S.manualInteraction){S.mapBearing=finite(S.mapBearing)?smoothAngle(S.mapBearing,hd,rawSpeed>35?.32:rawSpeed>10?.24:.15):norm(hd);applyMapBearing(S.mapBearing,initial)}
+      if(r){const now=Date.now();if(initial||now-S.lastPanelAt>450){S.lastPanelAt=now;updateNavPanel(r,current)}if(initial||now-S.lastApproachRequestAt>3000){S.lastApproachRequestAt=now;Promise.resolve(updateApproachRoute(r,current,initial)).catch(()=>{})}checkAutoComplete(r,current.lat,current.lng)}
     }catch(e){console.error('GPS konum işleme korunarak devam etti',e)}
   };
 
   startLiveTracking=function(){
-    if(!navigator.geolocation){navStatus('Konum servisi kullanılamıyor',2400);return}
-    if(navWatchId!==null)return;
-    try{
-      navWatchId=navigator.geolocation.watchPosition(
-        pos=>handleGpsPosition(pos),
-        err=>{console.warn('Navigasyon GPS',err);const now=Date.now();if(now-S.lastGpsErrorAt<7000)return;S.lastGpsErrorAt=now;if(err?.code===1)navStatus('Konum izni gerekli',2800);else if(err?.code===3)navStatus('GPS bekleniyor…',1800);else navStatus('Konum geçici olarak alınamadı',1800)},
-        {enableHighAccuracy:true,maximumAge:1200,timeout:20000}
-      );
-    }catch(e){console.warn('Navigasyon GPS başlatılamadı',e);navStatus('GPS başlatılamadı',2200)}
+    if(!navigator.geolocation){navStatus('Konum servisi kullanılamıyor',2400);return}if(navWatchId!==null)return;
+    try{navWatchId=navigator.geolocation.watchPosition(pos=>handleGpsPosition(pos),err=>{console.warn('Navigasyon GPS',err);const now=Date.now();if(now-S.lastGpsErrorAt<7000)return;S.lastGpsErrorAt=now;if(err?.code===1)navStatus('Konum izni gerekli',2800);else if(err?.code===3)navStatus('GPS bekleniyor…',1800);else navStatus('Konum geçici olarak alınamadı',1800)},{enableHighAccuracy:true,maximumAge:900,timeout:18000})}catch(e){console.warn('Navigasyon GPS başlatılamadı',e);navStatus('GPS başlatılamadı',2200)}
   };
 
   centerNavigation=function(){
-    navTracking=true;
-    if(V66.lastPos){stableCenter(V66.lastPos,true);const r=currentNavRoute(),hd=routeCourse(r,V66.lastPos);if(finite(hd)){S.mapBearing=smoothAngle(S.mapBearing||hd,hd,.65);applyMapBearing(S.mapBearing)}navStatus('Konum takibi açık');return}
-    if(!navigator.geolocation)return navStatus('Konum servisi kullanılamıyor');
-    navStatus('Konum alınıyor…');
-    navigator.geolocation.getCurrentPosition(p=>handleGpsPosition(p,currentNavRoute(),true),()=>navStatus('Konum alınamadı',2200),{enableHighAccuracy:true,maximumAge:1000,timeout:12000});
+    navTracking=true;S.manualInteraction=false;const host=document.getElementById('navMap');host?.classList.remove('rd847-manual-map');
+    if(V66.lastPos){stableCenter(V66.lastPos,true);const r=currentNavRoute(),hd=routeCourse(r,V66.lastPos);if(finite(hd)){S.course=finite(S.course)?smoothAngle(S.course,hd,.45):hd;S.mapBearing=finite(S.mapBearing)?smoothAngle(S.mapBearing,hd,.55):hd;setTimeout(()=>applyMapBearing(S.mapBearing,true),40)}navStatus('Konum takibi açık');return}
+    if(!navigator.geolocation)return navStatus('Konum servisi kullanılamıyor');navStatus('Konum alınıyor…');navigator.geolocation.getCurrentPosition(p=>handleGpsPosition(p,currentNavRoute(),true),()=>navStatus('Konum alınamadı',2200),{enableHighAccuracy:true,maximumAge:1000,timeout:12000});
   };
+
+  const oldFocusNavigationTarget=window.focusNavigationTarget;
+  if(typeof oldFocusNavigationTarget==='function')window.focusNavigationTarget=function(){enterManualMapMode(false);return oldFocusNavigationTarget.apply(this,arguments)};
+  const oldToggleNavOverview=window.toggleNavOverview;
+  if(typeof oldToggleNavOverview==='function')window.toggleNavOverview=function(){enterManualMapMode(false);return oldToggleNavOverview.apply(this,arguments)};
 
   const previousInit=window.initNavigation;
   window.initNavigation=function(r){
-    if(S.initPromise&&S.initRouteId===r?.id&&Date.now()-(S.initStartedAt||0)<1400)return S.initPromise;
-    const seq=++S.initSeq;S.fallbackInitPending=false;S.initRouteId=r?.id||null;S.initStartedAt=Date.now();
-    const job=(async()=>{
-      try{
-        await previousInit(r);
-        if(seq!==S.initSeq||document.body.dataset.view!=='navigationPage'||currentRouteId!==r.id)return;
-        bindBearingRefresh();
-        if(V66.lastPos){const hd=routeCourse(r,V66.lastPos);if(finite(hd)){S.course=finite(S.course)?S.course:hd;S.mapBearing=finite(S.mapBearing)?S.mapBearing:hd;applyMapBearing(S.mapBearing)}navTracking=true;stableCenter(V66.lastPos,true)}
-        startWatchdog();
-      }catch(e){console.error('Navigasyon güvenli başlatma',e);navStatus('Navigasyon haritası yenileniyor…',2200);if(seq===S.initSeq&&document.body.dataset.view==='navigationPage'){setTimeout(()=>{const rr=currentNavRoute();if(rr&&document.body.dataset.view==='navigationPage')previousInit(rr).catch?.(()=>{})},450)}}
-    })();
-    const wrapped=job.finally(()=>{if(S.initPromise===wrapped)S.initPromise=null});
-    S.initPromise=wrapped;return wrapped;
+    if(S.initPromise&&S.initRouteId===r?.id&&Date.now()-(S.initStartedAt||0)<2600)return S.initPromise;
+    const seq=++S.initSeq;S.fallbackInitPending=false;S.initRouteId=r?.id||null;S.initStartedAt=Date.now();S.manualInteraction=false;S.visualBearing=null;
+    const job=(async()=>{try{await previousInit(r);if(seq!==S.initSeq||document.body.dataset.view!=='navigationPage'||currentRouteId!==r.id)return;bindMapInteraction();if(V66.lastPos){const hd=routeCourse(r,V66.lastPos);if(finite(hd)){S.course=finite(S.course)?S.course:hd;S.mapBearing=finite(S.mapBearing)?S.mapBearing:hd}navTracking=true;stableCenter(V66.lastPos,true);if(finite(S.mapBearing))setTimeout(()=>applyMapBearing(S.mapBearing,true),50)}startWatchdog()}catch(e){console.error('Navigasyon güvenli başlatma',e);navStatus('Navigasyon haritası yenileniyor…',2200);if(seq===S.initSeq&&document.body.dataset.view==='navigationPage'){setTimeout(()=>{const rr=currentNavRoute();if(rr&&document.body.dataset.view==='navigationPage')Promise.resolve(previousInit(rr)).then(()=>bindMapInteraction()).catch(()=>{})},450)}}})();
+    const wrapped=job.finally(()=>{if(S.initPromise===wrapped)S.initPromise=null});S.initPromise=wrapped;return wrapped;
   };
 
-  window.gm_authFailure=function(){
-    try{sessionStorage.setItem('rd-google-map-session-failed-v1','1')}catch(_){ }
-    if(S.fallbackInitPending)return;S.fallbackInitPending=true;navStatus('Harita yedeğine geçiliyor…',1800);
-    const rid=currentRouteId;
-    setTimeout(()=>{S.fallbackInitPending=false;if(document.body.dataset.view!=='navigationPage'||currentRouteId!==rid)return;if(navMap&&navMapProvider==='leaflet')return;const r=currentNavRoute();if(r)window.initNavigation(r)},180);
-  };
+  const priorAuthFailure=window.gm_authFailure;
+  window.gm_authFailure=function(){try{priorAuthFailure?.()}catch(_){}try{sessionStorage.setItem('rd-google-map-session-failed-v1','1')}catch(_){}if(S.fallbackInitPending)return;S.fallbackInitPending=true;navStatus('Harita yedeğine geçiliyor…',1500);const rid=currentRouteId;setTimeout(()=>{S.fallbackInitPending=false;if(document.body.dataset.view!=='navigationPage'||currentRouteId!==rid)return;if(navMap&&navMapProvider==='leaflet')return;const r=currentNavRoute();if(r)window.initNavigation(r)},180)};
 
   function startWatchdog(){
-    if(S.watchdog)return;
-    S.watchdog=setInterval(()=>{
-      if(document.body.dataset.view!=='navigationPage')return;
-      const now=Date.now();
-      if(db.settings.liveTracking!==false&&(navWatchId===null||now-(V66.lastGpsAt||0)>18000)){
-        if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){ }navWatchId=null}
-        startLiveTracking();
-      }
-      if(navTracking&&V66.lastPos&&navMap){stableCenter(V66.lastPos,false);if(finite(S.mapBearing))applyMapBearing(S.mapBearing)}
-      if(!navMap){const r=currentNavRoute();if(r)window.initNavigation(r)}
-    },5000);
+    if(S.watchdog)return;S.watchdog=setInterval(()=>{if(document.body.dataset.view!=='navigationPage')return;const now=Date.now();if(db.settings.liveTracking!==false&&(navWatchId===null||now-(V66.lastGpsAt||0)>18000)){if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){}navWatchId=null}startLiveTracking()}if(navTracking&&!S.manualInteraction&&V66.lastPos&&navMap){stableCenter(V66.lastPos,false);if(finite(S.mapBearing))applyMapBearing(S.mapBearing,false)}if(!navMap){const r=currentNavRoute();if(r)window.initNavigation(r)}},5000)
   }
   startWatchdog();
 
-  // Auth/startup refresh must never pull the user out of an active navigation screen.
-  const oldStartupApply=window.rdApplyStartupView;
-  if(typeof oldStartupApply==='function')window.rdApplyStartupView=function(force=false){if(!force&&document.body.dataset.view==='navigationPage'){V66.startupApplied=true;return}return oldStartupApply(force)};
+  const oldStartupApply=window.rdApplyStartupView;if(typeof oldStartupApply==='function')window.rdApplyStartupView=function(force=false){if(!force&&document.body.dataset.view==='navigationPage'){V66.startupApplied=true;return}return oldStartupApply(force)};
 
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden||document.body.dataset.view!=='navigationPage')return;
-    setTimeout(()=>{if(navWatchId===null||Date.now()-(V66.lastGpsAt||0)>12000){if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){ }navWatchId=null}startLiveTracking()}if(V66.lastPos){navTracking=true;stableCenter(V66.lastPos,true);applyMapBearing(S.mapBearing||V66.heading||0)}},250);
-  },{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden||document.body.dataset.view!=='navigationPage')return;setTimeout(()=>{if(navWatchId===null||Date.now()-(V66.lastGpsAt||0)>12000){if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){}navWatchId=null}startLiveTracking()}if(V66.lastPos&&!S.manualInteraction){navTracking=true;stableCenter(V66.lastPos,true);if(finite(S.mapBearing))applyMapBearing(S.mapBearing,true)}},250)},{passive:true});
 
-  window.addEventListener('pagehide',()=>{if(S.watchdog){clearInterval(S.watchdog);S.watchdog=null}},{once:true});
+  window.addEventListener('orientationchange',()=>{if(document.body.dataset.view!=='navigationPage')return;setTimeout(()=>{try{if(navMapProvider==='leaflet')navMap?.invalidateSize?.({pan:false});else if(navMapProvider==='google'&&window.google?.maps)google.maps.event.trigger(navMap,'resize');if(navTracking&&!S.manualInteraction&&finite(S.mapBearing))applyMapBearing(S.mapBearing,true)}catch(_){}},280)},{passive:true});
+  window.addEventListener('resize',()=>{if(document.body.dataset.view!=='navigationPage')return;clearTimeout(S._resizeT);S._resizeT=setTimeout(()=>{try{if(navMapProvider==='leaflet')navMap?.invalidateSize?.({pan:false});if(navTracking&&!S.manualInteraction&&finite(S.mapBearing))applyMapBearing(S.mapBearing,true)}catch(_){}},180)},{passive:true});
+
+  window.addEventListener('pagehide',()=>{if(S.watchdog){clearInterval(S.watchdog);S.watchdog=null}cleanupInteractionBindings();if(S.markerFrame)cancelAnimationFrame(S.markerFrame)},{once:true});
 })();
 </script>
 
