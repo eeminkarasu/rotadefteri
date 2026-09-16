@@ -1340,7 +1340,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.4.10',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.2',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -2058,7 +2058,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.4.11-nav-next-stops-sheet';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.2-alignment-stability-fix';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2406,7 +2406,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.4.11-nav-next-stops-sheet';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.2-alignment-stability-fix';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2563,6 +2563,76 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </script>
 
 
+
+<style id="rd852-alignment-stability-fix">
+/* v8.5.2: genel hizalama ve durak kartı aksiyon düzeltmeleri */
+.khy-stop-list.rd-v71-stop-list .rd-stop-v71{
+  grid-template-columns:30px minmax(0,1fr) 112px 14px!important;
+  align-items:center!important;
+  column-gap:8px!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy{min-width:0!important;padding-right:2px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-copy h3{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  line-height:1.18!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-lines{gap:3px!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-lines small{line-height:1.2!important}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions{
+  width:112px!important;
+  min-width:112px!important;
+  max-width:112px!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,26px)!important;
+  justify-content:end!important;
+  align-items:center!important;
+  gap:3px!important;
+  overflow:visible!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn{
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  min-height:26px!important;
+  border-radius:8px!important;
+  padding:0!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.rd-iconized .rd-ui-icon,
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn .rd-ui-icon{
+  width:13px!important;
+  height:13px!important;
+  margin:0!important;
+  transform:translateY(0)!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.map.rd-iconized .rd-ui-icon,
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.map .rd-ui-icon{
+  width:14px!important;
+  height:14px!important;
+  transform:translateY(-1px)!important;
+}
+.khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn .rd-ui-icon svg{display:block;width:100%;height:100%}
+.khy-stop-list.rd-v71-stop-list .rd-stop-chevron{align-self:center!important;justify-self:end!important}
+.navigation-view .nav-top button,
+.rd-nav-stop-state button,
+.rd849-next-actions button,
+.mini-btn,
+.rd-route-icon-action{overflow:hidden!important}
+button.rd-iconized{align-items:center!important;justify-content:center!important}
+@media (max-width:420px){
+  .khy-stop-list.rd-v71-stop-list .rd-stop-v71{grid-template-columns:28px minmax(0,1fr) 104px!important;grid-template-areas:"seq copy actions" "expanded expanded expanded"!important}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-seq{width:28px!important;height:28px!important;min-width:28px!important;font-size:12px!important}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions{width:104px!important;min-width:104px!important;max-width:104px!important;grid-template-columns:repeat(4,24px)!important;gap:2px!important}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;border-radius:7px!important}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.rd-iconized .rd-ui-icon,
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn .rd-ui-icon{width:12px!important;height:12px!important}
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.map.rd-iconized .rd-ui-icon,
+  .khy-stop-list.rd-v71-stop-list .rd-stop-quick-actions .rd-stop-quick-btn.map .rd-ui-icon{width:13px!important;height:13px!important;transform:translateY(-1px)!important}
+}
+</style>
 <script id="rd851-professional-icon-runtime">
 (function(){
  'use strict';
