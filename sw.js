@@ -1,9 +1,11 @@
-const BUILD='v8-4-11-nav-next-stops-sheet';
-const SHELL_CACHE='rotadefteri-shell-'+BUILD;
-const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
-const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(SHELL_CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('rotadefteri-')&&![SHELL_CACHE,RUNTIME_CACHE].includes(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+const RD_VERSION='v8.5.5-static-layer-svg-fix';
+self.addEventListener('install',event=>{self.skipWaiting()});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('rotadefteri-'))await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
-async function networkFirst(req,cacheName,timeoutMs=5000){const cache=await caches.open(cacheName);const ctrl=typeof AbortController!=='undefined'?new AbortController():null;let timer=null;try{if(ctrl)timer=setTimeout(()=>ctrl.abort(),timeoutMs);const res=await fetch(req,{cache:'reload',signal:ctrl?.signal});if(res&&res.ok)cache.put(req,res.clone()).catch(()=>{});return res}catch(e){const hit=await cache.match(req);if(hit)return hit;throw e}finally{if(timer)clearTimeout(timer)}}
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(req.mode==='navigate'){event.respondWith(networkFirst(req,SHELL_CACHE,3000).catch(()=>caches.match('./index.html')));return}const same=url.origin===self.location.origin;const tileHost=url.hostname==='tile.openstreetmap.org'||url.hostname==='tile.openstreetmap.fr'||url.hostname.endsWith('.tile.openstreetmap.org')||url.hostname.endsWith('.tile.openstreetmap.fr');const cdn=['unpkg.com','cdn.sheetjs.com','www.gstatic.com','maps.googleapis.com','maps.gstatic.com'].includes(url.hostname);if(!same&&!cdn&&!tileHost)return;if(same){event.respondWith(networkFirst(req,SHELL_CACHE,5000));return}event.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(res=>{if(res&&(res.ok||res.type==='opaque'))caches.open(RUNTIME_CACHE).then(c=>c.put(req,res.clone())).catch(()=>{});return res}))) });
+self.addEventListener('fetch',event=>{
+  const req=event.request;
+  if(req.method!=='GET')return;
+  if(req.mode==='navigate'||new URL(req.url).origin===self.location.origin){
+    event.respondWith((async()=>{try{return await fetch(req,{cache:'no-store'})}catch(e){const hit=await caches.match(req);if(hit)return hit;throw e}})());
+  }
+});
