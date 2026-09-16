@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.5.13-nav-final-stable">
+<meta name="rd-build" content="v8.5.14-route-line-heading-lock">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
 <meta name="description" content="Rota Defteri — durak, rota ve canlı navigasyon yönetimi">
@@ -1448,7 +1448,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.13',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.14',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -2161,7 +2161,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.13-nav-final-stable';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.14-route-line-heading-lock';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2247,7 +2247,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.13-nav-final-stable';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.14-route-line-heading-lock';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2602,7 +2602,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 <script id="rd857-nav-compact-progress-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.13-nav-final-stable';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
+ window.RD_BUILD='8.5.14-route-line-heading-lock';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
  function targetEtaSeconds(r,pos,rm){
    if(!r||r.completed)return 0;
    if(r._direct)return Math.max(0,Number(rm?.duration)||0);
@@ -2641,7 +2641,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 <script id="rd8513-navigation-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.13-nav-final-stable';
+ window.RD_BUILD='8.5.14-route-line-heading-lock';
  document.body.dataset.build=window.RD_BUILD;
  document.title='Rota Defteri';
 
@@ -2743,17 +2743,32 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
  }
  function routeBearing(pos){
    const pts=S.routeCoords;if(!pos||pts.length<2)return null;
-   let i=nearestIndex(pos);if(i<0)return null;let j=Math.min(i+1,pts.length-1);
-   while(j<pts.length-1&&pointDistance(pts[i],pts[j])<45)j++;
-   return j!==i?bearingBetween(pts[i],pts[j]):null;
+   let i=nearestIndex(pos);if(i<0)return null;
+   // 70-120 m ileriye bakarak küçük GPS/rota kırıklarının kamerayı sağa-sola oynatmasını engelle.
+   let j=Math.min(i+1,pts.length-1),dist=0;
+   while(j<pts.length-1){
+     dist=pointDistance(pts[i],pts[j]);
+     if(dist>=85)break;
+     j++;
+   }
+   if(j===i)return null;
+   return bearingBetween(pts[i],pts[j]);
  }
  function desiredBearing(pos,heading){
-   const rb=routeBearing(pos);if(finite(rb))return norm(rb);
+   // Aktif mavi rota varsa kamera yönü SADECE bu çizginin ileri yönünden alınır.
+   // Telefon pusulası/GPS heading rota varken kamera dönüşünü etkileyemez.
+   const rb=routeBearing(pos);
+   if(S.routeCoords?.length>=2&&finite(rb))return norm(rb);
+   // Rota çizgisi henüz hazır değilse geçici olarak hedef doğrultusu kullanılır.
    const r=currentNavRoute?.();if(r&&pos){const g=guidanceBearing(r,pos);if(finite(g))return norm(g)}
-   return finite(heading)?norm(heading):(finite(V66.heading)?norm(V66.heading):0);
+   return finite(S.lastBearing)?norm(S.lastBearing):0;
  }
  function smoothBearing(prev,target,alpha=.32){
-   if(!finite(prev))return norm(target);const p=norm(prev),t=norm(target),d=((t-p+540)%360)-180;return norm(p+d*alpha);
+   if(!finite(prev))return norm(target);
+   const p=norm(prev),t=norm(target),d=((t-p+540)%360)-180;
+   if(Math.abs(d)<2.5)return p;
+   const a=Math.abs(d)>35?.42:alpha;
+   return norm(p+d*a);
  }
 
  // Hafif GPS filtresi: hareket halindeyken gecikme yaratmaz, yalnızca bariz sıçramayı bastırır.
