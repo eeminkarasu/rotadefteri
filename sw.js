@@ -1,4 +1,4 @@
-const RD_VERSION='v8.5.7-nav-compact-progress';
+const RD_VERSION='v8.5.8-nav-follow-rotate-stable';
 self.addEventListener('install',event=>{self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('rotadefteri-'))await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});

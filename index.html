@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.5.7-nav-compact-progress">
+<meta name="rd-build" content="v8.5.8-nav-follow-rotate-stable">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
 <meta name="description" content="Rota Defteri — durak, rota ve canlı navigasyon yönetimi">
@@ -1448,7 +1448,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.7',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.8',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -2161,7 +2161,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.7-nav-compact-progress';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.8-nav-follow-rotate-stable';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2247,7 +2247,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.7-nav-compact-progress';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.8-nav-follow-rotate-stable';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2606,15 +2606,50 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 (function(){
  'use strict';
  document.title='Rota Defteri';
- window.RD_BUILD='8.5.7-nav-compact-progress';
+ window.RD_BUILD='8.5.8-nav-follow-rotate-stable';
  document.body.dataset.build=window.RD_BUILD;
- const N=window.RD856Nav={manual:false,lastCenterAt:0,lastMarkerAt:0,routeToken:0,leafletRoute:null,leafletMarker:null};
+ const N=window.RD856Nav={manual:false,lastCenterAt:0,lastMarkerAt:0,routeToken:0,leafletRoute:null,leafletMarker:null,mapBearing:null,lastBearingAt:0,_programmaticZoom:false};
  function finite(v){return v!==null&&v!==''&&Number.isFinite(Number(v))}
  function navHost(){return document.getElementById('navMap')}
- function hardCleanHost(){const h=navHost();if(!h)return;h.classList.remove('rd847-heading-map','rd847-manual-map');h.style.rotate='';h.style.transform='';h.querySelectorAll('.rd854-route-pane,.rd855-route-pane,.rd847-gps-state').forEach(x=>x.remove());h.querySelectorAll('.leaflet-map-pane,.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-marker-pane,.leaflet-shadow-pane,.leaflet-tooltip-pane,.leaflet-popup-pane').forEach(x=>{x.style.rotate='';x.style.transformOrigin=''});}
- function enterManual(){N.manual=true;navTracking=false}
+ function hardCleanHost(){const h=navHost();if(!h)return;h.classList.remove('rd847-heading-map','rd847-manual-map');h.style.rotate='';h.style.transform='';h.querySelectorAll('.rd854-route-pane,.rd855-route-pane,.rd847-gps-state').forEach(x=>x.remove());h.querySelectorAll('.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-marker-pane,.leaflet-shadow-pane,.leaflet-tooltip-pane,.leaflet-popup-pane').forEach(x=>{x.style.rotate='';x.style.transformOrigin=''});if(navMapProvider==='leaflet'&&navTracking&&!N.manual&&Number.isFinite(Number(N.mapBearing)))applyLeafletBearing(Number(N.mapBearing),false);}
+ function enterManual(){if(N._programmaticZoom)return;N.manual=true;navTracking=false;try{navMap?.stop?.()}catch(_){}}
  function leaveManual(){N.manual=false;navTracking=true}
- function wireCleanGestures(){if(!navMap)return;if(navMapProvider==='leaflet'){navMap.dragging?.enable();navMap.touchZoom?.enable();navMap.doubleClickZoom?.enable();navMap.scrollWheelZoom?.enable();navMap.on('dragstart',enterManual);navMap.on('zoomstart',()=>{if(!N._programmaticZoom)enterManual()})}else if(navMapProvider==='google'){try{navMap.setOptions({gestureHandling:'greedy',draggable:true,scrollwheel:true,disableDoubleClickZoom:false})}catch(_){};try{navMap.addListener('dragstart',enterManual);navMap.addListener('zoom_changed',()=>{if(!N._programmaticZoom)enterManual()})}catch(_){}}
+ function normBearing(v){return ((Number(v)%360)+360)%360}
+ function smoothBearing(prev,target,alpha=.34){if(!finite(target))return finite(prev)?normBearing(prev):0;if(!finite(prev))return normBearing(target);const p=normBearing(prev),t=normBearing(target),d=((t-p+540)%360)-180;return normBearing(p+d*alpha)}
+ function routeCourseFromApproach(pos){
+   if(!pos||!navApproachPolyline)return null;let pts=[];
+   try{
+     if(navMapProvider==='leaflet'){const raw=navApproachPolyline.getLatLngs?.()||[];pts=raw.flat?.(3)?.map(x=>({lat:Number(x.lat),lng:Number(x.lng)})).filter(x=>finite(x.lat)&&finite(x.lng))||[]}
+     else if(navMapProvider==='google'){const path=navApproachPolyline.getPath?.();if(path)for(let i=0;i<path.getLength();i++){const q=path.getAt(i);pts.push({lat:Number(q.lat()),lng:Number(q.lng())})}}
+   }catch(_){}
+   if(pts.length<2)return null;let best=0,bestD=Infinity;for(let i=0;i<pts.length;i++){const d=pointDistance(pos,pts[i]);if(d<bestD){bestD=d;best=i}}
+   let j=Math.min(best+1,pts.length-1);while(j<pts.length-1&&pointDistance(pts[best],pts[j])<35)j++;
+   return best!==j?bearingBetween(pts[best],pts[j]):null;
+ }
+ function desiredMapBearing(pos,heading){
+   const r=currentNavRoute?.();const routeB=routeCourseFromApproach(pos);if(finite(routeB))return normBearing(routeB);
+   if(r&&pos){const g=guidanceBearing(r,pos);if(finite(g))return normBearing(g)}
+   return finite(heading)?normBearing(heading):(finite(V66.heading)?normBearing(V66.heading):0);
+ }
+ function leafletBearingOrigin(){
+   if(navMapProvider!=='leaflet'||!navMap)return null;try{const s=navMap.getSize?.(),mp=navMap._getMapPanePos?.()||{x:0,y:0};if(!s)return null;return {x:(Number(s.x)/2)-Number(mp.x||0),y:(Number(s.y)/2)-Number(mp.y||0)}}catch(_){return null}
+ }
+ function applyLeafletBearing(deg,animate=true){
+   if(navMapProvider!=='leaflet'||!navMap||!finite(deg))return;const h=navHost(),pane=navMap.getPane?.('mapPane')||h?.querySelector('.leaflet-map-pane'),origin=leafletBearingOrigin();if(!h||!pane||!origin)return;
+   const b=normBearing(deg);N.mapBearing=b;pane.style.transformOrigin=`${origin.x}px ${origin.y}px`;pane.style.transition=animate?'rotate .28s linear':'none';pane.style.rotate=`${-b}deg`;
+   h.querySelectorAll('.leaflet-marker-icon:not(.rd-nav-arrow-wrap)').forEach(el=>{el.style.transformOrigin='50% 50%';el.style.transition=animate?'rotate .28s linear':'none';el.style.rotate=`${b}deg`});
+   h.querySelectorAll('.leaflet-tooltip').forEach(el=>{el.style.transformOrigin='50% 50%';el.style.transition=animate?'rotate .28s linear':'none';el.style.rotate=`${b}deg`});
+ }
+ function applyFollowBearing(pos,heading,force=false){
+   if(!navMap||N.manual||!navTracking)return;const now=Date.now();if(!force&&now-N.lastBearingAt<140)return;N.lastBearingAt=now;
+   const wanted=desiredMapBearing(pos,heading),next=force?wanted:smoothBearing(N.mapBearing,wanted,.36);N.mapBearing=next;
+   if(navMapProvider==='leaflet')applyLeafletBearing(next,!force);
+   else if(navMapProvider==='google'){try{if(typeof navMap.setHeading==='function')navMap.setHeading(next);if(typeof navMap.setTilt==='function')navMap.setTilt(0)}catch(_){}}
+ }
+ function wireCleanGestures(){
+   if(!navMap)return;const container=navMapProvider==='leaflet'?navMap.getContainer?.():navHost();if(container&&!container.dataset.rd858ManualTouch){container.dataset.rd858ManualTouch='1';container.addEventListener('pointerdown',()=>{if(!N._programmaticZoom)enterManual()},{passive:true})}
+   if(navMapProvider==='leaflet'){navMap.dragging?.enable();navMap.touchZoom?.enable();navMap.doubleClickZoom?.enable();navMap.scrollWheelZoom?.enable();navMap.on('dragstart',enterManual);navMap.on('zoomstart',()=>{if(!N._programmaticZoom)enterManual()});navMap.on('move',()=>{if(!N.manual&&navTracking&&finite(N.mapBearing))applyLeafletBearing(N.mapBearing,false)})}
+   else if(navMapProvider==='google'){try{navMap.setOptions({gestureHandling:'greedy',draggable:true,scrollwheel:true,disableDoubleClickZoom:false})}catch(_){};try{navMap.addListener('dragstart',enterManual);navMap.addListener('zoom_changed',()=>{if(!N._programmaticZoom)enterManual()})}catch(_){}}
  }
  const originalDestroy=window.destroyNavigationMap;
  window.destroyNavigationMap=function(){try{if(N.leafletRoute){N.leafletRoute.remove();N.leafletRoute=null}}catch(_){};N.manual=false;N.routeToken++;const out=originalDestroy?.apply(this,arguments);hardCleanHost();return out};
@@ -2633,19 +2668,19 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    try{const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=full&geometries=geojson&steps=false',{signal:ctrl.signal});const data=await res.json(),route=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;if(token!==N.routeToken||!route?.geometry?.coordinates?.length||currentRouteId!==r.id)return;const good=route.geometry.coordinates.filter(c=>finite(c?.[0])&&finite(c?.[1]));if(good.length<2)return;if(navMapProvider==='google'){navApproachPolyline=new google.maps.Polyline({map:navMap,path:good.map(c=>({lat:Number(c[1]),lng:Number(c[0])})),strokeColor:navRouteColor(),strokeOpacity:.95,strokeWeight:7,zIndex:9})}else if(navMapProvider==='leaflet'){navApproachPolyline=L.polyline(good.map(c=>[Number(c[1]),Number(c[0])]),{weight:7,opacity:.92,color:navRouteColor(),lineCap:'round',lineJoin:'round',interactive:false,smoothFactor:1}).addTo(navMap)}if(r._direct){V66.directMetrics={distance:Number(route.distance)||straight,duration:Number(route.duration)||0,updatedAt:Date.now()};r.distance=V66.directMetrics.distance;r.duration=V66.directMetrics.duration;updateNavPanel(r,pos)}}
    catch(e){if(token!==N.routeToken)return;const fallbackDistance=straight*1.18,fallbackDuration=(fallbackDistance/1000)/38*3600;if(r._direct){V66.directMetrics={distance:fallbackDistance,duration:fallbackDuration,updatedAt:Date.now()};r.distance=fallbackDistance;r.duration=fallbackDuration;updateNavPanel(r,pos)}if(navMapProvider==='google')navApproachPolyline=new google.maps.Polyline({map:navMap,path:[{lat:Number(pos.lat),lng:Number(pos.lng)},{lat:Number(target.lat),lng:Number(target.lng)}],strokeColor:navRouteColor(),strokeOpacity:.55,strokeWeight:4,zIndex:8});else if(navMapProvider==='leaflet')navApproachPolyline=L.polyline([[Number(pos.lat),Number(pos.lng)],[Number(target.lat),Number(target.lng)]],{weight:4,opacity:.55,color:navRouteColor(),dashArray:'7 9',interactive:false}).addTo(navMap)}finally{clearTimeout(timer);hardCleanHost()}
  };
- window.setArrowHeading=function(deg){if(!finite(deg))return;V66.heading=((Number(deg)%360)+360)%360;if(navMapProvider==='google'&&navPositionMarker){try{navPositionMarker.setIcon(googleArrowIcon(V66.heading))}catch(_){};return}const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(el)el.style.transform=`rotate(${V66.heading}deg)`};
+ window.setArrowHeading=function(deg){if(!finite(deg))return;V66.heading=normBearing(deg);if(navMapProvider==='google'&&navPositionMarker){try{navPositionMarker.setIcon(googleArrowIcon(V66.heading))}catch(_){};return}const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(el)el.style.transform=`rotate(${V66.heading}deg)`};
  window.setTurnHeading=function(deg){const el=document.getElementById('navTurnIcon');if(el&&finite(deg))el.style.transform=`rotate(${((Number(deg)%360)+360)%360}deg)`};
- window.animateNavMarker=function(lat,lng,heading){if(!navMap||!finite(lat)||!finite(lng))return;const p={lat:Number(lat),lng:Number(lng)};if(navMapProvider==='google'){if(!navPositionMarker)navPositionMarker=new google.maps.Marker({map:navMap,position:p,icon:googleArrowIcon(heading),zIndex:9999,optimized:false});else navPositionMarker.setPosition(p);setArrowHeading(heading);return}if(!navPositionMarker)navPositionMarker=L.marker([p.lat,p.lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false}).addTo(navMap);else navPositionMarker.setLatLng([p.lat,p.lng]);setArrowHeading(heading);if(navTracking&&!N.manual&&Date.now()-N.lastCenterAt>650){N.lastCenterAt=Date.now();try{navMap.panTo([p.lat,p.lng],{animate:true,duration:.28,noMoveStart:true})}catch(_){}}};
- window.centerNavigation=function(){leaveManual();if(V66.lastPos){N._programmaticZoom=true;try{if(navMapProvider==='google'){navMap.panTo({lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)});navMap.setZoom(Math.max(16,Number(navMap.getZoom?.()||17)))}else navMap.flyTo([Number(V66.lastPos.lat),Number(V66.lastPos.lng)],Math.max(16,Number(navMap.getZoom?.()||17)),{animate:true,duration:.35})}finally{setTimeout(()=>N._programmaticZoom=false,450)};toast('Konum takibi açık');return}const r=currentNavRoute(),st=currentTarget(r);if(st){N._programmaticZoom=true;navSetView({lat:st.lat,lng:st.lng},16,false);setTimeout(()=>N._programmaticZoom=false,300)}};
+ window.animateNavMarker=function(lat,lng,heading){if(!navMap||!finite(lat)||!finite(lng))return;const p={lat:Number(lat),lng:Number(lng)};if(navMapProvider==='google'){if(!navPositionMarker)navPositionMarker=new google.maps.Marker({map:navMap,position:p,icon:googleArrowIcon(heading),zIndex:9999,optimized:false});else navPositionMarker.setPosition(p);setArrowHeading(heading);if(navTracking&&!N.manual){if(Date.now()-N.lastCenterAt>650){N.lastCenterAt=Date.now();try{navMap.panTo(p)}catch(_){}}applyFollowBearing(p,heading)}return}if(!navPositionMarker)navPositionMarker=L.marker([p.lat,p.lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false}).addTo(navMap);else navPositionMarker.setLatLng([p.lat,p.lng]);setArrowHeading(heading);if(navTracking&&!N.manual){if(Date.now()-N.lastCenterAt>650){N.lastCenterAt=Date.now();try{navMap.panTo([p.lat,p.lng],{animate:true,duration:.28,noMoveStart:true})}catch(_){}}applyFollowBearing(p,heading)}};
+ window.centerNavigation=function(){leaveManual();if(V66.lastPos){N._programmaticZoom=true;try{if(navMapProvider==='google'){navMap.panTo({lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)});navMap.setZoom(Math.max(16,Number(navMap.getZoom?.()||17)))}else navMap.flyTo([Number(V66.lastPos.lat),Number(V66.lastPos.lng)],Math.max(16,Number(navMap.getZoom?.()||17)),{animate:true,duration:.35});applyFollowBearing(V66.lastPos,V66.heading,true)}finally{setTimeout(()=>N._programmaticZoom=false,450)};toast('Konum takibi ve yön takibi açık');return}const r=currentNavRoute(),st=currentTarget(r);if(st){N._programmaticZoom=true;navSetView({lat:st.lat,lng:st.lng},16,false);setTimeout(()=>N._programmaticZoom=false,300)}};
  window.focusNavigationTarget=function(announce=false){if(!navMap)return;const r=currentNavRoute(),st=currentTarget(r);if(!st)return;enterManual();N._programmaticZoom=true;try{navFlyTo({lat:st.lat,lng:st.lng},17)}finally{setTimeout(()=>N._programmaticZoom=false,450)};if(V66.lastPos)updateApproachRoute(r,V66.lastPos,true);if(announce)toast((navIndex+1)+'. durak: '+st.name)};
  window.toggleNavOverview=function(){if(!navMap)return;const r=currentNavRoute();if(!r)return;enterManual();const bounds=[];if(V66.lastPos)bounds.push([V66.lastPos.lat,V66.lastPos.lng]);for(const id of r.stopIds||[]){const s=db.stops.find(x=>x.id===id);if(s)bounds.push([s.lat,s.lng])}if(bounds.length>1)navFitAll(bounds)};
  window.initNavigation=async function(r){
-   if(!r)return;ensureV66Settings();const hadWatch=navWatchId!==null;destroyNavigationMap();hardCleanHost();V66.approachTargetId=null;N.manual=false;navTracking=true;document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r._direct);
+   if(!r)return;ensureV66Settings();const hadWatch=navWatchId!==null;destroyNavigationMap();hardCleanHost();V66.approachTargetId=null;N.manual=false;N.mapBearing=null;N.lastBearingAt=0;navTracking=true;document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r._direct);
    const pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);if(!pts.length)return;const target=currentTarget(r)||pts[0],center=V66.lastPos?{lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)}:{lat:Number(target.lat),lng:Number(target.lng)},zoom=V66.lastPos?17:15,host=navHost();if(!host)return;host.innerHTML='';
    if(db.settings.map==='google'){try{await Promise.race([loadGoogleMaps(),new Promise((_,rej)=>setTimeout(()=>rej(new Error('Google Maps timeout')),4200))]);navMap=new google.maps.Map(host,{center,zoom,mapTypeId:'roadmap',streetViewControl:false,mapTypeControl:false,fullscreenControl:false,zoomControl:false,gestureHandling:'greedy',disableDefaultUI:true});navMapProvider='google';try{navTrafficLayer=new google.maps.TrafficLayer();navTrafficLayer.setMap(navMap)}catch(_){}}catch(e){console.warn('Google navigasyon haritası açılamadı; OSM kullanılıyor',e)}}
    if(!navMap){navMap=L.map(host,{preferCanvas:false,zoomControl:false,zoomAnimation:true,markerZoomAnimation:true,fadeAnimation:true,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:true,boxZoom:false,keyboard:false}).setView([center.lat,center.lng],zoom);L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları',updateWhenIdle:true,updateWhenZooming:false,keepBuffer:3}).addTo(navMap);navMapProvider='leaflet'}
    wireCleanGestures();drawNavigationRoute(r);const rn=document.getElementById('navRouteName');if(rn)rn.textContent=r.name;updateNavPanel(r,V66.lastPos);setTimeout(()=>{try{navMapProvider==='leaflet'?navMap.invalidateSize({pan:false,animate:false}):google.maps.event.trigger(navMap,'resize')}catch(_){};hardCleanHost()},50);
-   if(V66.lastPos){const hd=Number.isFinite(Number(V66.heading))?Number(V66.heading):guidanceBearing(r,V66.lastPos);animateNavMarker(V66.lastPos.lat,V66.lastPos.lng,hd);updateApproachRoute(r,V66.lastPos,true)}else primeNavigationPosition(r);
+   if(V66.lastPos){const hd=Number.isFinite(Number(V66.heading))?Number(V66.heading):guidanceBearing(r,V66.lastPos);animateNavMarker(V66.lastPos.lat,V66.lastPos.lng,hd);applyFollowBearing(V66.lastPos,hd,true);updateApproachRoute(r,V66.lastPos,true)}else primeNavigationPosition(r);
    if(db.settings.liveTracking!==false){startLiveTracking();if(hadWatch){} }else{const se=document.getElementById('navSpeed');if(se)se.textContent='—'}
    try{toggleNavQuickSummary(false)}catch(_){};speakNav('Navigasyon başladı. Hedef '+(target?.name||''));
  };
@@ -2658,7 +2693,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 <script id="rd857-nav-compact-progress-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.7-nav-compact-progress';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
+ window.RD_BUILD='8.5.8-nav-follow-rotate-stable';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
  function targetEtaSeconds(r,pos,rm){
    if(!r||r.completed)return 0;
    if(r._direct)return Math.max(0,Number(rm?.duration)||0);
