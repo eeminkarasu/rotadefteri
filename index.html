@@ -2,14 +2,15 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.5.1-professional-icons">
+<meta name="rd-build" content="v8.5.6-navigation-page-rebuild">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
-<meta name="description" content="RotaDefteri — kullanıcıya özel durak, rota ve canlı navigasyon yönetimi">
+<meta name="description" content="Rota Defteri — durak, rota ve canlı navigasyon yönetimi">
 <meta name="format-detection" content="telephone=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Karasu Hava Yolları">
+<meta name="apple-mobile-web-app-title" content="Rota Defteri">
+<meta name="application-name" content="Rota Defteri">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -20,7 +21,7 @@
 <link rel="dns-prefetch" href="//maps.googleapis.com">
 <link rel="dns-prefetch" href="//maps.gstatic.com">
 <link rel="dns-prefetch" href="//router.project-osrm.org">
-<title>RotaDefteri v8.5.1 — Profesyonel İkon Sistemi</title>
+<title>Rota Defteri</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <style>
@@ -454,7 +455,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v8.5.1";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:none!important;display:none!important}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -729,12 +730,42 @@ button.rd-iconized .rd-ui-icon{width:var(--rd-icon-size);height:var(--rd-icon-si
 button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
 </style>
 
+
+<style id="rd856-navigation-page-css">
+#navigationPage.rd856-navigation-page{position:fixed!important;inset:0!important;z-index:5000!important;display:none;background:#07101a!important;overflow:hidden!important;isolation:isolate!important;border-radius:0!important;padding:0!important}
+#navigationPage.rd856-navigation-page.active{display:block!important}
+#navigationPage.rd856-navigation-page::before,#navigationPage.rd856-navigation-page::after,#navMap::before,#navMap::after{content:none!important;display:none!important}
+.rd856-map-frame{position:absolute;inset:0;z-index:0;overflow:hidden;background:#e8ecef}
+#navigationPage #navMap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;overflow:hidden!important;transform:none!important;rotate:none!important;filter:none!important;background:#e8ecef!important}
+#navigationPage #navMap .leaflet-map-pane,#navigationPage #navMap .leaflet-tile-pane,#navigationPage #navMap .leaflet-overlay-pane,#navigationPage #navMap .leaflet-marker-pane,#navigationPage #navMap .leaflet-shadow-pane,#navigationPage #navMap .leaflet-tooltip-pane,#navigationPage #navMap .leaflet-popup-pane{rotate:none!important;transform-origin:center center!important}
+#navigationPage #navMap .rd854-route-pane,#navigationPage #navMap .rd855-route-pane,#navigationPage #navMap canvas.rd854-route-pane,#navigationPage #navMap canvas.rd855-route-pane{display:none!important}
+#navigationPage .leaflet-control-zoom{display:none!important}
+.rd856-target-card{position:absolute;z-index:1200;top:calc(env(safe-area-inset-top) + 22px);left:14px;right:14px;min-height:92px;padding:11px 12px;display:grid;grid-template-columns:42px 44px minmax(0,1fr) auto;align-items:center;gap:10px;border:1px solid rgba(88,181,246,.24);border-radius:22px;background:rgba(20,39,56,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.rd856-exit{width:42px;height:42px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:#fff;font-size:30px;display:grid;place-items:center;padding:0}
+.rd856-turn{width:42px;height:42px;display:grid;place-items:center;color:#159dff;font-size:34px;transform-origin:center center;transition:transform .18s linear}
+.rd856-target-copy{min-width:0}.rd856-target-copy strong,.rd856-target-copy b,.rd856-target-copy small{display:block}.rd856-target-copy strong{font-size:17px;color:#fff}.rd856-target-copy b{font-size:16px;color:#29a9ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}.rd856-target-copy small{font-size:10px;color:#a6b7c9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.rd856-target-actions{display:flex!important;grid-column:auto!important;grid-row:auto!important;align-items:center;gap:6px}.rd856-target-actions button{width:42px!important;height:42px!important;border-radius:13px!important;font-size:20px!important;padding:0!important}.rd856-target-actions .done{border-color:rgba(48,212,132,.45)!important;background:rgba(28,151,95,.16)!important;color:#5fe8ac!important}.rd856-target-actions .skip{border-color:rgba(255,92,111,.44)!important;background:rgba(187,51,70,.18)!important;color:#ff8795!important}.rd856-target-actions .map{border-color:rgba(61,171,255,.44)!important;background:rgba(26,101,166,.18)!important;color:#78d8ff!important}
+.rd856-summary-toggle{top:calc(env(safe-area-inset-top) + 124px)!important;width:58px!important;height:42px!important;z-index:1210!important}
+.rd856-speed-card{position:absolute;z-index:1100;top:calc(env(safe-area-inset-top) + 141px);left:15px;width:88px;height:88px;border-radius:22px;display:grid;place-items:center;border:1px solid rgba(86,163,222,.24);background:rgba(17,35,51,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.rd856-speed-ring{width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:5px solid rgba(27,160,255,.6);background:#071b2c;color:#fff}.rd856-speed-ring b{font-size:25px;line-height:1}.rd856-speed-ring span{font-size:9px;color:#b9cada;margin-top:4px}
+.rd856-call-card{position:absolute;z-index:1100;top:calc(env(safe-area-inset-top) + 239px);left:17px;width:70px;height:62px;border:1px solid rgba(86,163,222,.22);border-radius:18px;background:rgba(17,35,51,.86);color:#ff7c8d;font-size:27px;display:grid;place-items:center;padding:0;backdrop-filter:blur(12px)}
+.rd856-route-chip{position:absolute;z-index:1100;top:calc(env(safe-area-inset-top) + 143px);right:14px;max-width:170px;min-width:128px;padding:9px 12px;border:1px solid rgba(86,163,222,.2);border-radius:16px;background:rgba(17,35,51,.82);display:flex;align-items:center;gap:8px;backdrop-filter:blur(12px)}.rd856-route-chip>span{color:#24dd83}.rd856-route-chip b,.rd856-route-chip small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd856-route-chip b{font-size:12px;color:#fff}.rd856-route-chip small{font-size:9px;color:#91a8bf;margin-top:2px}
+.rd856-progress{position:absolute;z-index:1090;top:calc(env(safe-area-inset-top) + 197px);right:14px;width:142px;padding:7px 10px;border-radius:13px;background:rgba(17,35,51,.74);border:1px solid rgba(86,163,222,.16);backdrop-filter:blur(10px)}.rd856-progress>span{font-size:9px;color:#b5c7d9}.rd856-progress>i{display:block;height:4px;margin-top:5px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.rd856-progress>i>b{display:block;height:100%;width:0;border-radius:99px;background:#1ea5ff;transition:width .25s ease}
+.rd856-bottom-panel{position:absolute;z-index:1200;left:13px;right:13px;bottom:calc(12px + env(safe-area-inset-bottom));border:1px solid rgba(83,158,218,.22);border-radius:22px;background:rgba(18,38,57,.90);backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px);box-shadow:0 12px 36px rgba(0,0,0,.28);padding:10px 11px}
+.rd856-stats{display:grid;grid-template-columns:repeat(4,1fr);align-items:stretch}.rd856-stats>div{text-align:center;padding:5px 5px 7px;border-right:1px solid rgba(134,173,207,.13)}.rd856-stats>div:last-child{border-right:0}.rd856-stats span,.rd856-stats b,.rd856-stats small{display:block}.rd856-stats span{font-size:12px;color:#20a8ff}.rd856-stats b{font-size:14px;color:#fff;margin-top:3px}.rd856-stats small{font-size:8px;color:#91a7be;margin-top:2px}
+.rd856-controls{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:7px;margin-top:7px}.rd856-controls button{min-height:48px;border:1px solid rgba(53,139,209,.32);border-radius:14px;background:#082847;color:#fff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px}.rd856-controls button.primary{background:linear-gradient(180deg,#22a8ff,#0780f2);border-color:#40c4ff}.rd856-controls button span{white-space:nowrap}
+#navigationPage .rd849-nav-summary{z-index:1300!important;top:calc(env(safe-area-inset-top) + 176px)!important;bottom:calc(126px + env(safe-area-inset-bottom))!important}
+#navigationPage .rd849-summary-toggle.open{z-index:1310!important}
+#navigationPage .leaflet-control-attribution{font-size:9px!important;background:rgba(20,30,40,.66)!important;color:#dfeaf3!important}
+#navigationPage .leaflet-control-attribution a{color:#dfeaf3!important}
+@media(max-width:430px){.rd856-target-card{left:9px;right:9px;grid-template-columns:38px 38px minmax(0,1fr) auto;gap:7px;padding:9px;min-height:86px}.rd856-exit,.rd856-turn{width:38px;height:38px}.rd856-turn{font-size:30px}.rd856-target-actions{gap:4px}.rd856-target-actions button{width:35px!important;height:35px!important;border-radius:11px!important;font-size:18px!important}.rd856-target-copy strong{font-size:15px}.rd856-target-copy b{font-size:14px}.rd856-summary-toggle{top:calc(env(safe-area-inset-top) + 116px)!important}.rd856-speed-card{top:calc(env(safe-area-inset-top) + 135px);left:10px;width:78px;height:78px}.rd856-speed-ring{width:60px;height:60px;border-width:4px}.rd856-speed-ring b{font-size:22px}.rd856-call-card{top:calc(env(safe-area-inset-top) + 223px);left:12px;width:62px;height:56px}.rd856-route-chip{top:calc(env(safe-area-inset-top) + 136px);right:9px;max-width:150px}.rd856-progress{top:calc(env(safe-area-inset-top) + 188px);right:9px;width:128px}.rd856-bottom-panel{left:8px;right:8px;bottom:calc(7px + env(safe-area-inset-bottom));padding:9px}.rd856-controls button{font-size:10px;min-height:45px}.rd856-stats b{font-size:13px}.rd856-stats small{font-size:7.5px}}
+</style>
 </head>
 <body>
 <div class="app">
 <header class="topbar khy-topbar">
   <button class="head-icon" onclick="showView('home')" aria-label="Ana sayfa">⌂</button>
-  <div class="brand khy-brand"><img class="brand-logo" src="icons/brand-mark.svg" alt="RotaDefteri logosu"><span>Rota<span class="brand-blue">Defteri</span></span></div>
+  <div class="brand khy-brand"><img class="brand-logo" src="icons/brand-mark.svg" alt="RotaDefteri logosu"><span>Rota <span class="brand-blue">Defteri</span></span></div>
   <button class="head-icon" onclick="showView('settings')" aria-label="Ayarlar">⚙</button>
   <nav class="nav khy-nav">
     <button class="navbtn active" data-view="home">⌂<span>Ana Sayfa</span></button>
@@ -749,8 +780,8 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
 <main class="main">
 <section id="home" class="view khy-home rd-dashboard rd-dashboard-v7">
   <div class="rd-dashboard-top">
-    <div class="rd-brand-stack"><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><b>Rota<span>Defteri</span></b><small>Her Yol, Bir Hikaye</small></div></div>
-    <div class="rd-home-top-actions"><button class="rd-home-bell" onclick="openNotifications()" aria-label="Bildirimler">🔔</button><button class="rd-home-profile" onclick="openProfileHome()"><span class="rd-home-avatar" id="homeProfileAvatar">R</span><span><b id="homeProfileName">RotaDefteri</b><small id="homeProfileRole">Saha Ekibi</small></span><i>⌄</i></button></div>
+    <div class="rd-brand-stack"><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><b>Rota <span>Defteri</span></b><small>Her Yol, Bir Hikaye</small></div></div>
+    <div class="rd-home-top-actions"><button class="rd-home-bell" onclick="openNotifications()" aria-label="Bildirimler">🔔</button><button class="rd-home-profile" onclick="openProfileHome()"><span class="rd-home-avatar" id="homeProfileAvatar">R</span><span><b id="homeProfileName">Rota Defteri</b><small id="homeProfileRole">Saha Ekibi</small></span><i>⌄</i></button></div>
   </div>
   <div class="rd-greeting"><h1 id="homeGreeting">Günaydın!</h1><p>Bugün de yollar seni bekliyor.</p></div>
   <div class="rd-work-card">
@@ -766,7 +797,7 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
     <button class="home-tile" onclick="showHistoryPage()"><div class="rd-tile-icon">↺</div><div class="rd-tile-content"><b>Geçmiş</b><small>Tamamlanan rotaları ve geçmiş kayıtları incele.</small></div><div class="rd-tile-arrow">›</div></button>
     <button class="home-tile" onclick="showView('settings')"><div class="rd-tile-icon">⚙</div><div class="rd-tile-content"><b>Ayarlar</b><small>Hesap, uygulama tercihleri ve daha fazlası.</small></div><div class="rd-tile-arrow">›</div></button>
   </div>
-  <div class="rd-promo-banner"><div class="rd-promo-copy"><b>Yollar sadece mesafe değil,<br><span>güven taşır.</span></b><i></i></div><div class="rd-promo-brand"><strong>Rota<span>Defteri</span></strong><small>DAİMA YOLUNDA</small></div></div>
+  <div class="rd-promo-banner"><div class="rd-promo-copy"><b>Yollar sadece mesafe değil,<br><span>güven taşır.</span></b><i></i></div><div class="rd-promo-brand"><strong>Rota <span>Defteri</span></strong><small>DAİMA YOLUNDA</small></div></div>
 </section>
 
 <section id="routes" class="view khy-page rd-routes-page">
@@ -792,7 +823,7 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
 
 <section id="settings" class="view khy-page rd-settings-page">
   <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('home')" aria-label="Geri">‹</button><div class="rd-head-copy"><span class="eyebrow">UYGULAMA</span><h2>Ayarlar</h2><p class="rd-page-sub">Navigasyon, görünüm, açılış ekranı ve veri tercihleri.</p></div></div>
-  <div class="profile-card" id="profileCard"><div class="profile-avatar" id="profileAvatar">R</div><div style="flex:1"><b id="profileName">RotaDefteri</b><span id="profileEmail">Hesabınızla senkronizasyon hazır</span><small class="rd-sync-note" id="profileSyncNote">Giriş yapan kullanıcıların değişiklikleri kullanıcı hesabına özel Firestore alanında tutulur.</small></div><button class="dark-btn" id="signOutBtn" onclick="signOutUser()">Çıkış</button></div>
+  <div class="profile-card" id="profileCard"><div class="profile-avatar" id="profileAvatar">R</div><div style="flex:1"><b id="profileName">Rota Defteri</b><span id="profileEmail">Hesabınızla senkronizasyon hazır</span><small class="rd-sync-note" id="profileSyncNote">Giriş yapan kullanıcıların değişiklikleri kullanıcı hesabına özel Firestore alanında tutulur.</small></div><button class="dark-btn" id="signOutBtn" onclick="signOutUser()">Çıkış</button></div>
   <div class="settings-card rd-settings-card">
     <div class="setting-group-title">Başlangıç</div>
     <div class="setting-row"><div><b>🚀 Açılış ekranı</b><small>Uygulama girişten sonra bu sayfada açılır.</small></div><select id="startupViewSelect" onchange="saveSettings()"><option value="home">Ana Sayfa</option><option value="routes">Rotalar</option><option value="contacts">Adres Defteri</option></select></div>
@@ -885,17 +916,48 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
   </div>
 </section>
 <section id="routeDetailPage" class="view khy-page full-page rd-route-detail-page"><div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('routes')" aria-label="Geri">‹</button><div><span class="eyebrow">ROTA DETAY</span><h2 id="routeDetailTitle">Rota</h2><p class="rd-page-sub">Durak durumu, teslimat notu, km ve tahmini varış.</p></div></div><div id="routeDetailContent"></div></section>
-<section id="navigationPage" class="view navigation-view rd-navigation-view rd-nav-clean rd-nav-v71">
-  <div id="navMap"></div>
-  <div class="rd-nav-instruction-v71"><button class="rd-nav-exit-v71" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button><span class="rd-big-turn" id="navTurnIcon">➤</span><div class="rd-nav-instruction-copy"><strong id="navNextDistance">—</strong><b id="navNextName">—</b><small id="navNextMeta">—</small><div class="rd-nav-stop-state"><button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button><button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button><button id="navOpenMapBtn" class="map" onclick="openCurrentNavStopInGoogleMaps()" title="Google Haritalar'da aç" aria-label="Hedef durağı Google Haritalar'da aç">⌖</button></div></div></div>
-  <div class="rd-nav-speed-card-v71" id="navSpeedGauge"><div class="rd-speed-ring"><div><b id="navSpeed">0</b><span>km/sa</span></div></div></div>
-  <button class="rd-nav-call-card-v71" onclick="openCallPanel()" title="Durağı ara" aria-label="Durağın irtibat kişisini ara"><span>☎</span></button>
-  <div class="rd-nav-route-chip"><span>●</span><div><b id="navRouteName">Navigasyon</b><small id="navStopCounter">1 / 1</small></div></div>
-  <div class="rd-nav-progress-clean rd-nav-progress-v71"><span id="navProgressText">0 / 0</span><i><b id="navProgressBar"></b></i></div>
-  <div class="rd-nav-bottom-v71"><div class="rd-nav-stats-v71"><div><span>⌁</span><b id="navTotalKm">—</b><small>Toplam Mesafe</small></div><div><span>⌖</span><b id="navRemainKm">—</b><small>Kalan Mesafe</small></div><div><span>◷</span><b id="navRemainTime">—</b><small>Kalan Süre</small></div><div><span>⚑</span><b id="navEta">—</b><small>Varış Saati</small></div></div><div class="rd-nav-controls-v71"><button onclick="navigateStop(-1)">‹ <span>Önceki Durak</span></button><button class="primary" onclick="centerNavigation()">◎ <span>Konumu Ortala</span></button><button onclick="navigateStop(1)"><span>Sonraki Durak</span> ›</button></div></div>
+<section id="navigationPage" class="view rd-nav-clean rd856-navigation-page">
+  <div class="rd856-map-frame"><div id="navMap"></div></div>
+
+  <div class="rd856-target-card">
+    <button class="rd856-exit" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button>
+    <span class="rd856-turn" id="navTurnIcon">➤</span>
+    <div class="rd856-target-copy">
+      <strong id="navNextDistance">—</strong>
+      <b id="navNextName">—</b>
+      <small id="navNextMeta">—</small>
+    </div>
+    <div class="rd-nav-stop-state rd856-target-actions">
+      <button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button>
+      <button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button>
+      <button id="navOpenMapBtn" class="map" onclick="openCurrentNavStopInGoogleMaps()" title="Google Haritalar'da aç" aria-label="Hedef durağı Google Haritalar'da aç">⌖</button>
+    </div>
+  </div>
+
+  <button id="rd849SummaryToggle" class="rd849-summary-toggle rd856-summary-toggle" type="button" onclick="toggleNavQuickSummary()" title="Sıradaki durakları göster" aria-label="Sıradaki durakları göster">⌄</button>
+
+  <div class="rd856-speed-card" id="navSpeedGauge"><div class="rd856-speed-ring"><b id="navSpeed">0</b><span>km/sa</span></div></div>
+  <button class="rd856-call-card" onclick="openCallPanel()" title="Durağı ara" aria-label="Durağın irtibat kişisini ara"><span>☎</span><i id="navCallPerson" hidden>Ara</i><i id="navCallPhone" hidden>Numara yok</i></button>
+
+  <div class="rd856-route-chip"><span>●</span><div><b id="navRouteName">Navigasyon</b><small id="navStopCounter">1 / 1</small></div></div>
+  <div class="rd856-progress"><span id="navProgressText">0 / 0</span><i><b id="navProgressBar"></b></i></div>
+
+  <div class="rd856-bottom-panel">
+    <div class="rd856-stats">
+      <div><span>⌁</span><b id="navTotalKm">—</b><small>Toplam Mesafe</small></div>
+      <div><span>⌖</span><b id="navRemainKm">—</b><small>Kalan Mesafe</small></div>
+      <div><span>◷</span><b id="navRemainTime">—</b><small>Kalan Süre</small></div>
+      <div><span>⚑</span><b id="navEta">—</b><small>Varış Saati</small></div>
+    </div>
+    <div class="rd856-controls">
+      <button onclick="navigateStop(-1)">‹ <span>Önceki Durak</span></button>
+      <button class="primary" onclick="centerNavigation()">◎ <span>Konumu Ortala</span></button>
+      <button onclick="navigateStop(1)"><span>Sonraki Durak</span> ›</button>
+    </div>
+  </div>
 </section>
 </main>
-<div class="footer">Karasu Hava Yolları • Rota ve durak yönetim uygulaması</div>
+<div class="footer">Rota Defteri • Rota ve durak yönetimi</div>
 </div>
 
 <input id="importInput" type="file" accept=".xlsx,.xls,.csv,.rota-db,.json,application/json,text/csv" hidden>
@@ -930,7 +992,7 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
   <div class="auth-card rd-auth-shell" id="authCard">
     <section id="authWelcomeScreen" class="rd-auth-welcome">
       <button class="rd-auth-skip" onclick="enterGuestMode()">Daha sonra →</button>
-      <div class="rd-auth-brand"><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><strong>Rota<span>Defteri</span></strong><small>Her Yol, Bir Hikaye</small></div></div>
+      <div class="rd-auth-brand"><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><strong>Rota <span>Defteri</span></strong><small>Her Yol, Bir Hikaye</small></div></div>
       <div class="rd-auth-hero"><h1>Yolculuğuna<br><span>Hoş Geldin!</span></h1><p>Rotanı planla, yolunu takip et.</p><div class="rd-auth-road"><i></i><b>⌖</b></div><small class="rd-handnote rd-handnote-a">Daha Verimli<br>Yarınlara</small><small class="rd-handnote rd-handnote-b">Yollar sadece<br>mesafe değil,<br>güven taşır.</small></div>
       <div class="rd-auth-actions"><button class="rd-auth-primary" onclick="openEmailAuthPanel('login')"><span>✉</span><b>E-posta ile Giriş Yap</b><i>→</i></button><button class="rd-auth-guest" onclick="enterGuestMode()"><span>♙</span><b>Misafir olarak incele</b><i>→</i></button></div>
       <div class="rd-auth-quick"><button onclick="openEmailAuthPanel('signup')">⊕ <span>Hesap Oluştur</span></button><button onclick="openForgotAuthPanel()">♙ <span>Şifremi Unuttum</span></button></div>
@@ -939,7 +1001,7 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
       <div class="rd-auth-privacy"><span>🛡</span><div><b>Verilerin güvende.</b><small>Gizliliğin bizim için önemli.</small></div><button onclick="toast('Kullanım koşulları yakında eklenecek')">Kullanım Koşulları →</button></div>
     </section>
     <section id="authFormScreen" class="rd-auth-form-screen" hidden>
-      <div class="rd-auth-form-head"><button onclick="showAuthWelcome()">‹</button><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><h1 id="authTitle">RotaDefteri</h1><p class="auth-sub" id="authSubtitle">Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.</p></div></div>
+      <div class="rd-auth-form-head"><button onclick="showAuthWelcome()">‹</button><img src="icons/brand-mark.svg" alt="RotaDefteri"><div><h1 id="authTitle">Rota Defteri</h1><p class="auth-sub" id="authSubtitle">Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.</p></div></div>
       <div class="auth-fields">
         <div class="auth-field" id="authNameWrap" style="display:none"><label>AD SOYAD</label><input id="authName" autocomplete="name" placeholder="Adınız ve soyadınız"></div>
         <div class="auth-field"><label>E-POSTA</label><input id="authEmail" type="email" autocomplete="email" inputmode="email" placeholder="ornek@gmail.com"></div>
@@ -1001,7 +1063,7 @@ function toast(t){const el=document.getElementById('toast');el.textContent=t;el.
 function openNotifications(){toast('Yeni bildirim bulunmuyor')}
 function openProfileHome(){showView('settings')}
 function showRoutesFromHome(){showView('routes')}
-function getHomeUserName(){const n=(document.getElementById('profileName')?.textContent||'').trim();return n&&n!=='RotaDefteri'?n:'Sürücü'}
+function getHomeUserName(){const n=(document.getElementById('profileName')?.textContent||'').trim();return n&&n!=='RotaDefteri'&&n!=='Rota Defteri'?n:'Sürücü'}
 function getActiveRouteList(){return db.routes.filter(r=>!r.completed&&(r.stopIds||[]).length)}
 function getOpenRoute(){return getActiveRouteList().find(r=>routeFinishedCount(r)<(r.stopIds?.length||0))||null}
 function smartNavigateHome(){const open=getOpenRoute();if(open)return openNavigation(open.id);if(db.routes.length)return openRouteBuilder();toast('Önce bir rota oluşturun')}
@@ -1329,7 +1391,7 @@ function mergeStops(items){
  return {added,updated,skipped};
 }
 async function clearAll(){if(!confirm('Tüm duraklar, rotalar ve uygulama tercihleri mevcut kullanım alanından silinecek. Giriş yaptıysanız hesabınızdan, misafirseniz bu cihazdan silinir. Google Maps anahtarı korunur. Bu işlem geri alınamaz.'))return;db.stops=[];db.routes=[];db.settings={theme:'dark',unit:'km',map:'google',googleMapsKey:db.settings.googleMapsKey||'',autoComplete:true,liveTracking:true,voiceNavigation:true,routeColor:'blue',accentTheme:'blue'};db.lastBackup=null;persist();renderStops();renderRoutes();applyTheme();try{if(window.rdSyncNow)await window.rdSyncNow();toast('Hesap verileri silindi')}catch(e){toast('Yerel veriler silindi; bulut silme tekrar denenecek')}}
-function shareApp(){if(navigator.share){navigator.share({title:'Karasu Hava Yolları',text:'Karasu Hava Yolları Rota Yönetimi',url:location.href}).catch(()=>{});}else{navigator.clipboard?.writeText(location.href);toast('Uygulama bağlantısı kopyalandı')}}
+function shareApp(){if(navigator.share){navigator.share({title:'Rota Defteri',text:'Rota Defteri — Rota Yönetimi',url:location.href}).catch(()=>{});}else{navigator.clipboard?.writeText(location.href);toast('Uygulama bağlantısı kopyalandı')}}
 function stamp(){return new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 load();
@@ -1340,7 +1402,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.5',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.6',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -1445,7 +1507,7 @@ if ('serviceWorker' in navigator) {
     showGate(false);setStatus(hadLocal?'Hesabınız açıldı • senkronizasyon kontrol ediliyor…':'Hesabınız açıldı • veriler yükleniyor…');setTimeout(()=>window.rdApplyStartupView?.(true),40);if(announce)toast('Oturum açıldı');hydrateAccount(user,hadLocal).catch(()=>{});
   }
   async function refreshCloud(){if(!rdUser||!rdFs||rdDirty||rdSyncInFlight||rdRefreshInFlight||sessionHydrationUid===rdUser.uid||navigator.onLine===false)return;rdRefreshInFlight=true;const uid=rdUser.uid;try{const remote=await fetchCloud(uid);if(!rdUser||rdUser.uid!==uid)return;db.stops=remote.stops;db.routes=restoreLocalGeometry(remote.routes);if(remote.settings)db.settings={...db.settings,...remote.settings};normalizeDb();stateFromRemote(remote);db.lastSyncAt=new Date().toISOString();cacheOnly();renderDb();setStatus('Bulut senkronizasyonu hazır')}catch(e){console.warn('Arka plan yenilemesi başarısız',e)}finally{rdRefreshInFlight=false}}
-  window.toggleAuthMode=function(){authSignupMode=!authSignupMode;const card=document.getElementById('authCard'),btn=document.getElementById('emailAuthBtn'),mode=document.getElementById('authModeBtn'),title=document.getElementById('authTitle'),sub=document.getElementById('authSubtitle'),pw=document.getElementById('authPassword');card?.classList.toggle('signup',authSignupMode);if(btn)btn.textContent=authSignupMode?'Hesap Oluştur':'Giriş Yap';if(mode)mode.textContent=authSignupMode?'Zaten hesabın var mı? Giriş yap':'Hesabın yok mu? Hesap oluştur';if(title)title.textContent=authSignupMode?'Hesap Oluştur':'RotaDefteri';if(sub)sub.textContent=authSignupMode?'Yeni hesabınızla durak ve rotalarınızı güvenli şekilde senkronize edin.':'Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.';if(pw)pw.autocomplete=authSignupMode?'new-password':'current-password';hideAuthHelp();setStatus(authSignupMode?'Yeni hesap bilgilerinizi girin':'E-posta ve şifrenizle giriş yapın')};
+  window.toggleAuthMode=function(){authSignupMode=!authSignupMode;const card=document.getElementById('authCard'),btn=document.getElementById('emailAuthBtn'),mode=document.getElementById('authModeBtn'),title=document.getElementById('authTitle'),sub=document.getElementById('authSubtitle'),pw=document.getElementById('authPassword');card?.classList.toggle('signup',authSignupMode);if(btn)btn.textContent=authSignupMode?'Hesap Oluştur':'Giriş Yap';if(mode)mode.textContent=authSignupMode?'Zaten hesabın var mı? Giriş yap':'Hesabın yok mu? Hesap oluştur';if(title)title.textContent=authSignupMode?'Hesap Oluştur':'Rota Defteri';if(sub)sub.textContent=authSignupMode?'Yeni hesabınızla durak ve rotalarınızı güvenli şekilde senkronize edin.':'Rotalarınızı güvenli şekilde kaydedin ve tüm cihazlarınızda senkronize edin.';if(pw)pw.autocomplete=authSignupMode?'new-password':'current-password';hideAuthHelp();setStatus(authSignupMode?'Yeni hesap bilgilerinizi girin':'E-posta ve şifrenizle giriş yapın')};
   window.submitEmailAuth=async function(){
     if(!rdAuth){finishAuthPending();setStatus(firebaseBooting?'Giriş servisi hazırlanıyor…':'Firebase bağlantısı yeniden hazırlanıyor…');showAuthHelp('Giriş servisi henüz hazır değil. Bağlantı yeniden deneniyor; birkaç saniye sonra tekrar dokunun.');if(!firebaseBooting){firebaseReady=false;bootstrapFirebase()}return}
     hideAuthHelp();const email=(document.getElementById('authEmail')?.value||'').trim(),password=document.getElementById('authPassword')?.value||'',name=(document.getElementById('authName')?.value||'').trim();if(!email||!password){showAuthHelp('E-posta ve şifre alanlarını doldurun.');return}if(authSignupMode&&!name){showAuthHelp('Hesap oluşturmak için ad soyad alanını doldurun.');return}if(password.length<6){showAuthHelp('Şifre en az 6 karakter olmalıdır.');return}
@@ -2053,7 +2115,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.5-static-layer-svg-fix';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.6-navigation-page-rebuild';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2136,272 +2198,10 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </script>
 
 
-<style id="rd847-navigation-performance-css">
-/* v8.4.10 — smooth navigation + free map gestures + smart resume */
-#navMap{touch-action:none;overscroll-behavior:none;contain:layout paint style}
-#navMap.rd847-heading-map .leaflet-map-pane{
-  will-change:rotate;
-  backface-visibility:hidden;
-  transform-style:preserve-3d;
-  transition:rotate .18s linear;
-}
-#navMap.rd847-manual-map .leaflet-map-pane{transition:none!important}
-.navigation-view .nav-top,
-.navigation-view .nav-next,
-.navigation-view .rd-nav-progress,
-.navigation-view .rd-nav-bottom-v71,
-.navigation-view .nav-bottom{
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-.navigation-view .rd-nav-pulse{animation:none!important;opacity:.24!important}
-.navigation-view .rd-nav-arrow-inner{transition:transform .16s linear!important}
-.rd847-gps-state{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 228px);transform:translateX(-50%);z-index:1600;pointer-events:none;background:rgba(8,19,31,.84);border:1px solid rgba(97,183,255,.24);border-radius:999px;padding:5px 10px;color:#c8def2;font-size:10px;opacity:0;transition:opacity .16s ease;white-space:nowrap}
-.rd847-gps-state.show{opacity:1}
-@media (prefers-reduced-motion:reduce){#navMap.rd847-heading-map .leaflet-map-pane,.navigation-view .rd-nav-arrow-inner{transition:none!important}}
-</style>
-<script id="rd847-navigation-performance-engine">
-(function(){
-  'use strict';
-  if(window.RD847_NAV_PATCHED)return;
-  window.RD847_NAV_PATCHED=true;
-
-  const S=window.RD847Nav={
-    initSeq:0,initPromise:null,initRouteId:null,initStartedAt:0,
-    acceptedPos:null,acceptedAt:0,rawPos:null,course:null,mapBearing:null,appliedBearing:null,
-    googleBearingApplied:false,manualMode:false,userTouchAt:0,pointerStart:null,
-    markerFrame:0,markerTarget:null,lastCenterAt:0,lastBearingAt:0,lastPanelAt:0,
-    lastGpsErrorAt:0,lastStatusAt:0,lastFollowNoticeAt:0,fallbackInitPending:false,
-    watchdog:null,mapHandlers:[],hostHandlers:[],preferredZoom:null
-  };
-
-  const norm=d=>((Number(d)%360)+360)%360;
-  const angleDelta=(a,b)=>((norm(b)-norm(a)+540)%360)-180;
-  const smoothAngle=(from,to,factor=.30)=>norm(norm(from)+angleDelta(from,to)*factor);
-  const finite=n=>n!==null&&n!==undefined&&n!==''&&Number.isFinite(Number(n));
-  const dist=(a,b)=>a&&b?haversine(Number(a.lat),Number(a.lng),Number(b.lat),Number(b.lng)):Infinity;
-  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-
-  function statusNode(){
-    let n=document.getElementById('rd847GpsState');
-    if(!n){n=document.createElement('div');n.id='rd847GpsState';n.className='rd847-gps-state';document.getElementById('navigationPage')?.appendChild(n)}
-    return n;
-  }
-  function navStatus(text,ms=1500){
-    const n=statusNode();if(!n)return;n.textContent=text;n.classList.add('show');
-    clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('show'),ms);
-  }
-
-  // Navigation-only Leaflet instance: fewer animations, canvas preference and calmer tile loading.
-  const baseMakeMap=makeMap;
-  makeMap=function(el,center=[40.195,29.06],zoom=10){
-    if(el!=='navMap')return baseMakeMap(el,center,zoom);
-    const m=L.map(el,{preferCanvas:false,zoomAnimation:false,markerZoomAnimation:false,fadeAnimation:false,zoomSnap:.25,zoomDelta:.5,wheelDebounceTime:55,wheelPxPerZoomLevel:90,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:true,boxZoom:false,keyboard:false}).setView(center,zoom);
-    L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları',updateWhenIdle:true,updateWhenZooming:false,keepBuffer:4}).addTo(m);
-    return m;
-  };
-
-  function extractLeafletCourse(layer,pos){
-    if(!layer||!pos)return null;const pts=[];
-    const push=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(push);return}if(finite(v.lat)&&finite(v.lng))pts.push({lat:Number(v.lat),lng:Number(v.lng)})};
-    try{if(typeof layer.getLatLngs==='function')push(layer.getLatLngs());if(typeof layer.eachLayer==='function')layer.eachLayer(x=>{try{if(typeof x.getLatLngs==='function')push(x.getLatLngs())}catch(_){}})}catch(_){}
-    if(pts.length<2)return null;let best=0,bestD=Infinity;for(let i=0;i<pts.length;i++){const d=dist(pos,pts[i]);if(d<bestD){bestD=d;best=i}}
-    let j=Math.min(best+1,pts.length-1);while(j<pts.length-1&&dist(pts[best],pts[j])<28)j++;
-    return bestD<220?bearingBetween(pos,pts[j]):null;
-  }
-  function extractGoogleCourse(layer,pos){
-    if(!layer||!pos||typeof layer.getPath!=='function')return null;
-    try{const p=layer.getPath(),pts=[];for(let i=0;i<p.getLength();i++){const x=p.getAt(i);pts.push({lat:x.lat(),lng:x.lng()})}if(pts.length<2)return null;let best=0,bestD=Infinity;for(let i=0;i<pts.length;i++){const d=dist(pos,pts[i]);if(d<bestD){bestD=d;best=i}}let j=Math.min(best+1,pts.length-1);while(j<pts.length-1&&dist(pts[best],pts[j])<28)j++;return bestD<220?bearingBetween(pos,pts[j]):null}catch(_){return null}
-  }
-  function routeCourse(r,pos){
-    let b=null;if(navMapProvider==='leaflet')b=extractLeafletCourse(navApproachPolyline,pos);else if(navMapProvider==='google')b=extractGoogleCourse(navApproachPolyline,pos);if(finite(b))return norm(b);
-    const g=r?.geometry?.coordinates;if(Array.isArray(g)&&g.length>1){let best=0,bestD=Infinity;for(let i=0;i<g.length;i++){const q={lat:Number(g[i][1]),lng:Number(g[i][0])};if(!finite(q.lat)||!finite(q.lng))continue;const d=dist(pos,q);if(d<bestD){bestD=d;best=i}}let j=Math.min(best+1,g.length-1);while(j<g.length-1&&dist({lat:Number(g[best][1]),lng:Number(g[best][0])},{lat:Number(g[j][1]),lng:Number(g[j][0])})<32)j++;if(bestD<240&&g[j])return bearingBetween(pos,{lat:Number(g[j][1]),lng:Number(g[j][0])})}
-    return r?guidanceBearing(r,pos):null;
-  }
-
-  function clearLeafletBearing(){
-    const host=document.getElementById('navMap');if(!host)return;host.classList.remove('rd847-heading-map');
-    const pane=navMap?.getPanes?.()?.mapPane||host.querySelector('.leaflet-map-pane');
-    if(pane){pane.style.rotate='';pane.style.transformOrigin='';pane.style.transition=''}
-    /* Eski sürümün pane transform müdahalesinden kalabilecek rotate değerlerini temizle. */
-    host.querySelectorAll('.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-shadow-pane,.leaflet-marker-pane,.leaflet-tooltip-pane,.leaflet-popup-pane').forEach(p=>{if((p.style.transform||'').includes('rotate('))p.style.transform='';p.style.transformOrigin='';p.style.rotate='';});
-    host.querySelectorAll('.rd-stop-marker').forEach(p=>{p.style.transform='';p.style.rotate=''});S.appliedBearing=null;
-  }
-  function leafletBearingOrigin(){
-    if(navMapProvider!=='leaflet'||!navMap)return null;const size=navMap.getSize?.(),mp=navMap._getMapPanePos?.()||{x:0,y:0};if(!size)return null;return {x:(size.x/2)-Number(mp.x||0),y:(size.y/2)-Number(mp.y||0)};
-  }
-  function applyLeafletBearing(deg,force=false){
-    if(navMapProvider!=='leaflet'||!navMap||!finite(deg))return;
-    if(S.manualMode||!navTracking){clearLeafletBearing();return}
-    const host=document.getElementById('navMap');if(!host)return;const b=norm(deg),now=Date.now();
-    if(!force&&finite(S.appliedBearing)&&Math.abs(angleDelta(S.appliedBearing,b))<1.8&&now-S.lastBearingAt<450)return;
-    const origin=leafletBearingOrigin(),pane=navMap.getPanes?.()?.mapPane;if(!origin||!pane)return;
-    host.classList.add('rd847-heading-map');host.classList.remove('rd847-manual-map');
-    /* Leaflet'in translate3d transformuna dokunma: bağımsız rotate özelliği ile tüm katmanları birlikte döndür. */
-    pane.style.transformOrigin=`${origin.x}px ${origin.y}px`;pane.style.rotate=`${-b}deg`;
-    host.querySelectorAll('.rd-stop-marker').forEach(el=>{el.style.transform='';el.style.rotate=`${b}deg`});
-    S.appliedBearing=b;S.lastBearingAt=now;
-    const arrow=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(arrow&&finite(V66.heading))arrow.style.transform=`rotate(${norm(V66.heading)}deg)`;
-  }
-  function applyMapBearing(deg,force=false){
-    if(!finite(deg)||!navMap)return;const b=norm(deg);S.mapBearing=b;
-    if(S.manualMode||!navTracking){
-      if(navMapProvider==='leaflet')clearLeafletBearing();
-      else if(navMapProvider==='google'){try{navMap.setHeading?.(0)}catch(_){}S.googleBearingApplied=false}
-      return;
-    }
-    if(navMapProvider==='google'){
-      clearLeafletBearing();try{navMap.setHeading?.(b);const got=Number(navMap.getHeading?.());S.googleBearingApplied=Number.isFinite(got)&&Math.abs(angleDelta(got,b))<10}catch(_){S.googleBearingApplied=false}
-    }else{S.googleBearingApplied=false;applyLeafletBearing(b,force)}
-  }
-
-  setArrowHeading=function(deg){
-    if(!finite(deg))return;V66.heading=norm(deg);
-    if(navMapProvider==='google'&&navPositionMarker){const rot=(navTracking&&!S.manualMode&&S.googleBearingApplied)?0:V66.heading;try{navPositionMarker.setIcon(googleArrowIcon(rot))}catch(_){}return}
-    const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(el)el.style.transform=`rotate(${V66.heading}deg)`;
-  };
-  setTurnHeading=function(deg){
-    const el=document.getElementById('navTurnIcon');if(!el||!finite(deg))return;const rotated=(navMapProvider==='leaflet'&&navTracking&&!S.manualMode&&finite(S.mapBearing))||(navMapProvider==='google'&&navTracking&&!S.manualMode&&S.googleBearingApplied&&finite(S.mapBearing));const relative=rotated?norm(Number(deg)-Number(S.mapBearing)):norm(deg);el.style.transform=`rotate(${relative}deg)`;
-  };
-
-  function acceptGps(coords,r){
-    const raw={lat:Number(coords.latitude),lng:Number(coords.longitude)},now=Date.now();if(!finite(raw.lat)||!finite(raw.lng))return null;
-    const accuracy=finite(coords.accuracy)?Math.max(0,Number(coords.accuracy)):999,speedKmh=Math.max(0,(Number(coords.speed)||0)*3.6);
-    if(accuracy>220)return null;
-    if(S.acceptedPos){const dt=Math.max(.25,(now-S.acceptedAt)/1000),d=dist(S.acceptedPos,raw),reported=speedKmh,implied=d/dt*3.6;if(dt<7&&d>120&&implied>Math.max(150,reported+95))return null;if(dt<3&&d>65&&reported<60&&accuracy>18)return null}
-    let out=raw,movedRaw=S.acceptedPos?dist(S.acceptedPos,raw):Infinity;
-    if(S.acceptedPos){
-      if(speedKmh<3&&movedRaw<Math.max(2.5,Math.min(12,accuracy*.28)))out={...S.acceptedPos};
-      else{let w=speedKmh>=40?.82:speedKmh>=15?.72:speedKmh>=5?.60:.48;if(accuracy>35)w-=.14;else if(accuracy>18)w-=.07;w=clamp(w,.34,.86);out={lat:S.acceptedPos.lat+(raw.lat-S.acceptedPos.lat)*w,lng:S.acceptedPos.lng+(raw.lng-S.acceptedPos.lng)*w}}
-    }
-    const moved=S.acceptedPos?dist(S.acceptedPos,out):0,routeB=routeCourse(r,out);let course=null,deviceHeading=finite(coords.heading)?norm(Number(coords.heading)):null;
-    if(finite(deviceHeading)&&speedKmh>=8){if(finite(routeB)&&speedKmh<32&&Math.abs(angleDelta(routeB,deviceHeading))>95)course=routeB;else course=deviceHeading}
-    if(!finite(course)&&S.acceptedPos&&moved>=5)course=bearingBetween(S.acceptedPos,out);
-    if(!finite(course))course=routeB;
-    if(finite(course)){const f=speedKmh>=45?.46:speedKmh>=18?.36:speedKmh>=7?.28:.20;S.course=finite(S.course)?smoothAngle(S.course,course,f):norm(course)}
-    S.rawPos=raw;S.acceptedPos=out;S.acceptedAt=now;return {pos:out,course:S.course,accuracy,speedKmh,moved};
-  }
-
-  function currentZoom(){const z=Number(navZoom?.()||17);return finite(z)?z:17}
-  function stableCenter(pos,force=false){
-    if(!navMap||!pos||(!navTracking&&!force)||S.manualMode)return;const now=Date.now();if(!force&&now-S.lastCenterAt<480)return;
-    const target={lat:Number(pos.lat),lng:Number(pos.lng)},z=clamp(Number(S.preferredZoom||currentZoom()),15,19);S.lastCenterAt=now;
-    try{
-      if(navMapProvider==='google'){
-        const c=navMap.getCenter?.(),cur=c?{lat:c.lat(),lng:c.lng()}:null;if(!force&&cur&&dist(cur,target)<4)return;navMap.panTo(target);if(force&&Math.abs((navMap.getZoom?.()||z)-z)>.2)navMap.setZoom(z);
-      }else{
-        const c=navMap.getCenter?.(),cur=c?{lat:c.lat,lng:c.lng}:null;if(!force&&cur&&dist(cur,target)<4)return;
-        // No nested Leaflet pan animation: one controlled pan per accepted GPS sample.
-        if(force)navMap.setView([target.lat,target.lng],z,{animate:false});else navMap.panTo([target.lat,target.lng],{animate:true,duration:.30,easeLinearity:.30,noMoveStart:true});
-      }
-    }catch(e){console.warn('Navigasyon merkezleme',e)}
-  }
-
-  function stopMarkerAnimation(){if(S.markerFrame){cancelAnimationFrame(S.markerFrame);S.markerFrame=0}}
-  animateNavMarker=function(lat,lng,heading){
-    if(!navMap||!finite(lat)||!finite(lng))return;const hd=finite(heading)?norm(heading):(finite(S.course)?S.course:0),to={lat:Number(lat),lng:Number(lng)};
-    setArrowHeading(hd);
-    if(navMapProvider==='google'){
-      if(!navPositionMarker){navPositionMarker=new google.maps.Marker({map:navMap,position:to,icon:googleArrowIcon((navTracking&&!S.manualMode&&S.googleBearingApplied)?0:hd),zIndex:9999,optimized:true});return}
-      const gp=navPositionMarker.getPosition?.(),from=gp?{lat:gp.lat(),lng:gp.lng()}:to;stopMarkerAnimation();const start=performance.now(),duration=clamp(V66.lastGpsAt?Date.now()-V66.lastGpsAt:650,300,780);
-      const tick=t=>{const q=Math.min(1,(t-start)/duration),e=q*(2-q);try{navPositionMarker.setPosition({lat:from.lat+(to.lat-from.lat)*e,lng:from.lng+(to.lng-from.lng)*e})}catch(_){}if(q<1)S.markerFrame=requestAnimationFrame(tick);else S.markerFrame=0};S.markerFrame=requestAnimationFrame(tick);return;
-    }
-    if(!navPositionMarker){navPositionMarker=L.marker([to.lat,to.lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false,bubblingMouseEvents:false}).addTo(navMap);requestAnimationFrame(()=>setArrowHeading(hd));return}
-    const ll=navPositionMarker.getLatLng?.(),from=ll?{lat:ll.lat,lng:ll.lng}:to;stopMarkerAnimation();const start=performance.now(),duration=clamp(V66.lastGpsAt?Date.now()-V66.lastGpsAt:650,300,780);
-    const tick=t=>{const q=Math.min(1,(t-start)/duration),e=q*(2-q);try{navPositionMarker.setLatLng([from.lat+(to.lat-from.lat)*e,from.lng+(to.lng-from.lng)*e])}catch(_){}if(q<1)S.markerFrame=requestAnimationFrame(tick);else S.markerFrame=0};S.markerFrame=requestAnimationFrame(tick);
-  };
-
-  function enterManualMode(label='Serbest harita'){if(S.manualMode)return;S.manualMode=true;navTracking=false;const host=document.getElementById('navMap');host?.classList.add('rd847-manual-map');applyMapBearing(0,true);if(Date.now()-S.lastFollowNoticeAt>900){S.lastFollowNoticeAt=Date.now();navStatus(label+' • Ortala ile takibe dön',1700)}}
-  function leaveManualMode(){S.manualMode=false;navTracking=true;document.getElementById('navMap')?.classList.remove('rd847-manual-map')}
-
-  function cleanupInteractions(){
-    for(const [obj,evt,fn] of S.mapHandlers){try{obj?.off?.(evt,fn)}catch(_){}try{if(window.google?.maps&&obj&&typeof obj.remove==='function')obj.remove()}catch(_){}}S.mapHandlers=[];
-    const host=document.getElementById('navMap');if(host){for(const [evt,fn,opt] of S.hostHandlers){try{host.removeEventListener(evt,fn,opt)}catch(_){}}}S.hostHandlers=[];
-  }
-  function onHost(evt,fn,opt){const host=document.getElementById('navMap');if(!host)return;host.addEventListener(evt,fn,opt);S.hostHandlers.push([evt,fn,opt])}
-  function wireInteractions(){
-    cleanupInteractions();const host=document.getElementById('navMap');if(!host||!navMap)return;
-    if(navMapProvider==='leaflet'){
-      try{navMap.dragging?.enable();navMap.touchZoom?.enable();navMap.doubleClickZoom?.enable();navMap.scrollWheelZoom?.enable()}catch(_){}
-      const drag=()=>enterManualMode('Harita serbest');navMap.on('dragstart',drag);S.mapHandlers.push([navMap,'dragstart',drag]);
-      const zoomStart=()=>{if(Date.now()-S.userTouchAt<900)enterManualMode('Yakınlaştırma serbest')};navMap.on('zoomstart',zoomStart);S.mapHandlers.push([navMap,'zoomstart',zoomStart]);
-      const zoomEnd=()=>{S.preferredZoom=currentZoom();if(!S.manualMode&&finite(S.mapBearing))applyMapBearing(S.mapBearing,true)};navMap.on('zoomend',zoomEnd);S.mapHandlers.push([navMap,'zoomend',zoomEnd]);
-      const resize=()=>{if(!S.manualMode&&navTracking&&finite(S.mapBearing))requestAnimationFrame(()=>applyLeafletBearing(S.mapBearing,true))};navMap.on('resize',resize);S.mapHandlers.push([navMap,'resize',resize]);
-      const move=()=>{if(!S.manualMode&&navTracking&&finite(S.mapBearing)){const origin=leafletBearingOrigin(),panes=navMap.getPanes?.();if(origin)['tilePane','overlayPane','shadowPane','markerPane','tooltipPane','popupPane'].forEach(k=>{const p=panes?.[k];if(p)p.style.transformOrigin=`${origin.x}px ${origin.y}px`})}};navMap.on('move',move);S.mapHandlers.push([navMap,'move',move]);
-    }else if(navMapProvider==='google'){
-      try{navMap.setOptions?.({gestureHandling:'greedy',draggable:true,scrollwheel:true,disableDoubleClickZoom:false,headingInteractionEnabled:false,tiltInteractionEnabled:false})}catch(_){}
-      try{const a=navMap.addListener('dragstart',()=>enterManualMode('Harita serbest'));S.mapHandlers.push([a,'google',null]);const b=navMap.addListener('zoom_changed',()=>{if(Date.now()-S.userTouchAt<900){enterManualMode('Yakınlaştırma serbest');S.preferredZoom=currentZoom()}});S.mapHandlers.push([b,'google',null])}catch(_){}
-    }
-    const down=e=>{S.userTouchAt=Date.now();S.pointerStart={x:Number(e.clientX||0),y:Number(e.clientY||0),id:e.pointerId}};
-    const move=e=>{if(!S.pointerStart||S.pointerStart.id!==e.pointerId)return;const dx=Number(e.clientX||0)-S.pointerStart.x,dy=Number(e.clientY||0)-S.pointerStart.y;if(Math.hypot(dx,dy)>8)enterManualMode('Harita serbest')};
-    const up=()=>{S.pointerStart=null};const touch=e=>{S.userTouchAt=Date.now();if(e.touches?.length>1)enterManualMode('Yakınlaştırma serbest')};const wheel=()=>{S.userTouchAt=Date.now();enterManualMode('Yakınlaştırma serbest')};
-    onHost('pointerdown',down,{capture:true,passive:true});onHost('pointermove',move,{capture:true,passive:true});onHost('pointerup',up,{capture:true,passive:true});onHost('pointercancel',up,{capture:true,passive:true});onHost('touchstart',touch,{capture:true,passive:true});onHost('wheel',wheel,{capture:true,passive:true});
-  }
-
-  const baseDestroy=destroyNavigationMap;
-  destroyNavigationMap=function(){stopMarkerAnimation();cleanupInteractions();clearLeafletBearing();S.manualMode=false;S.googleBearingApplied=false;S.preferredZoom=null;return baseDestroy()};
-
-  handleGpsPosition=function(pos,rArg=null,initial=false){
-    try{
-      const r=rArg||currentNavRoute();if(!pos?.coords)return;const accepted=acceptGps(pos.coords,r);if(!accepted){if(Date.now()-S.lastStatusAt>7000){S.lastStatusAt=Date.now();navStatus('Zayıf GPS örneği atlandı')}return}
-      const current=accepted.pos,rawSpeed=accepted.speedKmh;V66.displayedSpeed=V66.displayedSpeed?V66.displayedSpeed*.68+rawSpeed*.32:rawSpeed;const speedEl=document.getElementById('navSpeed');if(speedEl)speedEl.textContent=Math.round(V66.displayedSpeed);
-      let hd=finite(accepted.course)?accepted.course:routeCourse(r,current);if(!finite(hd))hd=finite(V66.heading)?V66.heading:0;V66.lastPos=current;V66.lastGpsAt=Date.now();
-      if(finite(hd)&&!S.manualMode&&navTracking){if(!finite(S.mapBearing))S.mapBearing=norm(hd);else if(Math.abs(angleDelta(S.mapBearing,hd))>1.4)S.mapBearing=smoothAngle(S.mapBearing,hd,rawSpeed>=40?.42:rawSpeed>=15?.32:.23);applyMapBearing(S.mapBearing)}
-      animateNavMarker(current.lat,current.lng,hd);stableCenter(current,initial);
-      const now=Date.now();if(r){if(initial||now-S.lastPanelAt>450){S.lastPanelAt=now;updateNavPanel(r,current)}updateApproachRoute(r,current,initial).catch?.(()=>{});checkAutoComplete(r,current.lat,current.lng)}
-    }catch(e){console.error('GPS konum işleme korunarak devam etti',e)}
-  };
-
-  startLiveTracking=function(){
-    if(!navigator.geolocation){navStatus('Konum servisi kullanılamıyor',2200);return}if(navWatchId!==null)return;
-    try{navWatchId=navigator.geolocation.watchPosition(pos=>handleGpsPosition(pos),err=>{console.warn('Navigasyon GPS',err);const now=Date.now();if(now-S.lastGpsErrorAt<7000)return;S.lastGpsErrorAt=now;if(err?.code===1)navStatus('Konum izni gerekli',2600);else if(err?.code===3)navStatus('GPS bekleniyor…',1600);else navStatus('Konum geçici olarak alınamadı',1800)},{enableHighAccuracy:true,maximumAge:700,timeout:18000})}catch(e){console.warn('Navigasyon GPS başlatılamadı',e);navStatus('GPS başlatılamadı',2200)}
-  };
-
-  centerNavigation=function(){
-    leaveManualMode();if(V66.lastPos){const r=currentNavRoute(),hd=finite(S.course)?S.course:routeCourse(r,V66.lastPos);if(finite(hd)){S.mapBearing=finite(S.mapBearing)?smoothAngle(S.mapBearing,hd,.72):norm(hd)}stableCenter(V66.lastPos,true);if(finite(S.mapBearing))setTimeout(()=>applyMapBearing(S.mapBearing,true),20);navStatus('Konum takibi açık');return}
-    if(!navigator.geolocation)return navStatus('Konum servisi kullanılamıyor');navStatus('Konum alınıyor…');navigator.geolocation.getCurrentPosition(p=>handleGpsPosition(p,currentNavRoute(),true),()=>navStatus('Konum alınamadı',2200),{enableHighAccuracy:true,maximumAge:800,timeout:12000});
-  };
-
-  focusNavigationTarget=function(announce=false){
-    if(!navMap)return;const r=currentNavRoute(),st=currentTarget(r);if(!st)return;
-    if(announce){enterManualMode('Hedef görünümü');navFlyTo({lat:st.lat,lng:st.lng},Math.max(16,Math.min(18,currentZoom())))}
-    else if(V66.lastPos){leaveManualMode();stableCenter(V66.lastPos,true);const hd=finite(S.course)?S.course:routeCourse(r,V66.lastPos);if(finite(hd)){S.mapBearing=norm(hd);setTimeout(()=>applyMapBearing(S.mapBearing,true),20)}}
-    if(V66.lastPos)updateApproachRoute(r,V66.lastPos,true);if(announce)toast((navIndex+1)+'. durak: '+st.name);
-  };
-
-  toggleNavOverview=function(){
-    if(!navMap)return;const r=currentNavRoute();if(!r)return;enterManualMode('Genel görünüm');const bounds=[];if(V66.lastPos)bounds.push([V66.lastPos.lat,V66.lastPos.lng]);for(const id of r.stopIds){const s=db.stops.find(x=>x.id===id);if(s)bounds.push([s.lat,s.lng])}if(bounds.length>1)navFitAll(bounds);
-  };
-
-  const previousInit=window.initNavigation;
-  window.initNavigation=function(r){
-    if(!r)return Promise.resolve();if(S.initPromise&&S.initRouteId===r.id&&Date.now()-S.initStartedAt<1700)return S.initPromise;
-    const seq=++S.initSeq;S.initRouteId=r.id;S.initStartedAt=Date.now();S.fallbackInitPending=false;
-    const job=(async()=>{try{await previousInit(r);if(seq!==S.initSeq||document.body.dataset.view!=='navigationPage'||currentRouteId!==r.id)return;wireInteractions();S.preferredZoom=currentZoom();if(V66.lastPos){const hd=finite(S.course)?S.course:routeCourse(r,V66.lastPos);if(finite(hd)){S.course=finite(S.course)?S.course:hd;S.mapBearing=finite(S.mapBearing)?S.mapBearing:norm(hd)}leaveManualMode();stableCenter(V66.lastPos,true);if(finite(S.mapBearing))applyMapBearing(S.mapBearing,true)}startWatchdog()}catch(e){console.error('Navigasyon güvenli başlatma',e);navStatus('Navigasyon haritası yenileniyor…',1900)}})();
-    const wrapped=job.finally(()=>{if(S.initPromise===wrapped)S.initPromise=null});S.initPromise=wrapped;return wrapped;
-  };
-
-  window.gm_authFailure=function(){
-    try{sessionStorage.setItem('rd-google-map-session-failed-v1','1')}catch(_){}if(S.fallbackInitPending)return;S.fallbackInitPending=true;navStatus('Harita yedeğine geçiliyor…',1500);const rid=currentRouteId;
-    setTimeout(()=>{S.fallbackInitPending=false;if(document.body.dataset.view!=='navigationPage'||currentRouteId!==rid)return;if(navMap&&navMapProvider==='leaflet')return;const r=currentNavRoute();if(r)window.initNavigation(r)},220);
-  };
-
-  function startWatchdog(){
-    if(S.watchdog)return;S.watchdog=setInterval(()=>{if(document.body.dataset.view!=='navigationPage')return;const now=Date.now();if(db.settings.liveTracking!==false&&(navWatchId===null||now-(V66.lastGpsAt||0)>20000)){if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){}navWatchId=null}startLiveTracking()}if(navTracking&&!S.manualMode&&V66.lastPos&&navMap){const c=navMapProvider==='google'?navMap.getCenter?.():navMap.getCenter?.(),cur=c?(navMapProvider==='google'?{lat:c.lat(),lng:c.lng()}:{lat:c.lat,lng:c.lng}):null;if(!cur||dist(cur,V66.lastPos)>90)stableCenter(V66.lastPos,false)}if(!navMap){const r=currentNavRoute();if(r)window.initNavigation(r)}},6000);
-  }
-  startWatchdog();
-
-  const oldStartupApply=window.rdApplyStartupView;if(typeof oldStartupApply==='function')window.rdApplyStartupView=function(force=false){if(!force&&document.body.dataset.view==='navigationPage'){V66.startupApplied=true;return}return oldStartupApply(force)};
-  document.addEventListener('visibilitychange',()=>{if(document.hidden||document.body.dataset.view!=='navigationPage')return;setTimeout(()=>{if(navWatchId===null||Date.now()-(V66.lastGpsAt||0)>14000){if(navWatchId!==null){try{navigator.geolocation.clearWatch(navWatchId)}catch(_){}navWatchId=null}startLiveTracking()}if(V66.lastPos&&!S.manualMode){navTracking=true;stableCenter(V66.lastPos,true);if(finite(S.mapBearing))applyMapBearing(S.mapBearing,true)}},280)},{passive:true});
-  window.addEventListener('pagehide',()=>{if(S.watchdog){clearInterval(S.watchdog);S.watchdog=null}stopMarkerAnimation()},{once:true});
-})();
-</script>
-
-
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.5-static-layer-svg-fix';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.6-navigation-page-rebuild';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2755,114 +2555,58 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 </script>
 
 
-<script id="rd853-map-overlay-guard">
-(function(){
- 'use strict';
- if(window.__RD853_MAP_GUARD__)return;window.__RD853_MAP_GUARD__=true;
- function refreshLeafletRenderer(){
-   if(navMapProvider!=='leaflet'||!navMap)return;
-   try{navMap.invalidateSize({pan:false,animate:false})}catch(_){}
-   try{navMap._renderer?._redraw?.()}catch(_){}
- }
- const oldInit=window.initNavigation;
- if(typeof oldInit==='function')window.initNavigation=async function(){const out=await oldInit.apply(this,arguments);setTimeout(refreshLeafletRenderer,80);return out};
- document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.body?.dataset?.view==='navigationPage')setTimeout(refreshLeafletRenderer,100)},{passive:true});
-})();
-</script>
 
-<style id="rd855-static-layer-svg-css">
-/* v8.5.5 — navigation vectors use SVG only; stale canvas route layers are forbidden. */
-#navMap .rd855-route-pane{z-index:430!important;pointer-events:none!important}
-#navMap .rd855-route-pane svg{pointer-events:none!important;overflow:visible!important}
-#navMap .rd854-route-pane{display:none!important}
-</style>
-<script id="rd855-static-layer-svg-fix">
+<script id="rd856-navigation-page-runtime">
 (function(){
  'use strict';
- if(window.__RD855_STATIC_LAYER_FIX__)return;window.__RD855_STATIC_LAYER_FIX__=true;
- let routeRenderer=null,rendererMap=null;
- const valid=n=>Number.isFinite(Number(n));
- function clearLayer(layer){try{if(!layer)return;if(typeof layer.setMap==='function')layer.setMap(null);else if(typeof layer.remove==='function')layer.remove();else if(navMap&&typeof navMap.removeLayer==='function')navMap.removeLayer(layer)}catch(_){} }
- function purgeStaleVectorDom(){
-   const host=document.getElementById('navMap');if(!host)return;
-   try{
-     /* The cyan screen-fixed artifact came from a stale Leaflet canvas renderer. Navigation no longer uses canvas vectors. */
-     host.querySelectorAll('.leaflet-overlay-pane canvas,.rd854-route-pane canvas,.rd855-route-pane canvas').forEach(el=>el.remove());
-     host.querySelectorAll('.rd854-route-pane').forEach(el=>el.remove());
-     const panes=navMapProvider==='leaflet'&&navMap?navMap.getPanes?.():null;
-     if(panes?.overlayPane){
-       panes.overlayPane.querySelectorAll('canvas').forEach(el=>el.remove());
-       panes.overlayPane.style.rotate='';panes.overlayPane.style.transformOrigin='';
-     }
-   }catch(e){console.warn('Eski harita çizim katmanı temizlenemedi',e)}
+ document.title='Rota Defteri';
+ window.RD_BUILD='8.5.6-navigation-page-rebuild';
+ document.body.dataset.build=window.RD_BUILD;
+ const N=window.RD856Nav={manual:false,lastCenterAt:0,lastMarkerAt:0,routeToken:0,leafletRoute:null,leafletMarker:null};
+ function finite(v){return v!==null&&v!==''&&Number.isFinite(Number(v))}
+ function navHost(){return document.getElementById('navMap')}
+ function hardCleanHost(){const h=navHost();if(!h)return;h.classList.remove('rd847-heading-map','rd847-manual-map');h.style.rotate='';h.style.transform='';h.querySelectorAll('.rd854-route-pane,.rd855-route-pane,.rd847-gps-state').forEach(x=>x.remove());h.querySelectorAll('.leaflet-map-pane,.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-marker-pane,.leaflet-shadow-pane,.leaflet-tooltip-pane,.leaflet-popup-pane').forEach(x=>{x.style.rotate='';x.style.transformOrigin=''});}
+ function enterManual(){N.manual=true;navTracking=false}
+ function leaveManual(){N.manual=false;navTracking=true}
+ function wireCleanGestures(){if(!navMap)return;if(navMapProvider==='leaflet'){navMap.dragging?.enable();navMap.touchZoom?.enable();navMap.doubleClickZoom?.enable();navMap.scrollWheelZoom?.enable();navMap.on('dragstart',enterManual);navMap.on('zoomstart',()=>{if(!N._programmaticZoom)enterManual()})}else if(navMapProvider==='google'){try{navMap.setOptions({gestureHandling:'greedy',draggable:true,scrollwheel:true,disableDoubleClickZoom:false})}catch(_){};try{navMap.addListener('dragstart',enterManual);navMap.addListener('zoom_changed',()=>{if(!N._programmaticZoom)enterManual()})}catch(_){}}
  }
- function ensureRenderer(){
-   if(navMapProvider!=='leaflet'||!navMap||!window.L)return null;
-   try{
-     let pane=navMap.getPane?.('rd855RoutePane');
-     if(!pane){pane=navMap.createPane('rd855RoutePane');pane.classList.add('rd855-route-pane')}
-     if(rendererMap!==navMap||!routeRenderer){routeRenderer=L.svg({pane:'rd855RoutePane'});rendererMap=navMap}
-     purgeStaleVectorDom();
-     return routeRenderer;
-   }catch(e){console.warn('SVG navigasyon rota katmanı hazırlanamadı',e);return null}
- }
- const previousDestroy=window.destroyNavigationMap;
- if(typeof previousDestroy==='function')window.destroyNavigationMap=function(){
-   clearLayer(navPolyline);clearLayer(navApproachPolyline);navPolyline=null;navApproachPolyline=null;
-   routeRenderer=null;rendererMap=null;purgeStaleVectorDom();
-   return previousDestroy.apply(this,arguments);
- };
+ const originalDestroy=window.destroyNavigationMap;
+ window.destroyNavigationMap=function(){try{if(N.leafletRoute){N.leafletRoute.remove();N.leafletRoute=null}}catch(_){};N.manual=false;N.routeToken++;const out=originalDestroy?.apply(this,arguments);hardCleanHost();return out};
  window.drawNavigationRoute=function(r){
-   clearLayer(navPolyline);navPolyline=null;purgeStaleVectorDom();
-   navStopMarkers.forEach(clearLayer);navStopMarkers=[];
-   const pts=(r?.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean),done=new Set(r?.completedStopIds||[]),skip=new Set(r?.skippedStopIds||[]);
-   if(navMapProvider==='google'){
-     pts.forEach((st,i)=>{const state=done.has(st.id)?'done':skip.has(st.id)?'skipped':'',target=i===navIndex,fill=state==='done'?'#17a966':state==='skipped'?'#d64545':target?'#168cff':'#17435e';const mk=new google.maps.Marker({map:navMap,position:{lat:Number(st.lat),lng:Number(st.lng)},title:st.name,label:{text:String(i+1),color:'#fff',fontSize:'12px',fontWeight:'800'},icon:{path:google.maps.SymbolPath.CIRCLE,scale:target?15:13,fillColor:fill,fillOpacity:state?0.58:0.92,strokeColor:target?'#ffffff':'#b8d9ee',strokeWeight:target?3:1.5},zIndex:target?300:100+i});navStopMarkers.push(mk)});return;
-   }
-   if(navMapProvider==='leaflet')pts.forEach((st,i)=>{const mk=L.marker([Number(st.lat),Number(st.lng)],{icon:makeStopIcon(i,done.has(st.id)?'done':skip.has(st.id)?'skipped':'',i===navIndex)}).addTo(navMap).bindTooltip(esc(st.name),{direction:'top',offset:[0,-18]});navStopMarkers.push(mk)});
+   if(!navMap||!r)return;navStopMarkers.forEach(navClearOverlay);navStopMarkers=[];navClearOverlay(navPolyline);navPolyline=null;
+   const done=new Set(r.completedStopIds||[]),skip=new Set(r.skippedStopIds||[]),pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);
+   if(navMapProvider==='google')pts.forEach((st,i)=>{const state=done.has(st.id)?'done':skip.has(st.id)?'skipped':'',target=i===navIndex,fill=state==='done'?'#17a966':state==='skipped'?'#d64545':target?'#168cff':'#17435e';const mk=new google.maps.Marker({map:navMap,position:{lat:Number(st.lat),lng:Number(st.lng)},title:st.name,label:{text:String(i+1),color:'#fff',fontSize:'12px',fontWeight:'800'},icon:{path:google.maps.SymbolPath.CIRCLE,scale:target?15:13,fillColor:fill,fillOpacity:state?0.58:.92,strokeColor:'#fff',strokeWeight:target?3:2},zIndex:target?300:100+i});navStopMarkers.push(mk)});
+   else if(navMapProvider==='leaflet')pts.forEach((st,i)=>{const mk=L.marker([Number(st.lat),Number(st.lng)],{icon:makeStopIcon(i,done.has(st.id)?'done':skip.has(st.id)?'skipped':'',i===navIndex)}).addTo(navMap).bindTooltip(esc(st.name),{direction:'top',offset:[0,-18]});navStopMarkers.push(mk)});
  };
- window.updateRemainingNavigationRoute=async function(){clearLayer(navPolyline);navPolyline=null;purgeStaleVectorDom();return null};
+ window.updateRemainingNavigationRoute=async function(){navClearOverlay(navPolyline);navPolyline=null;return null};
  window.updateApproachRoute=async function(r,pos,force=false){
-   if(!navMap||!pos)return;const target=currentTarget(r);if(!target)return;
-   const moved=V66.approachPos?pointDistance(pos,V66.approachPos):Infinity,age=Date.now()-V66.approachAt;
-   if(!force&&V66.approachTargetId===target.id&&(age<12000||(age<25000&&moved<180)))return;
-   V66.approachTargetId=target.id;V66.approachAt=Date.now();V66.approachPos={...pos};
-   clearLayer(navApproachPolyline);navApproachPolyline=null;clearLayer(navPolyline);navPolyline=null;purgeStaleVectorDom();
-   const straight=pointDistance(pos,{lat:target.lat,lng:target.lng});
-   if(straight<35){if(r?._direct){V66.directMetrics={distance:straight,duration:0,updatedAt:Date.now()};updateNavPanel(r,pos)}return}
-   const coords=`${Number(pos.lng)},${Number(pos.lat)};${Number(target.lng)},${Number(target.lat)}`,ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
-   try{
-     const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=full&geometries=geojson&steps=false',{signal:ctrl.signal});
-     const data=await res.json(),route=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;
-     if(route?.geometry?.coordinates?.length){
-       if(navMapProvider==='google'){
-         const path=route.geometry.coordinates.filter(c=>valid(c?.[0])&&valid(c?.[1])).map(c=>({lat:Number(c[1]),lng:Number(c[0])}));
-         navApproachPolyline=new google.maps.Polyline({map:navMap,path,strokeColor:navRouteColor(),strokeOpacity:.95,strokeWeight:7,zIndex:9});
-       }else if(navMapProvider==='leaflet'){
-         const renderer=ensureRenderer(),latlngs=route.geometry.coordinates.filter(c=>valid(c?.[0])&&valid(c?.[1])).map(c=>[Number(c[1]),Number(c[0])]);
-         if(renderer&&latlngs.length>1)navApproachPolyline=L.polyline(latlngs,{renderer,pane:'rd855RoutePane',weight:7,opacity:.92,color:navRouteColor(),lineCap:'round',lineJoin:'round',interactive:false,smoothFactor:1}).addTo(navMap);
-       }
-       if(r?._direct){V66.directMetrics={distance:Number(route.distance)||straight,duration:Number(route.duration)||0,updatedAt:Date.now()};r.distance=V66.directMetrics.distance;r.duration=V66.directMetrics.duration;updateNavPanel(r,pos)}
-     }
-   }catch(e){
-     const fallbackDistance=straight*1.18,fallbackDuration=(fallbackDistance/1000)/38*3600;
-     if(r?._direct){V66.directMetrics={distance:fallbackDistance,duration:fallbackDuration,updatedAt:Date.now()};r.distance=fallbackDistance;r.duration=fallbackDuration;updateNavPanel(r,pos)}
-     if(navMapProvider==='google')navApproachPolyline=new google.maps.Polyline({map:navMap,path:[{lat:Number(pos.lat),lng:Number(pos.lng)},{lat:Number(target.lat),lng:Number(target.lng)}],strokeColor:navRouteColor(),strokeOpacity:.6,strokeWeight:4,zIndex:8});
-     else if(navMapProvider==='leaflet'){const renderer=ensureRenderer();if(renderer)navApproachPolyline=L.polyline([[Number(pos.lat),Number(pos.lng)],[Number(target.lat),Number(target.lng)]],{renderer,pane:'rd855RoutePane',weight:4,opacity:.62,color:navRouteColor(),dashArray:'7 9',interactive:false}).addTo(navMap)}
-   }finally{clearTimeout(timer)}
+   if(!navMap||!pos||!r)return;const target=currentTarget(r);if(!target)return;const moved=V66.approachPos?pointDistance(pos,V66.approachPos):Infinity,age=Date.now()-Number(V66.approachAt||0);if(!force&&V66.approachTargetId===target.id&&(age<10000||(age<22000&&moved<150)))return;
+   V66.approachTargetId=target.id;V66.approachAt=Date.now();V66.approachPos={lat:Number(pos.lat),lng:Number(pos.lng)};const token=++N.routeToken;navClearOverlay(navApproachPolyline);navApproachPolyline=null;navClearOverlay(navPolyline);navPolyline=null;
+   const straight=pointDistance(pos,{lat:target.lat,lng:target.lng});if(straight<25)return;
+   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),7500),coords=`${Number(pos.lng)},${Number(pos.lat)};${Number(target.lng)},${Number(target.lat)}`;
+   try{const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=full&geometries=geojson&steps=false',{signal:ctrl.signal});const data=await res.json(),route=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;if(token!==N.routeToken||!route?.geometry?.coordinates?.length||currentRouteId!==r.id)return;const good=route.geometry.coordinates.filter(c=>finite(c?.[0])&&finite(c?.[1]));if(good.length<2)return;if(navMapProvider==='google'){navApproachPolyline=new google.maps.Polyline({map:navMap,path:good.map(c=>({lat:Number(c[1]),lng:Number(c[0])})),strokeColor:navRouteColor(),strokeOpacity:.95,strokeWeight:7,zIndex:9})}else if(navMapProvider==='leaflet'){navApproachPolyline=L.polyline(good.map(c=>[Number(c[1]),Number(c[0])]),{weight:7,opacity:.92,color:navRouteColor(),lineCap:'round',lineJoin:'round',interactive:false,smoothFactor:1}).addTo(navMap)}if(r._direct){V66.directMetrics={distance:Number(route.distance)||straight,duration:Number(route.duration)||0,updatedAt:Date.now()};r.distance=V66.directMetrics.distance;r.duration=V66.directMetrics.duration;updateNavPanel(r,pos)}}
+   catch(e){if(token!==N.routeToken)return;const fallbackDistance=straight*1.18,fallbackDuration=(fallbackDistance/1000)/38*3600;if(r._direct){V66.directMetrics={distance:fallbackDistance,duration:fallbackDuration,updatedAt:Date.now()};r.distance=fallbackDistance;r.duration=fallbackDuration;updateNavPanel(r,pos)}if(navMapProvider==='google')navApproachPolyline=new google.maps.Polyline({map:navMap,path:[{lat:Number(pos.lat),lng:Number(pos.lng)},{lat:Number(target.lat),lng:Number(target.lng)}],strokeColor:navRouteColor(),strokeOpacity:.55,strokeWeight:4,zIndex:8});else if(navMapProvider==='leaflet')navApproachPolyline=L.polyline([[Number(pos.lat),Number(pos.lng)],[Number(target.lat),Number(target.lng)]],{weight:4,opacity:.55,color:navRouteColor(),dashArray:'7 9',interactive:false}).addTo(navMap)}finally{clearTimeout(timer);hardCleanHost()}
  };
- const priorInit=window.initNavigation;
- if(typeof priorInit==='function')window.initNavigation=async function(){
-   purgeStaleVectorDom();const out=await priorInit.apply(this,arguments);
-   if(navMapProvider==='leaflet'){purgeStaleVectorDom();ensureRenderer();const r=currentNavRoute?.();if(r&&V66.lastPos)setTimeout(()=>window.updateApproachRoute(r,V66.lastPos,true),60)}
-   return out;
+ window.setArrowHeading=function(deg){if(!finite(deg))return;V66.heading=((Number(deg)%360)+360)%360;if(navMapProvider==='google'&&navPositionMarker){try{navPositionMarker.setIcon(googleArrowIcon(V66.heading))}catch(_){};return}const el=navPositionMarker?.getElement?.()?.querySelector('.rd-nav-arrow-inner');if(el)el.style.transform=`rotate(${V66.heading}deg)`};
+ window.setTurnHeading=function(deg){const el=document.getElementById('navTurnIcon');if(el&&finite(deg))el.style.transform=`rotate(${((Number(deg)%360)+360)%360}deg)`};
+ window.animateNavMarker=function(lat,lng,heading){if(!navMap||!finite(lat)||!finite(lng))return;const p={lat:Number(lat),lng:Number(lng)};if(navMapProvider==='google'){if(!navPositionMarker)navPositionMarker=new google.maps.Marker({map:navMap,position:p,icon:googleArrowIcon(heading),zIndex:9999,optimized:false});else navPositionMarker.setPosition(p);setArrowHeading(heading);return}if(!navPositionMarker)navPositionMarker=L.marker([p.lat,p.lng],{icon:makeArrowIcon(),zIndexOffset:2400,interactive:false}).addTo(navMap);else navPositionMarker.setLatLng([p.lat,p.lng]);setArrowHeading(heading);if(navTracking&&!N.manual&&Date.now()-N.lastCenterAt>650){N.lastCenterAt=Date.now();try{navMap.panTo([p.lat,p.lng],{animate:true,duration:.28,noMoveStart:true})}catch(_){}}};
+ window.centerNavigation=function(){leaveManual();if(V66.lastPos){N._programmaticZoom=true;try{if(navMapProvider==='google'){navMap.panTo({lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)});navMap.setZoom(Math.max(16,Number(navMap.getZoom?.()||17)))}else navMap.flyTo([Number(V66.lastPos.lat),Number(V66.lastPos.lng)],Math.max(16,Number(navMap.getZoom?.()||17)),{animate:true,duration:.35})}finally{setTimeout(()=>N._programmaticZoom=false,450)};toast('Konum takibi açık');return}const r=currentNavRoute(),st=currentTarget(r);if(st){N._programmaticZoom=true;navSetView({lat:st.lat,lng:st.lng},16,false);setTimeout(()=>N._programmaticZoom=false,300)}};
+ window.focusNavigationTarget=function(announce=false){if(!navMap)return;const r=currentNavRoute(),st=currentTarget(r);if(!st)return;enterManual();N._programmaticZoom=true;try{navFlyTo({lat:st.lat,lng:st.lng},17)}finally{setTimeout(()=>N._programmaticZoom=false,450)};if(V66.lastPos)updateApproachRoute(r,V66.lastPos,true);if(announce)toast((navIndex+1)+'. durak: '+st.name)};
+ window.toggleNavOverview=function(){if(!navMap)return;const r=currentNavRoute();if(!r)return;enterManual();const bounds=[];if(V66.lastPos)bounds.push([V66.lastPos.lat,V66.lastPos.lng]);for(const id of r.stopIds||[]){const s=db.stops.find(x=>x.id===id);if(s)bounds.push([s.lat,s.lng])}if(bounds.length>1)navFitAll(bounds)};
+ window.initNavigation=async function(r){
+   if(!r)return;ensureV66Settings();const hadWatch=navWatchId!==null;destroyNavigationMap();hardCleanHost();V66.approachTargetId=null;N.manual=false;navTracking=true;document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r._direct);
+   const pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);if(!pts.length)return;const target=currentTarget(r)||pts[0],center=V66.lastPos?{lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)}:{lat:Number(target.lat),lng:Number(target.lng)},zoom=V66.lastPos?17:15,host=navHost();if(!host)return;host.innerHTML='';
+   if(db.settings.map==='google'){try{await Promise.race([loadGoogleMaps(),new Promise((_,rej)=>setTimeout(()=>rej(new Error('Google Maps timeout')),4200))]);navMap=new google.maps.Map(host,{center,zoom,mapTypeId:'roadmap',streetViewControl:false,mapTypeControl:false,fullscreenControl:false,zoomControl:false,gestureHandling:'greedy',disableDefaultUI:true});navMapProvider='google';try{navTrafficLayer=new google.maps.TrafficLayer();navTrafficLayer.setMap(navMap)}catch(_){}}catch(e){console.warn('Google navigasyon haritası açılamadı; OSM kullanılıyor',e)}}
+   if(!navMap){navMap=L.map(host,{preferCanvas:false,zoomControl:false,zoomAnimation:true,markerZoomAnimation:true,fadeAnimation:true,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:true,boxZoom:false,keyboard:false}).setView([center.lat,center.lng],zoom);L.tileLayer(tileUrl(),{maxZoom:19,attribution:'© OpenStreetMap katkıcıları',updateWhenIdle:true,updateWhenZooming:false,keepBuffer:3}).addTo(navMap);navMapProvider='leaflet'}
+   wireCleanGestures();drawNavigationRoute(r);const rn=document.getElementById('navRouteName');if(rn)rn.textContent=r.name;updateNavPanel(r,V66.lastPos);setTimeout(()=>{try{navMapProvider==='leaflet'?navMap.invalidateSize({pan:false,animate:false}):google.maps.event.trigger(navMap,'resize')}catch(_){};hardCleanHost()},50);
+   if(V66.lastPos){const hd=Number.isFinite(Number(V66.heading))?Number(V66.heading):guidanceBearing(r,V66.lastPos);animateNavMarker(V66.lastPos.lat,V66.lastPos.lng,hd);updateApproachRoute(r,V66.lastPos,true)}else primeNavigationPosition(r);
+   if(db.settings.liveTracking!==false){startLiveTracking();if(hadWatch){} }else{const se=document.getElementById('navSpeed');if(se)se.textContent='—'}
+   try{toggleNavQuickSummary(false)}catch(_){};speakNav('Navigasyon başladı. Hedef '+(target?.name||''));
  };
- function cleanIfNav(){if(document.body?.dataset?.view!=='navigationPage')return;purgeStaleVectorDom()}
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(cleanIfNav,80)},{passive:true});
- window.addEventListener('pageshow',()=>setTimeout(cleanIfNav,100),{passive:true});
- setInterval(cleanIfNav,3000);
+ const oldNavigate=window.navigateStop;window.navigateStop=function(dir){const out=oldNavigate?.call(this,dir);setTimeout(()=>{const r=currentNavRoute();if(r){drawNavigationRoute(r);if(V66.lastPos)updateApproachRoute(r,V66.lastPos,true)}},20);return out};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden||document.body.dataset.view!=='navigationPage')return;setTimeout(()=>{hardCleanHost();try{navMap?.invalidateSize?.({pan:false,animate:false})}catch(_){};if(db.settings.liveTracking!==false&&navWatchId===null)startLiveTracking();if(V66.lastPos&&!N.manual)centerNavigation()},180)},{passive:true});
+ window.addEventListener('pageshow',()=>{if(document.body.dataset.view==='navigationPage')setTimeout(hardCleanHost,120)},{passive:true});
 })();
 </script>
-
 </body>
 </html>
