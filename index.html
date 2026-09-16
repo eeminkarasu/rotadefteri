@@ -1340,7 +1340,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.3',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.4',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -2053,7 +2053,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.3-nav-map-overlay-fix';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.4-static-ghost-line-fix';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2401,7 +2401,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.3-nav-map-overlay-fix';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.4-static-ghost-line-fix';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2769,5 +2769,100 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.body?.dataset?.view==='navigationPage')setTimeout(refreshLeafletRenderer,100)},{passive:true});
 })();
 </script>
+
+<style id="rd854-static-ghost-line-css">
+/* Navigation route graphics live in their own pane. No page-fixed decorative route layer is allowed. */
+#navMap .rd854-route-pane{z-index:430!important;pointer-events:none!important}
+#navMap .rd854-route-pane canvas{pointer-events:none!important}
+#navMap .leaflet-overlay-pane>svg,
+#navMap .leaflet-overlay-pane>canvas{pointer-events:none!important}
+</style>
+<script id="rd854-static-ghost-line-fix">
+(function(){
+ 'use strict';
+ if(window.__RD854_GHOST_LINE_FIX__)return;window.__RD854_GHOST_LINE_FIX__=true;
+ let routeRenderer=null,rendererMap=null;
+ const valid=n=>Number.isFinite(Number(n));
+ function clearLayer(layer){try{if(!layer)return;if(typeof layer.setMap==='function')layer.setMap(null);else if(typeof layer.remove==='function')layer.remove();else if(navMap&&typeof navMap.removeLayer==='function')navMap.removeLayer(layer)}catch(_){}}
+ function removeLegacyOverlayGraphics(){
+   if(navMapProvider!=='leaflet'||!navMap)return;
+   try{
+     const panes=navMap.getPanes?.();
+     const overlay=panes?.overlayPane;
+     if(overlay){
+       // Any navigation path left in Leaflet's default overlay pane is legacy/stale.
+       // New route graphics are drawn only in rd854RoutePane below.
+       Array.from(overlay.children||[]).forEach(el=>{try{el.remove()}catch(_){}});
+       overlay.style.transformOrigin='';overlay.style.rotate='';
+     }
+   }catch(e){console.warn('Eski rota katmanı temizlenemedi',e)}
+ }
+ function ensureRenderer(){
+   if(navMapProvider!=='leaflet'||!navMap||!window.L)return null;
+   try{
+     let pane=navMap.getPane?.('rd854RoutePane');
+     if(!pane){pane=navMap.createPane('rd854RoutePane');pane.classList.add('rd854-route-pane')}
+     if(rendererMap!==navMap||!routeRenderer){routeRenderer=L.canvas({pane:'rd854RoutePane',padding:.35,tolerance:4});rendererMap=navMap}
+     removeLegacyOverlayGraphics();
+     return routeRenderer;
+   }catch(e){console.warn('Navigasyon rota renderer hazırlanamadı',e);return null}
+ }
+ const previousDestroy=window.destroyNavigationMap;
+ if(typeof previousDestroy==='function')window.destroyNavigationMap=function(){
+   clearLayer(navPolyline);clearLayer(navApproachPolyline);navPolyline=null;navApproachPolyline=null;
+   routeRenderer=null;rendererMap=null;
+   return previousDestroy.apply(this,arguments);
+ };
+ // The full-route line is intentionally not rendered in navigation. Only the active target path is shown.
+ window.drawNavigationRoute=function(r){
+   clearLayer(navPolyline);navPolyline=null;
+   if(navMapProvider==='leaflet')removeLegacyOverlayGraphics();
+   navStopMarkers.forEach(clearLayer);navStopMarkers=[];
+   const pts=(r?.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean),done=new Set(r?.completedStopIds||[]),skip=new Set(r?.skippedStopIds||[]);
+   if(navMapProvider==='google'){
+     pts.forEach((st,i)=>{const state=done.has(st.id)?'done':skip.has(st.id)?'skipped':'',target=i===navIndex,fill=state==='done'?'#17a966':state==='skipped'?'#d64545':target?'#168cff':'#17435e';const mk=new google.maps.Marker({map:navMap,position:{lat:Number(st.lat),lng:Number(st.lng)},title:st.name,label:{text:String(i+1),color:'#fff',fontSize:'12px',fontWeight:'800'},icon:{path:google.maps.SymbolPath.CIRCLE,scale:target?15:13,fillColor:fill,fillOpacity:state?0.58:0.92,strokeColor:target?'#ffffff':'#b8d9ee',strokeWeight:target?3:1.5},zIndex:target?300:100+i});navStopMarkers.push(mk)});return;
+   }
+   if(navMapProvider==='leaflet')pts.forEach((st,i)=>{const mk=L.marker([Number(st.lat),Number(st.lng)],{icon:makeStopIcon(i,done.has(st.id)?'done':skip.has(st.id)?'skipped':'',i===navIndex)}).addTo(navMap).bindTooltip(esc(st.name),{direction:'top',offset:[0,-18]});navStopMarkers.push(mk)});
+ };
+ window.updateRemainingNavigationRoute=async function(){clearLayer(navPolyline);navPolyline=null;if(navMapProvider==='leaflet')removeLegacyOverlayGraphics();return null};
+ window.updateApproachRoute=async function(r,pos,force=false){
+   if(!navMap||!pos)return;const target=currentTarget(r);if(!target)return;
+   const moved=V66.approachPos?pointDistance(pos,V66.approachPos):Infinity,age=Date.now()-V66.approachAt;
+   if(!force&&V66.approachTargetId===target.id&&(age<12000||(age<25000&&moved<180)))return;
+   V66.approachTargetId=target.id;V66.approachAt=Date.now();V66.approachPos={...pos};
+   clearLayer(navApproachPolyline);navApproachPolyline=null;clearLayer(navPolyline);navPolyline=null;
+   const straight=pointDistance(pos,{lat:target.lat,lng:target.lng});
+   if(straight<35){if(navMapProvider==='leaflet')removeLegacyOverlayGraphics();if(r?._direct){V66.directMetrics={distance:straight,duration:0,updatedAt:Date.now()};updateNavPanel(r,pos)}return}
+   const coords=`${Number(pos.lng)},${Number(pos.lat)};${Number(target.lng)},${Number(target.lat)}`;
+   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
+   try{
+     const res=await fetch('https://router.project-osrm.org/route/v1/driving/'+coords+'?overview=full&geometries=geojson&steps=false',{signal:ctrl.signal});
+     const data=await res.json(),route=data.code==='Ok'&&data.routes?.[0]?data.routes[0]:null;
+     if(route?.geometry?.coordinates?.length){
+       if(navMapProvider==='google'){
+         const path=route.geometry.coordinates.filter(c=>valid(c?.[0])&&valid(c?.[1])).map(c=>({lat:Number(c[1]),lng:Number(c[0])}));
+         navApproachPolyline=new google.maps.Polyline({map:navMap,path,strokeColor:navRouteColor(),strokeOpacity:.95,strokeWeight:7,zIndex:9});
+       }else if(navMapProvider==='leaflet'){
+         const renderer=ensureRenderer(),latlngs=route.geometry.coordinates.filter(c=>valid(c?.[0])&&valid(c?.[1])).map(c=>[Number(c[1]),Number(c[0])]);
+         if(latlngs.length>1)navApproachPolyline=L.polyline(latlngs,{renderer,pane:'rd854RoutePane',weight:7,opacity:.92,color:navRouteColor(),lineCap:'round',lineJoin:'round',interactive:false,smoothFactor:1}).addTo(navMap);
+       }
+       if(r?._direct){V66.directMetrics={distance:Number(route.distance)||straight,duration:Number(route.duration)||0,updatedAt:Date.now()};r.distance=V66.directMetrics.distance;r.duration=V66.directMetrics.duration;updateNavPanel(r,pos)}
+     }
+   }catch(e){
+     const fallbackDistance=straight*1.18,fallbackDuration=(fallbackDistance/1000)/38*3600;
+     if(r?._direct){V66.directMetrics={distance:fallbackDistance,duration:fallbackDuration,updatedAt:Date.now()};r.distance=fallbackDistance;r.duration=fallbackDuration;updateNavPanel(r,pos)}
+     if(navMapProvider==='google')navApproachPolyline=new google.maps.Polyline({map:navMap,path:[{lat:Number(pos.lat),lng:Number(pos.lng)},{lat:Number(target.lat),lng:Number(target.lng)}],strokeColor:navRouteColor(),strokeOpacity:.6,strokeWeight:4,zIndex:8});
+     else if(navMapProvider==='leaflet'){const renderer=ensureRenderer();navApproachPolyline=L.polyline([[Number(pos.lat),Number(pos.lng)],[Number(target.lat),Number(target.lng)]],{renderer,pane:'rd854RoutePane',weight:4,opacity:.62,color:navRouteColor(),dashArray:'7 9',interactive:false}).addTo(navMap)}
+   }finally{clearTimeout(timer)}
+ };
+ const priorInit=window.initNavigation;
+ if(typeof priorInit==='function')window.initNavigation=async function(){const out=await priorInit.apply(this,arguments);if(navMapProvider==='leaflet'){ensureRenderer();removeLegacyOverlayGraphics();const r=currentNavRoute?.();if(r&&V66.lastPos)setTimeout(()=>window.updateApproachRoute(r,V66.lastPos,true),40)}return out};
+ function cleanIfNav(){if(document.body?.dataset?.view!=='navigationPage'||navMapProvider!=='leaflet'||!navMap)return;removeLegacyOverlayGraphics();try{navMap._renderer?._redraw?.()}catch(_){} }
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(cleanIfNav,80)},{passive:true});
+ window.addEventListener('pageshow',()=>setTimeout(cleanIfNav,100),{passive:true});
+ setInterval(cleanIfNav,5000);
+})();
+</script>
+
 </body>
 </html>
