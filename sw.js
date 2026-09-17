@@ -1,4 +1,4 @@
-const RD_VERSION='v8.5.14-route-line-heading-lock';
+const RD_VERSION='v8.5.15-manual-zoom-follow-pause';
 self.addEventListener('install',event=>{self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('rotadefteri-'))await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
