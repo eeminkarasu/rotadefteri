@@ -3133,5 +3133,216 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 })();
 </script>
 
+
+<style id="rd8519-quick-route-editor-style">
+#routeBuilderPage.rd8519-quick-mode{padding-bottom:128px!important}
+#routeBuilderPage.rd8519-quick-mode .rd850-stepper,
+#routeBuilderPage.rd8519-quick-mode [data-rd850-step="1"],
+#routeBuilderPage.rd8519-quick-mode [data-rd850-step="4"]{display:none!important}
+#routeBuilderPage.rd8519-quick-mode [data-rd850-step="2"],
+#routeBuilderPage.rd8519-quick-mode [data-rd850-step="3"]{display:block!important;visibility:visible!important}
+#routeBuilderPage.rd8519-quick-mode .rd850-nav-row{display:none!important}
+#routeBuilderPage.rd8519-quick-mode .rd850-step-card{margin-bottom:14px}
+#routeBuilderPage.rd8519-quick-mode .rd850-card-head small{font-weight:800}
+#routeBuilderPage.rd8519-quick-mode .rd8519-quick-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:rgba(24,169,255,.12);border:1px solid rgba(24,169,255,.32);color:#a7ddff;font-size:12px;font-weight:800;margin-top:8px}
+#routeBuilderPage.rd8519-quick-mode .rd850-help{margin-bottom:10px}
+#rd8519QuickFooter{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:1800;display:none;gap:10px;padding:12px;border-radius:18px;background:rgba(8,18,30,.94);border:1px solid #29425f;box-shadow:0 18px 42px rgba(0,0,0,.34);backdrop-filter:blur(12px)}
+#rd8519QuickFooter.show{display:grid;grid-template-columns:1fr 1.3fr}
+#rd8519QuickFooter button{border:0;border-radius:14px;padding:14px 12px;font-weight:900;font-size:15px}
+#rd8519QuickCancel{background:#19283a;color:#fff}
+#rd8519QuickSave{background:#168cff;color:#fff}
+#rd8519QuickSave[disabled]{opacity:.7}
+.rd8519-quick-plus{font-size:22px!important;font-weight:900!important}
+@media(min-width:940px){
+ #routeBuilderPage.rd8519-quick-mode{max-width:1180px!important}
+ #routeBuilderPage.rd8519-quick-mode .rd8519-quick-wrap{display:grid;grid-template-columns:minmax(320px,430px) minmax(0,1fr);gap:14px;align-items:start}
+ #routeBuilderPage.rd8519-quick-mode [data-rd850-step="2"],
+ #routeBuilderPage.rd8519-quick-mode [data-rd850-step="3"]{margin:0!important}
+ #routeBuilderPage.rd8519-quick-mode [data-rd850-step="3"] .rd850-map{height:280px}
+}
+</style>
+
+<script id="rd8519-quick-route-editor-runtime">
+(function(){
+ 'use strict';
+ window.RD_BUILD='8.5.19-quick-plan-scroll';
+ document.body.dataset.build=window.RD_BUILD;
+ const Q={active:false,routeId:null};
+ const byId=id=>document.getElementById(id);
+ const today=()=>new Date().toISOString().slice(0,10);
+ const routeById=id=>(window.db?.routes||[]).find(r=>r.id===id)||null;
+ function ensureQuickWrap(){
+   const page=byId('routeBuilderPage'); if(!page) return;
+   if(page.querySelector('.rd8519-quick-wrap')) return;
+   const step2=page.querySelector('[data-rd850-step="2"]');
+   const step3=page.querySelector('[data-rd850-step="3"]');
+   if(!step2||!step3) return;
+   const wrap=document.createElement('div');
+   wrap.className='rd8519-quick-wrap';
+   step2.parentNode.insertBefore(wrap,step2);
+   wrap.append(step2,step3);
+ }
+ function ensureQuickBadge(){
+   const head=byId('rd850BuilderSub'); if(!head) return;
+   let badge=byId('rd8519QuickBadge');
+   if(!badge){ badge=document.createElement('div'); badge.id='rd8519QuickBadge'; badge.className='rd8519-quick-badge'; head.insertAdjacentElement('afterend',badge); }
+   const count=(window.currentRouteStops||[]).length;
+   badge.textContent=count+' durak seçildi • tek sayfada ekle, sırala ve kaydet';
+ }
+ function ensureQuickFooter(){
+   let bar=byId('rd8519QuickFooter');
+   if(!bar){
+     bar=document.createElement('div');
+     bar.id='rd8519QuickFooter';
+     bar.innerHTML='<button id="rd8519QuickCancel" type="button">Vazgeç</button><button id="rd8519QuickSave" type="button">Rotayı Güncelle</button>';
+     document.body.appendChild(bar);
+     byId('rd8519QuickCancel').onclick=()=>window.cancelRouteBuilder?.();
+     byId('rd8519QuickSave').onclick=async()=>{
+       const btn=byId('rd8519QuickSave');
+       if(btn){btn.disabled=true;btn.textContent='Kaydediliyor…';}
+       try{ await window.rd850FinalizeRoute?.(); }
+       finally{ if(byId('routeBuilderPage')?.classList.contains('rd8519-quick-mode') && btn){ btn.disabled=false; btn.textContent='Rotayı Güncelle'; } }
+     };
+   }
+   bar.classList.add('show');
+ }
+ function hideQuickFooter(){ byId('rd8519QuickFooter')?.classList.remove('show'); }
+ function setBuilderBaseInfo(route){
+   const n=byId('pageRouteName'), d=byId('pageRouteDate'), t=byId('pageRouteStart'), s=byId('pageRouteSearch'), m=byId('routePlanMode');
+   if(n) n.value=route?.name||'';
+   if(d) d.value=route?.date||today();
+   if(t) t.value=route?.startTime||'08:30';
+   if(s) s.value='';
+   if(m && !m.value) m.value='manual';
+ }
+ function syncQuickCounts(){
+   const count=(window.currentRouteStops||[]).length;
+   const c1=byId('rd850SelectedCount'); if(c1) c1.textContent=count+' durak seçildi';
+   ensureQuickBadge();
+ }
+ function sanitizeOrderNumbers(){
+   const nodes=[...document.querySelectorAll('#pageRouteOrder .rd-order-number, #pageRouteOrder .drag-num')];
+   nodes.forEach((btn,i)=>{
+     btn.dataset.rd851Iconized='1';
+     btn.querySelectorAll?.('.rd-ui-icon,.rd-icon-legacy-hidden').forEach(n=>n.remove());
+     if(btn.textContent.trim()!==String(i+1)) btn.textContent=String(i+1);
+     btn.setAttribute?.('title','Sıra numarası: '+(i+1));
+     btn.setAttribute?.('aria-label',(i+1)+'. sıra');
+   });
+ }
+ function activateQuickMode(route){
+   const page=byId('routeBuilderPage'); if(!page) return;
+   ensureQuickWrap();
+   Q.active=true; Q.routeId=route?.id||null;
+   page.classList.add('rd8519-quick-mode');
+   const title=byId('rd850BuilderTitle'), sub=byId('rd850BuilderSub');
+   if(title) title.textContent='Durak Ekle ve Planla';
+   if(sub) sub.textContent='Bu rotayı sıfırdan oluşturmadan, tek sayfada durak ekleyip sıralamayı güncelleyin.';
+   page.querySelectorAll('[data-rd850-step]').forEach(el=>{ const step=Number(el.dataset.rd850Step); el.hidden=!(step===2||step===3); });
+   ensureQuickFooter();
+   syncQuickCounts();
+   setTimeout(()=>{
+     try{ window.renderPageRouteChoices?.(); }catch(_){}
+     try{ window.renderPageRouteOrder?.(); }catch(_){}
+     try{ window.updateBuilderSummary?.(); }catch(_){}
+     try{ window.refreshPlanSelectors?.(); }catch(_){}
+     try{ window.updatePlanControls?.(); }catch(_){}
+     try{ window.rd850RefreshPlanMap?.(); }catch(_){}
+     sanitizeOrderNumbers();
+     byId('pageRouteSearch')?.focus();
+     window.scrollTo({top:0,behavior:'smooth'});
+   },80);
+ }
+ function deactivateQuickMode(){
+   Q.active=false; Q.routeId=null;
+   const page=byId('routeBuilderPage');
+   page?.classList.remove('rd8519-quick-mode');
+   hideQuickFooter();
+   byId('rd8519QuickBadge')?.remove();
+   const title=byId('rd850BuilderTitle'), sub=byId('rd850BuilderSub');
+   if(title && title.textContent==='Durak Ekle ve Planla') title.textContent='Rota Oluştur';
+   if(sub && sub.textContent.includes('tek sayfada')) sub.textContent='Yeni rotanızı adım adım oluşturun.';
+ }
+ window.openQuickRouteExtend=function(rid){
+   const route=routeById(rid); if(!route) return;
+   window.V66=window.V66||{};
+   V66.builderReturnView='routeDetailPage';
+   V66.editRouteId=rid;
+   window.currentRouteId=rid;
+   window.currentRouteStops=[...new Set(route.stopIds||[])];
+   setBuilderBaseInfo(route);
+   try{ showView('routeBuilderPage'); }catch(_){ return; }
+   setTimeout(()=>activateQuickMode(route),60);
+ };
+ function retuneRouteDetail(id){
+   const host=document.querySelector('#routeDetailContent .rd-route-status-actions');
+   if(!host) return;
+   const btn=host.querySelector('.rd849-today-btn') || host.firstElementChild;
+   if(!btn) return;
+   btn.classList.add('rd8519-quick-plus');
+   btn.classList.remove('active');
+   btn.textContent='+';
+   btn.title='Durak ekle ve planla';
+   btn.setAttribute('aria-label','Durak ekle ve planla');
+   btn.onclick=()=>window.openQuickRouteExtend(id);
+ }
+ const prevRenderDetail=window.renderRouteDetailPage;
+ if(typeof prevRenderDetail==='function'){
+   window.renderRouteDetailPage=function(id){ const out=prevRenderDetail.apply(this,arguments); setTimeout(()=>retuneRouteDetail(id),20); return out; };
+ }
+ const prevCancel=window.cancelRouteBuilder;
+ if(typeof prevCancel==='function'){ window.cancelRouteBuilder=function(){ const out=prevCancel.apply(this,arguments); deactivateQuickMode(); return out; }; }
+ const prevShow=window.showView;
+ if(typeof prevShow==='function'){
+   window.showView=function(id){
+     const leaving=document.body.dataset.view==='routeBuilderPage' && id!=='routeBuilderPage';
+     const out=prevShow.apply(this,arguments);
+     if(leaving) deactivateQuickMode();
+     return out;
+   };
+ }
+ const prevRenderChoices=window.renderPageRouteChoices;
+ if(typeof prevRenderChoices==='function'){
+   window.renderPageRouteChoices=function(){ const out=prevRenderChoices.apply(this,arguments); setTimeout(syncQuickCounts,0); return out; };
+ }
+ const prevRenderOrder=window.renderPageRouteOrder;
+ if(typeof prevRenderOrder==='function'){
+   window.renderPageRouteOrder=function(){ const out=prevRenderOrder.apply(this,arguments); setTimeout(()=>{sanitizeOrderNumbers(); syncQuickCounts();},0); return out; };
+ }
+ // Faster auto-scroll while dragging route stops upward/downward.
+ window.bindPointerSort=function(el){
+   if(!el) return;
+   let active=null,pointerId=null,lastY=0,raf=0,scrollLoop=0,host=null;
+   const getHost=()=>{ const page=el.closest('.view.active, .view'); return page&&page.scrollHeight>page.clientHeight+20 ? page : (document.scrollingElement||document.documentElement); };
+   const scrollByY=dy=>{ const h=host||getHost(); if(!h) return; if(h===document.documentElement||h===document.body||h===document.scrollingElement) window.scrollBy(0,dy); else h.scrollTop+=dy; };
+   const runReorder=()=>{ raf=0; if(!active) return; const y=lastY; const siblings=[...el.querySelectorAll('.drag-item')].filter(x=>x!==active); let before=null; for(const node of siblings){ const r=node.getBoundingClientRect(); if(y<r.top+r.height/2){ before=node; break; } } if(before) el.insertBefore(active,before); else el.appendChild(active); };
+   const tickScroll=()=>{ if(!active) return; const topZone=132, bottomZone=window.innerHeight-145; let dy=0; if(lastY<topZone) dy=-Math.min(38,Math.max(14,Math.round((topZone-lastY)*0.45))); else if(lastY>bottomZone) dy=Math.min(38,Math.max(14,Math.round((lastY-bottomZone)*0.45))); if(dy){ scrollByY(dy); if(active.scrollIntoView) active.scrollIntoView({block:'nearest'}); if(!raf) raf=requestAnimationFrame(runReorder); } scrollLoop=requestAnimationFrame(tickScroll); };
+   const sync=()=>{ try{ window.syncRouteOrderFromDom?.(el); }catch(_){} };
+   const cleanup=()=>{ if(raf) cancelAnimationFrame(raf); raf=0; if(scrollLoop) cancelAnimationFrame(scrollLoop); scrollLoop=0; document.removeEventListener('pointermove',move,true); document.removeEventListener('pointerup',finish,true); document.removeEventListener('pointercancel',finish,true); document.documentElement.classList.remove('rd-route-sorting'); if(active) active.classList.remove('rd-pointer-sorting'); if(window.V82?.dragging){ sync(); window.V82.dragging=false; try{ window.paintBuilderLive?.(); }catch(_){} try{ window.refreshLeadRoad?.(true); }catch(_){} } active=null; pointerId=null; sanitizeOrderNumbers(); };
+   function move(e){ if(!active||e.pointerId!==pointerId) return; e.preventDefault(); lastY=e.clientY; if(!raf) raf=requestAnimationFrame(runReorder); }
+   function finish(e){ if(!active||e.pointerId!==pointerId) return; e.preventDefault(); cleanup(); }
+   el.querySelectorAll('.drag-handle').forEach(handle=>{
+     handle.addEventListener('pointerdown',e=>{
+       if(e.pointerType==='mouse'&&e.button!==0) return;
+       e.preventDefault(); e.stopPropagation(); window.getSelection?.()?.removeAllRanges?.();
+       active=handle.closest('.drag-item'); if(!active) return;
+       pointerId=e.pointerId; lastY=e.clientY; host=getHost();
+       window.V82=window.V82||{}; window.V82.dragging=true;
+       document.documentElement.classList.add('rd-route-sorting');
+       active.classList.add('rd-pointer-sorting');
+       document.addEventListener('pointermove',move,{capture:true,passive:false});
+       document.addEventListener('pointerup',finish,{capture:true,passive:false});
+       document.addEventListener('pointercancel',finish,{capture:true,passive:false});
+       if(scrollLoop) cancelAnimationFrame(scrollLoop);
+       scrollLoop=requestAnimationFrame(tickScroll);
+       navigator.vibrate?.(10);
+     },{passive:false});
+     handle.addEventListener('contextmenu',e=>e.preventDefault());
+   });
+ };
+ setTimeout(()=>{ try{sanitizeOrderNumbers(); if(window.currentRouteId) retuneRouteDetail(window.currentRouteId);}catch(_){} },200);
+})();
+</script>
+
 </body>
 </html>
