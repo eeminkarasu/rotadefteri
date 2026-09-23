@@ -1,4 +1,4 @@
-const RD_VERSION='v8.5.17-direct-call';
+const RD_VERSION='v8.5.18-road-geometry-single-line';
 self.addEventListener('install',event=>{self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('rotadefteri-'))await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
