@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v8.5.15-manual-zoom-follow-pause">
+<meta name="rd-build" content="v8.5.17-direct-call">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07101a">
 <meta name="description" content="Rota Defteri — durak, rota ve canlı navigasyon yönetimi">
@@ -805,6 +805,18 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
   #navigationPage .rd857-mini-progress>span{font-size:8px}
 }
 </style>
+
+<style id="rd8516-preview-label">
+.rd850-map{position:relative}
+.rd8516-preview-status{position:absolute;z-index:600;pointer-events:none;left:50%;bottom:18px;transform:translateX(-50%);max-width:calc(100% - 30px);padding:7px 10px;border-radius:10px;background:rgba(6,20,39,.86);color:#e3efff;border:1px solid rgba(69,169,242,.32);font-size:11px;font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center}
+.rd8516-preview-status[hidden]{display:none!important}
+</style>
+
+<style id="rd817-call-layout">
+#navCallTopBtn[hidden],#stopActionModal button[hidden]{display:none!important}
+#navigationPage .rd856-target-actions.rd817-no-phone{grid-template-columns:repeat(3,30px)!important}
+@media(max-width:430px){#navigationPage .rd856-target-actions.rd817-no-phone{grid-template-columns:repeat(3,28px)!important}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -977,7 +989,7 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
       <div class="rd-nav-stop-state rd856-target-actions">
         <button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button>
         <button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button>
-        <button id="navCallTopBtn" class="call" onclick="openCallPanel()" title="Durağı ara" aria-label="Durağın irtibat kişisini ara">☎</button>
+        <button id="navCallTopBtn" class="call" onclick="openCallPanel()" title="Kayıtlı numarayı ara" aria-label="Durağın irtibat kişisini ara">☎</button>
         <button id="navOpenMapBtn" class="map" onclick="openCurrentNavStopInGoogleMaps()" title="Google Haritalar'da aç" aria-label="Hedef durağı Google Haritalar'da aç">⌖</button>
       </div>
     </div>
@@ -1027,7 +1039,6 @@ button.rd-iconized .rd-icon-legacy-hidden{display:none!important}
 </div>
 
 
-<div id="callModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">İRTİBAT</span><h3>Durak kişisi</h3></div><button class="close" onclick="cancelCallModal()" aria-label="Vazgeç">×</button></div><div id="callExisting" class="rd-contact-preview"></div><div class="rd-call-actions"><button class="rd-call-primary" id="callNowBtn" onclick="callSavedContact()">☎ Şimdi Ara</button><button class="dark-btn" id="contactPickerBtn" onclick="pickContactFromPhone()">▣ Rehberden seç</button></div><input id="vcardContactInput" type="file" accept=".vcf,text/vcard,text/x-vcard" hidden onchange="importContactVCard(this)"><div class="rd-divider"><span>veya manuel gir</span></div><div class="field"><label>Kişi adı ve soyadı</label><input id="manualContactName" autocomplete="name" placeholder="Ad Soyad"></div><div class="field"><label>Telefon numarası</label><input id="manualContactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div><div class="rd-contact-save-row rd-contact-save-row-v78"><button class="start-route-btn" onclick="saveManualContact()">Kaydet ve Ara</button><button class="rd-contact-clear" onclick="clearStopContact()">⌫ İrtibatı Sil</button><button class="rd-cancel-action" onclick="cancelCallModal()">Vazgeç</button></div><p class="muted rd-modal-help" id="contactPickerHelp">Android/uyumlu tarayıcılarda rehberden seçim yapılır. iPhone/Safari'de destek yoksa kişi kartı (.vcf) seçme ekranı açılır.</p></div></div>
 <div id="routeNoteModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">TESLİMAT NOTU</span><h3 id="routeNoteTitle">Durak notu</h3></div><button class="close" onclick="cancelRouteNoteModal()" aria-label="Vazgeç">×</button></div><div class="field"><label>Bu rota için teslimat notu</label><textarea id="routeNoteText" rows="6" placeholder="Örn. Güvenliğe bırak, arka kapıdan gir..."></textarea></div><div class="rd-save-cancel-row"><button class="rd-cancel-action" onclick="cancelRouteNoteModal()">Vazgeç</button><button class="start-route-btn" onclick="saveRouteStopNote()">📎 Notu Kaydet</button></div></div></div>
 <div id="stopActionModal" class="modal rd-sheet-modal"><div class="modal-box rd-sheet"><div class="modal-head"><div><span class="eyebrow">DURAK İŞLEMLERİ</span><h3 id="stopActionTitle">Durak</h3></div><button class="close" onclick="closeModal('stopActionModal')">×</button></div><div class="rd-action-list"><button onclick="editActionStop()">✎ Durak bilgilerini düzenle</button><button onclick="callActionStop()">☎ İrtibat kişisini ara</button><button class="danger" onclick="removeActionStop()">⌫ Rotadan kaldır</button><button class="danger" onclick="deleteActionStopRecord()">🗑 Durak kaydını sil</button></div></div></div>
 
@@ -1448,7 +1459,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async()=>{
     try{
       if(window.caches){for(const k of await caches.keys()){if(k.startsWith('rotadefteri-')&&!k.includes('v8-4-11-nav-next-stops-sheet'))await caches.delete(k)}}
-      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.15',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=8.5.17',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage({type:'SKIP_WAITING'})})});
@@ -1663,7 +1674,7 @@ function setStopState(rid,sid,state){const r=db.routes.find(x=>x.id===rid);if(!r
 function openRouteNote(rid,sid){const r=db.routes.find(x=>x.id===rid),st=db.stops.find(x=>x.id===sid);if(!r||!st)return;V66.noteRouteId=rid;V66.noteStopId=sid;document.getElementById('routeNoteTitle').textContent=st.name;document.getElementById('routeNoteText').value=r.stopNotes?.[sid]||st.note||'';document.getElementById('routeNoteModal').classList.add('open')}
 function saveRouteStopNote(){const r=db.routes.find(x=>x.id===V66.noteRouteId);if(!r||!V66.noteStopId)return;r.stopNotes={...(r.stopNotes||{})};const text=document.getElementById('routeNoteText').value.trim();if(text)r.stopNotes[V66.noteStopId]=text;else delete r.stopNotes[V66.noteStopId];r.updatedAt=new Date().toISOString();persist();closeModal('routeNoteModal');renderRouteDetailPage(r.id);toast(text?'Teslimat notu kaydedildi':'Teslimat notu kaldırıldı')}
 function addStopNote(sid){if(currentRouteId)return openRouteNote(currentRouteId,sid);editStop(sid)}
-function openStopActions(rid,sid){const st=db.stops.find(x=>x.id===sid);V66.actionRouteId=rid;V66.actionStopId=sid;document.getElementById('stopActionTitle').textContent=st?.name||'Durak';document.getElementById('stopActionModal').classList.add('open')}
+function openStopActions(rid,sid){const st=db.stops.find(x=>x.id===sid);V66.actionRouteId=rid;V66.actionStopId=sid;document.getElementById('stopActionTitle').textContent=st?.name||'Durak';const call=document.querySelector('#stopActionModal [onclick="callActionStop()"]');if(call)call.hidden=!rd817Callable(st?.contactPhone);document.getElementById('stopActionModal').classList.add('open')}
 function editActionStop(){const sid=V66.actionStopId;closeModal('stopActionModal');if(sid)openStopModal(sid)}
 function callActionStop(){closeModal('stopActionModal');openCallPanel(V66.actionStopId)}
 function deleteActionStopRecord(){const sid=V66.actionStopId;closeModal('stopActionModal');if(sid)deleteStop(sid)}
@@ -1749,17 +1760,22 @@ function toggleNavOverview(){if(!navMap)return;navTracking=false;const r=current
 function stopLiveTracking(){if(navWatchId!==null){navigator.geolocation.clearWatch(navWatchId);navWatchId=null}cancelAnimationFrame(V66.animFrame)}
 function exitNavigation(){clearTimeout(V66.autoSwitchTimer);stopLiveTracking();if(V66.directRoute&&V66.directRoute.id===currentRouteId){V66.directRoute=null;V66.directMetrics=null;V66.approachTargetId=null;V66.approachPos=null;currentRouteId=null;document.getElementById('navigationPage')?.classList.remove('rd-direct-nav');showView('contacts');return}showView('routeDetailPage');if(currentRouteId)renderRouteDetailPage(currentRouteId)}
 
-function openCallPanel(sid=null){const r=currentNavRoute(),targetId=sid||r?.stopIds?.[navIndex],st=db.stops.find(x=>x.id===targetId);if(!st)return toast('Durak bulunamadı');V66.actionStopId=st.id;document.getElementById('manualContactName').value=st.contactName||'';document.getElementById('manualContactPhone').value=st.contactPhone||'';document.getElementById('callExisting').innerHTML=`<b>${esc(st.contactName||'Kişi bilgisi yok')}</b><span>${esc(st.contactPhone||'Telefon numarası yok')}</span><small>${esc(st.name)}</small>`;const b=document.getElementById('callNowBtn');b.disabled=!st.contactPhone;b.style.opacity=st.contactPhone?'1':'.45';prepareContactPickerUI();document.getElementById('callModal').classList.add('open')}
-function isIOSWeb(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
-function prepareContactPickerUI(){const btn=document.getElementById('contactPickerBtn'),help=document.getElementById('contactPickerHelp'),supported=!!navigator.contacts?.select;if(!btn||!help)return;btn.classList.toggle('rd-contact-picker-supported',supported);if(supported){btn.textContent='▣ Rehberden seç';help.textContent='Telefonun desteklediği güvenli kişi seçicisi açılır. Yalnızca sizin seçtiğiniz kişinin adı ve telefonu paylaşılır.'}else if(isIOSWeb()){btn.textContent='▣ Kişi kartı (.vcf) seç';help.textContent='iPhone Safari/PWA, web uygulamalarına Kişiler için “Tüm Kişiler” izni vermiyor. Bu nedenle kişi kartı (.vcf) seçebilir veya aşağıdan manuel girebilirsiniz.'}else{btn.textContent='▣ Kişi kartı (.vcf) seç';help.textContent='Bu tarayıcı doğrudan rehber seçicisini desteklemiyor. Kişi kartı (.vcf) seçebilir veya manuel girebilirsiniz.'}}
-function callCurrentStop(){openCallPanel()}
-function callSavedContact(){const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st?.contactPhone)return toast('Telefon numarası kayıtlı değil');location.href='tel:'+st.contactPhone.replace(/[^+\d]/g,'')}
-async function pickContactFromPhone(){const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st)return;const help=document.getElementById('contactPickerHelp');if(navigator.contacts?.select){try{let props=['name','tel'];if(navigator.contacts.getProperties){const supported=await navigator.contacts.getProperties();props=props.filter(x=>supported.includes(x));if(!props.includes('tel'))throw new Error('Telefon alanı desteklenmiyor')}const res=await navigator.contacts.select(props,{multiple:false}),c=res?.[0];if(!c)return;st.contactName=Array.isArray(c.name)?(c.name[0]||''):String(c.name||'');st.contactPhone=Array.isArray(c.tel)?(c.tel[0]||''):String(c.tel||'');st.updatedAt=new Date().toISOString();persist();document.getElementById('manualContactName').value=st.contactName;document.getElementById('manualContactPhone').value=st.contactPhone;openCallPanel(st.id);renderStops();if(currentRouteId&&!V66.directRoute)renderRouteDetailPage(currentRouteId);toast('Seçilen kişi durağa kaydedildi');return}catch(e){console.warn(e);if(e?.name==='AbortError')return;if(help)help.textContent='Rehber seçici açılamadı. Kişi kartı (.vcf) seçebilir veya manuel girebilirsiniz.'}}
- const input=document.getElementById('vcardContactInput');if(input){input.value='';input.click()}else document.getElementById('manualContactPhone')?.focus()}
-function decodeVCardValue(v){return String(v||'').replace(/\\n/gi,' ').replace(/\\,/g,',').replace(/\\;/g,';').trim()}
-async function importContactVCard(input){const file=input?.files?.[0];if(!file)return;try{const raw=await file.text(),rawLines=raw.split(/\r?\n/),lines=[];for(const line of rawLines){if(/^[ \t]/.test(line)&&lines.length)lines[lines.length-1]+=line.trimStart();else lines.push(line)}const fn=lines.find(x=>/^FN(?:;[^:]*)?:/i.test(x)),n=lines.find(x=>/^N(?:;[^:]*)?:/i.test(x)),tel=lines.find(x=>/^TEL(?:;[^:]*)?:/i.test(x));let name=fn?decodeVCardValue(fn.slice(fn.indexOf(':')+1)):'';if(!name&&n){const parts=decodeVCardValue(n.slice(n.indexOf(':')+1)).split(';');name=[parts[1],parts[0]].filter(Boolean).join(' ')}const phone=tel?decodeVCardValue(tel.slice(tel.indexOf(':')+1)):'';if(!phone){toast('Kişi kartında telefon numarası bulunamadı');return}const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st)return;st.contactName=name||st.contactName||'';st.contactPhone=phone;st.updatedAt=new Date().toISOString();persist();document.getElementById('manualContactName').value=st.contactName;document.getElementById('manualContactPhone').value=st.contactPhone;openCallPanel(st.id);renderStops();if(currentRouteId&&!V66.directRoute)renderRouteDetailPage(currentRouteId);toast('Kişi kartı durağa aktarıldı')}catch(e){console.error(e);toast('Kişi kartı okunamadı')}}
-function clearStopContact(){const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st)return;if(!st.contactName&&!st.contactPhone)return toast('Silinecek irtibat bilgisi yok');if(!confirm('Bu durağın irtibat adı ve telefon numarası silinsin mi?'))return;st.contactName='';st.contactPhone='';st.updatedAt=new Date().toISOString();persist();document.getElementById('manualContactName').value='';document.getElementById('manualContactPhone').value='';openCallPanel(st.id);renderStops();if(currentRouteId&&!V66.directRoute)renderRouteDetailPage(currentRouteId);toast('İrtibat bilgisi silindi')}
-function saveManualContact(){const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st)return;const name=document.getElementById('manualContactName').value.trim(),phone=document.getElementById('manualContactPhone').value.trim();if(!phone)return toast('Telefon numarası girin');st.contactName=name;st.contactPhone=phone;st.updatedAt=new Date().toISOString();persist();renderStops();if(currentRouteId&&!V66.directRoute)renderRouteDetailPage(currentRouteId);closeModal('callModal');location.href='tel:'+phone.replace(/[^+\d]/g,'')}
+function rd817DialNumber(raw){
+ const digits=String(raw??'').trim().replace(/[^\d+]/g,'');
+ return /^\+?\d{7,15}$/.test(digits)?digits:null;
+}
+function rd817Callable(raw){return !!rd817DialNumber(raw)}
+// Tek dokunuş: mevcut kayıtlı telefon numarasını doğrudan telefon uygulamasına gönder.
+// Rehber izni, kişi seçimi, modal ve veri değiştirme yok.
+function openCallPanel(sid=null){
+ const r=typeof currentNavRoute==='function'?currentNavRoute():null;
+ const id=sid||r?.stopIds?.[navIndex];
+ const st=(db.stops||[]).find(x=>x.id===id);
+ if(!st)return toast('Durak bulunamadı');
+ const number=rd817DialNumber(st.contactPhone);
+ if(!number)return toast('Bu durağın geçerli bir telefon numarası kayıtlı değil');
+ location.href='tel:'+number;
+}
 function saveNavSettings(){ensureV66Settings();db.settings.autoComplete=document.getElementById('autoCompleteToggle')?.checked!==false;db.settings.liveTracking=document.getElementById('liveTrackingToggle')?.checked!==false;db.settings.voiceNavigation=document.getElementById('voiceNavToggle')?.checked!==false;db.settings.routeColor=document.getElementById('routeColorSelect')?.value||'blue';db.settings.routeWidth=Number(document.getElementById('routeWidthSelect')?.value)||8;persist();if(document.getElementById('navigationPage')?.classList.contains('active')){if(db.settings.liveTracking)startLiveTracking();else stopLiveTracking();const r=currentNavRoute();if(r)refreshNavVisual(r)}toast('Navigasyon ayarları kaydedildi')}
 function resumeLastRoute(){ensureV66Settings();const r=db.routes.find(r=>!r.completed&&r.stopIds?.length&&routeFinishedCount(r)<r.stopIds.length);if(!r)return toast('Devam edilecek açık rota yok');openNavigation(r.id)}
 
@@ -1842,32 +1858,9 @@ setTimeout(()=>{if(document.getElementById('authGate')?.classList.contains('open
   window.saveStop=function(){const modal=document.getElementById('stopModal'),wasOpen=modal?.classList.contains('open');baseSaveStop();if(wasOpen&&!modal?.classList.contains('open')){V66.stopDraftSnapshot=null;cleanupStopPicker()}};
   window.cancelStopModal=function(){const modal=document.getElementById('stopModal');if(!modal?.classList.contains('open'))return;const dirty=V66.stopDraftSnapshot!=null&&stopDraftState()!==V66.stopDraftSnapshot;if(dirty&&!confirm('Kaydedilmemiş durak değişikliklerinden vazgeçilsin mi?'))return;editingStopId=null;V66.stopDraftSnapshot=null;cleanupStopPicker();closeModal('stopModal');setTimeout(cleanupStopPicker,300)};
   window.cancelRouteNoteModal=function(){closeModal('routeNoteModal')};
-  window.cancelCallModal=function(){closeModal('callModal')};
   window.cancelGoogleMapsKeyEdit=function(){const el=document.getElementById('googleMapsKey');if(el)el.value=db.settings.googleMapsKey||'';toast('API anahtarı değişikliği iptal edildi');goBackView('home')};
 
-  // Rehber/VCF seçimi taslağı doldurur; Kaydet ve Ara basılmadan veri değişmez.
-  window.pickContactFromPhone=async function(){
-    const st=db.stops.find(x=>x.id===V66.actionStopId);if(!st)return;const help=document.getElementById('contactPickerHelp');
-    if(navigator.contacts?.select){try{let props=['name','tel'];if(navigator.contacts.getProperties){const supported=await navigator.contacts.getProperties();props=props.filter(x=>supported.includes(x));if(!props.includes('tel'))throw new Error('Telefon alanı desteklenmiyor')}const res=await navigator.contacts.select(props,{multiple:false}),c=res?.[0];if(!c)return;const name=Array.isArray(c.name)?(c.name[0]||''):String(c.name||''),phone=Array.isArray(c.tel)?(c.tel[0]||''):String(c.tel||'');document.getElementById('manualContactName').value=name;document.getElementById('manualContactPhone').value=phone;if(help)help.textContent='Kişi seçildi. Durağa kaydetmek için “Kaydet ve Ara” butonuna dokunun.';toast('Kişi seçildi • henüz kaydedilmedi');return}catch(e){console.warn(e);if(e?.name==='AbortError')return;if(help)help.textContent='Rehber seçici açılamadı. Kişi kartı (.vcf) seçebilir veya manuel girebilirsiniz.'}}
-    const input=document.getElementById('vcardContactInput');if(input){input.value='';input.click()}else document.getElementById('manualContactPhone')?.focus();
-  };
-  window.importContactVCard=async function(input){
-    const file=input?.files?.[0];if(!file)return;
-    try{
-      const raw=await file.text(),rawLines=raw.split(/\r?\n/),lines=[];
-      for(const line of rawLines){if(/^[ 	]/.test(line)&&lines.length)lines[lines.length-1]+=line.trimStart();else lines.push(line)}
-      const fn=lines.find(x=>/^FN(?:;[^:]*)?:/i.test(x)),n=lines.find(x=>/^N(?:;[^:]*)?:/i.test(x)),tel=lines.find(x=>/^TEL(?:;[^:]*)?:/i.test(x));
-      let name=fn?decodeVCardValue(fn.slice(fn.indexOf(':')+1)):'';
-      if(!name&&n){const parts=decodeVCardValue(n.slice(n.indexOf(':')+1)).split(';');name=[parts[1],parts[0]].filter(Boolean).join(' ')}
-      const phone=tel?decodeVCardValue(tel.slice(tel.indexOf(':')+1)):'';
-      if(!phone)return toast('Kişi kartında telefon numarası bulunamadı');
-      document.getElementById('manualContactName').value=name;document.getElementById('manualContactPhone').value=phone;
-      const help=document.getElementById('contactPickerHelp');if(help)help.textContent='Kişi kartı okundu. Kaydetmek için “Kaydet ve Ara” butonuna dokunun.';
-      toast('Kişi kartı seçildi • henüz kaydedilmedi');
-    }catch(e){console.error(e);toast('Kişi kartı okunamadı')}finally{if(input)input.value=''}
-  };
-
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('stopModal')?.classList.contains('open'))cancelStopModal();else if(document.getElementById('callModal')?.classList.contains('open'))cancelCallModal();else if(document.getElementById('routeNoteModal')?.classList.contains('open'))cancelRouteNoteModal()});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('stopModal')?.classList.contains('open'))cancelStopModal();else if(document.getElementById('routeNoteModal')?.classList.contains('open'))cancelRouteNoteModal()});
 })();
 </script>
 
@@ -2161,7 +2154,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd844-compact-stop-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.15-manual-zoom-follow-pause';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.17-direct-call';document.body.dataset.build=window.RD_BUILD;
  const normText=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');
  window.openStopInGoogleMaps=function(id){
    const s=(db.stops||[]).find(x=>x.id===id);if(!s)return toast('Durak bulunamadı');
@@ -2191,7 +2184,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
      const expanded=V71.expandedStopId===s.id,region=String(stopRegionLabel(s)||'').trim(),phone=String(s.contactPhone||'').trim();
      const placeLine=`<span class="rd-stop-line primary"><span class="rd-line-symbol">⌖</span>${esc(region||'İl / ilçe belirtilmemiş')}</span>`;
      const phoneLine=`<span class="rd-stop-line phone"><span class="rd-line-symbol">☎</span>${esc(phone||'Telefon belirtilmemiş')}</span>`;
-     return `<article class="item rd-stop-v71 ${expanded?'expanded':''}" onclick="toggleStopCard('${s.id}')"><span class="rd-stop-seq">${i+1}</span><div class="rd-stop-copy"><h3 title="${esc(s.name)}">${esc(s.name)}</h3><div class="rd-stop-lines">${placeLine}${phoneLine}</div></div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()"><button class="rd-stop-quick-btn map" title="Google Haritalar'da aç" aria-label="Google Haritalar'da aç" onclick="openStopInGoogleMaps('${s.id}')"><span class="rd-mini-icon rd-i-pin" aria-hidden="true"></span></button><button class="rd-stop-quick-btn edit" title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')"><span class="rd-mini-icon rd-i-edit" aria-hidden="true"></span></button><button class="rd-stop-quick-btn danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')"><span class="rd-mini-icon rd-i-trash" aria-hidden="true"></span></button><button class="rd-stop-quick-btn add" title="Rotaya ekle" aria-label="Rotaya ekle" onclick="openRouteBuilderWithStop('${s.id}')"><span class="rd-mini-icon rd-i-plus" aria-hidden="true"></span></button></div><span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()">${phone?`<button onclick="openCallPanel('${s.id}')">☎ Ara</button>`:''}<button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">➤ Uygulama içi navigasyon</button></div></article>`;
+     return `<article class="item rd-stop-v71 ${expanded?'expanded':''}" onclick="toggleStopCard('${s.id}')"><span class="rd-stop-seq">${i+1}</span><div class="rd-stop-copy"><h3 title="${esc(s.name)}">${esc(s.name)}</h3><div class="rd-stop-lines">${placeLine}${phoneLine}</div></div><div class="rd-stop-quick-actions" onclick="event.stopPropagation()"><button class="rd-stop-quick-btn map" title="Google Haritalar'da aç" aria-label="Google Haritalar'da aç" onclick="openStopInGoogleMaps('${s.id}')"><span class="rd-mini-icon rd-i-pin" aria-hidden="true"></span></button><button class="rd-stop-quick-btn edit" title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')"><span class="rd-mini-icon rd-i-edit" aria-hidden="true"></span></button><button class="rd-stop-quick-btn danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')"><span class="rd-mini-icon rd-i-trash" aria-hidden="true"></span></button><button class="rd-stop-quick-btn add" title="Rotaya ekle" aria-label="Rotaya ekle" onclick="openRouteBuilderWithStop('${s.id}')"><span class="rd-mini-icon rd-i-plus" aria-hidden="true"></span></button></div><span class="rd-stop-chevron">${expanded?'⌄':'›'}</span><div class="rd-stop-expanded-actions" onclick="event.stopPropagation()">${rd817Callable(phone)?`<button onclick="openCallPanel('${s.id}')">☎ Ara</button>`:''}<button class="rd-go-action" onclick="navigateDirectToStop('${s.id}')">➤ Uygulama içi navigasyon</button></div></article>`;
    }).join('');
    if(map)refreshMainMapMarkers();
  };
@@ -2247,7 +2240,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd849-smart-nav-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.15-manual-zoom-follow-pause';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='8.5.17-direct-call';document.body.dataset.build=window.RD_BUILD;
  const NAV_SESSION_KEY='rd849-active-navigation-session';
  const SESSION_MAX_AGE=18*60*60*1000;
  const R={summaryOpen:false,offCount:0,lastOffAt:0,rerouteBusy:false,reroute:null,resumeBusy:false,lastResumeAt:0,lastSessionSaveAt:0,resumeTimer:null};
@@ -2362,7 +2355,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <script id="rd850-route-wizard-runtime">
 (function(){
  'use strict';
- const W={step:1,planMap:null,planLayers:[],confirmMap:null,confirmLayers:[],createdBusy:false};
+ const W={step:1,planMap:null,planLayers:[],confirmMap:null,confirmLayers:[],createdBusy:false,previewCache:new Map(),previewKey:null,previewTimer:null,previewRequest:0,previewController:null,previewDrawing:{},previewErrorUntil:0};
  window.RD_BUILD='8.5.0-route-wizard';document.body.dataset.build=window.RD_BUILD;
  const byId=id=>document.getElementById(id);
  const validCoord=s=>s&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng));
@@ -2376,11 +2369,19 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
  window.rd850NextFromInfo=function(){setToday();rd850GoStep(2)};
  window.rd850NextFromStops=function(){if(currentRouteStops.length<2)return toast('Rota için en az 2 durak seçin');rd850GoStep(3)};
  window.rd850NextFromPlan=function(){if(currentRouteStops.length<2)return toast('Rota için en az 2 durak seçin');rd850GoStep(4)};
- function destroyMap(which){const m=W[which];if(m){try{m.remove()}catch(_){}W[which]=null}W[which+'Layers']=[]}
+ function destroyMap(which){const m=W[which];if(m){try{m.remove()}catch(_){}W[which]=null}W[which+'Layers']=[];W.previewDrawing[which]=null;if(!W.planMap&&!W.confirmMap){clearTimeout(W.previewTimer);W.previewTimer=null;W.previewController?.abort();W.previewController=null;W.previewKey=null;W.previewRequest++}}
  function markerIcon(i){return L.divIcon({className:'rd850-number-marker',html:`<div>${i+1}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}
- function drawMap(which,id){const host=byId(id);if(!host||!window.L)return;if(W[which]){try{W[which].invalidateSize()}catch(_){};clearMapLayers(which);return paintMap(which)}host.innerHTML='';const pts=currentRouteStops.map(x=>db.stops.find(s=>s.id===x)).filter(validCoord);const c=pts[0]?[Number(pts[0].lat),Number(pts[0].lng)]:[40.195,29.06];try{W[which]=makeMap(id,c,pts.length?11:8);paintMap(which)}catch(e){console.warn('Rota önizleme haritası',e);host.innerHTML='<div class="rd850-map-loading">Harita açılamadı</div>'}}
+ // Yol geometrisi durak sırası + koordinatlarla eşlenir; eski sıranın çizgisi yeni haritaya taşınmaz.
+ function previewStops(){return currentRouteStops.map(x=>db.stops.find(s=>s.id===x)).filter(validCoord)}
+ function previewKey(pts){return pts.map(s=>String(s.id)+':'+Number(s.lat).toFixed(6)+','+Number(s.lng).toFixed(6)).join('|')}
+ function previewStatus(which,message){const host=byId(which==='planMap'?'rd850PlanMap':'rd850ConfirmMap');if(!host)return;let el=host.querySelector('.rd8516-preview-status');if(!el){el=document.createElement('div');el.className='rd8516-preview-status';host.appendChild(el)}el.textContent=message||'';el.hidden=!message}
+ function validPreviewCoordinates(g){const coords=g?.coordinates;if(!Array.isArray(coords)||coords.length<2)return null;const out=coords.filter(c=>Array.isArray(c)&&c.length>=2&&Number.isFinite(Number(c[0]))&&Number.isFinite(Number(c[1]))&&Math.abs(Number(c[0]))<=180&&Math.abs(Number(c[1]))<=90).map(c=>[Number(c[1]),Number(c[0])]);return out.length>=2?out:null}
+ function showPreviewLine(which,key,path){const m=W[which];if(!m||W.previewDrawing[which]!==key)return;const l=L.polyline(path,{color:typeof navRouteColor==='function'?navRouteColor():'#168cff',weight:5,opacity:.87,lineCap:'round',lineJoin:'round',interactive:false}).addTo(m);W[which+'Layers'].push(l);previewStatus(which,'');try{m.fitBounds(l.getBounds(),{padding:[28,28],maxZoom:14})}catch(_){}}
+ function drawMap(which,id){const host=byId(id);if(!host||!window.L)return;if(W[which]){try{W[which].invalidateSize()}catch(_){};return paintMap(which)}host.innerHTML='';const pts=previewStops();const c=pts[0]?[Number(pts[0].lat),Number(pts[0].lng)]:[40.195,29.06];try{W[which]=makeMap(id,c,pts.length?11:8);paintMap(which)}catch(e){console.warn('Rota önizleme haritası',e);host.innerHTML='<div class="rd850-map-loading">Harita açılamadı</div>'}}
  function clearMapLayers(which){(W[which+'Layers']||[]).forEach(l=>{try{W[which].removeLayer(l)}catch(_){}});W[which+'Layers']=[]}
- function paintMap(which){const m=W[which];if(!m)return;clearMapLayers(which);const pts=currentRouteStops.map(x=>db.stops.find(s=>s.id===x)).filter(validCoord);if(!pts.length)return;const latlngs=[];pts.forEach((s,i)=>{const ll=[Number(s.lat),Number(s.lng)];latlngs.push(ll);const marker=L.marker(ll,{icon:markerIcon(i)}).addTo(m);const region=typeof stopRegionLabel==='function'?stopRegionLabel(s):(s.address||'');marker.bindPopup(`<div class="rd850-map-popup"><b>${esc(s.name)}</b><small>${esc(region||'Konum')}</small>${s.contactPhone?`<small>☎ ${esc(s.contactPhone)}</small>`:''}</div>`);W[which+'Layers'].push(marker)});if(latlngs.length>1){const line=L.polyline(latlngs,{color:typeof navRouteColor==='function'?navRouteColor():'#168cff',weight:5,opacity:.82,lineCap:'round',lineJoin:'round'}).addTo(m);W[which+'Layers'].push(line)}try{m.fitBounds(L.latLngBounds(latlngs),{padding:[28,28],maxZoom:14})}catch(_){} }
+ function paintMap(which){const m=W[which];if(!m)return;clearMapLayers(which);const pts=previewStops(),key=previewKey(pts);W.previewDrawing[which]=key;if(!pts.length){previewStatus(which,'');return}const latlngs=[];pts.forEach((s,i)=>{const ll=[Number(s.lat),Number(s.lng)];latlngs.push(ll);const marker=L.marker(ll,{icon:markerIcon(i)}).addTo(m);const region=typeof stopRegionLabel==='function'?stopRegionLabel(s):(s.address||'');marker.bindPopup(`<div class="rd850-map-popup"><b>${esc(s.name)}</b><small>${esc(region||'Konum')}</small>${s.contactPhone?`<small>☎ ${esc(s.contactPhone)}</small>`:''}</div>`);W[which+'Layers'].push(marker)});try{m.fitBounds(L.latLngBounds(latlngs),{padding:[28,28],maxZoom:14})}catch(_){}if(currentRouteStops.length!==pts.length){previewStatus(which,'Koordinatı eksik durak var • yol hesaplanamadı');return}if(pts.length<2){previewStatus(which,'');return}const cached=W.previewCache.get(key);if(cached){showPreviewLine(which,key,cached);return}previewStatus(which,'Yol güzergâhı hesaplanıyor…');requestPreview(key,pts)}
+ async function fetchPreviewPath(pts,signal){const all=[];for(let i=0;i<pts.length-1;i+=49){if(signal.aborted)throw new Error('Önizleme iptal edildi');const slice=pts.slice(i,Math.min(i+50,pts.length));const query=slice.map(s=>Number(s.lng)+','+Number(s.lat)).join(';');const resp=await fetch('https://router.project-osrm.org/route/v1/driving/'+query+'?overview=full&geometries=geojson&steps=false',{signal});if(!resp.ok)throw new Error('Yol servisi yanıt vermedi');const body=await resp.json();if(body.code!=='Ok'||!body.routes?.[0])throw new Error('Yol bulunamadı');const path=validPreviewCoordinates(body.routes[0].geometry);if(!path)throw new Error('Geçersiz yol geometrisi');all.push(...(all.length?path.slice(1):path))}return all}
+ function requestPreview(key,pts){if(W.previewKey===key&&(W.previewTimer||W.previewController||Date.now()<W.previewErrorUntil))return;clearTimeout(W.previewTimer);W.previewController?.abort();W.previewKey=key;W.previewErrorUntil=0;const token=++W.previewRequest;W.previewTimer=setTimeout(async()=>{W.previewTimer=null;const ctrl=new AbortController();W.previewController=ctrl;const timeout=setTimeout(()=>ctrl.abort(),25000);try{const path=await fetchPreviewPath(pts,ctrl.signal);if(token!==W.previewRequest||W.previewKey!==key)return;W.previewCache.set(key,path);if(W.previewCache.size>3)W.previewCache.delete(W.previewCache.keys().next().value);for(const which of ['planMap','confirmMap'])if(W.previewDrawing[which]===key)showPreviewLine(which,key,path)}catch(e){if(token!==W.previewRequest||W.previewKey!==key)return;W.previewErrorUntil=Date.now()+15000;console.warn('Yol güzergâhı önizlemesi',e);for(const which of ['planMap','confirmMap'])if(W.previewDrawing[which]===key)previewStatus(which,'Yol güzergâhı alınamadı • duraklar gösteriliyor')}finally{clearTimeout(timeout);if(W.previewController===ctrl)W.previewController=null}},400)}
  window.rd850RefreshPlanMap=function(){drawMap('planMap','rd850PlanMap')};
  window.rd850RefreshConfirmMap=function(){drawMap('confirmMap','rd850ConfirmMap')};
  window.rd850RenderConfirm=function(){setToday();updateBuilderSummary();const d=byId('pageRouteDate')?.value||new Date().toISOString().slice(0,10);const set=(id,v)=>{const e=byId(id);if(e)e.textContent=v};set('rd850ConfirmName',routeName());set('rd850ConfirmDate',fmtDate(d));set('rd850ConfirmStops',currentRouteStops.length+' durak');set('rd850ConfirmDistance',byId('pageRouteDistance')?.textContent||'—');set('rd850ConfirmDuration',byId('pageRouteDuration')?.textContent||'—');set('rd850ConfirmArrival',byId('pageRouteArrival')?.textContent||'—');set('rd850ConfirmCount',currentRouteStops.length+' durak');const list=byId('rd850ConfirmList');if(list)list.innerHTML=currentRouteStops.map((id,i)=>{const s=db.stops.find(x=>x.id===id);if(!s)return'';const region=typeof stopRegionLabel==='function'?stopRegionLabel(s):(s.address||'');return `<div class="rd850-confirm-stop"><i>${i+1}</i><div><b title="${esc(s.name)}">${esc(s.name)}</b><small>${esc(region||'Konum')}</small></div></div>`}).join('')};
@@ -2602,7 +2603,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 <script id="rd857-nav-compact-progress-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.15-manual-zoom-follow-pause';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
+ window.RD_BUILD='8.5.17-direct-call';document.body.dataset.build=window.RD_BUILD;document.title='Rota Defteri';
  function targetEtaSeconds(r,pos,rm){
    if(!r||r.completed)return 0;
    if(r._direct)return Math.max(0,Number(rm?.duration)||0);
@@ -2615,6 +2616,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    r=r||currentNavRoute?.();if(!r)return;
    const total=(r.stopIds||[]).length,done=new Set((r.completedStopIds||[]).filter(id=>(r.stopIds||[]).includes(id))).size,processed=typeof routeFinishedCount==='function'?routeFinishedCount(r):done,remaining=Math.max(0,total-processed),pct=total?Math.round(processed/total*100):0;
    const txt=document.getElementById('rd857MiniProgressText'),bar=document.getElementById('rd857MiniProgressBar');if(txt)txt.textContent='✓ '+done+' • '+remaining+' kaldı';if(bar)bar.style.width=pct+'%';
+   const call=document.getElementById('navCallTopBtn');if(call){const sid=r.stopIds?.[navIndex],st=(db.stops||[]).find(x=>x.id===sid),canCall=rd817Callable(st?.contactPhone);call.hidden=!canCall;call.closest('.rd856-target-actions')?.classList.toggle('rd817-no-phone',!canCall)}
    const eta=document.getElementById('navEta');if(eta){const rm=typeof remainingMetrics==='function'?remainingMetrics(r,pos||V66?.lastPos):null,sec=targetEtaSeconds(r,pos||V66?.lastPos,rm);eta.textContent=r.completed?'—':(sec?new Date(Date.now()+sec*1000).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'—')}
  }
  const oldPanel=window.updateNavPanel;window.updateNavPanel=function(r,pos){const out=oldPanel?.apply(this,arguments);try{refreshCompactNav(r,pos)}catch(e){console.warn('Kompakt navigasyon sayacı',e)}return out};
@@ -2641,7 +2643,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
 <script id="rd8513-navigation-runtime">
 (function(){
  'use strict';
- window.RD_BUILD='8.5.15-manual-zoom-follow-pause';
+ window.RD_BUILD='8.5.17-direct-call';
  document.body.dataset.build=window.RD_BUILD;
  document.title='Rota Defteri';
 
@@ -2658,7 +2660,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    follow:true,manual:false,programmatic:false,loadPromise:null,
    routeCoords:[],stopMarkers:[],userMarker:null,routeSeq:0,lastCameraAt:0,lastBearing:null,
    filtered:null,lastRaw:null,lastFixAt:0,lastGpsCallbackAt:0,restartAt:0,
-   watchdog:null,initialZoom:16.6
+   watchdog:null,initialZoom:16.6,fullRouteKey:null,fullRouteToken:0,fullRoutePending:null,fullFallbackOverlay:null
  };
 
  const finite=v=>v!==null&&v!==''&&Number.isFinite(Number(v));
@@ -2705,6 +2707,20 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    try{if(navMap.getLayer(id))navMap.removeLayer(id)}catch(_){}
    try{if(navMap.getSource(id))navMap.removeSource(id)}catch(_){}
  }
+ function fullRouteGeometry(r){const cc=r?.geometry?.coordinates;if(!Array.isArray(cc)||cc.length<2)return null;const points=cc.filter(c=>Array.isArray(c)&&c.length>=2&&finite(c[0])&&finite(c[1])&&Math.abs(Number(c[0]))<=180&&Math.abs(Number(c[1]))<=90).map(c=>[Number(c[0]),Number(c[1])]);return points.length>=2?points:null}
+ function fullRouteSignature(r){return String(r.id)+'|'+(r.stopIds||[]).map(id=>{const s=db.stops.find(v=>v.id===id);return id+':'+(s?Number(s.lat).toFixed(6)+','+Number(s.lng).toFixed(6):'none')}).join('|')}
+ function drawFullNavigationLine(r){const coords=fullRouteGeometry(r);if(!navMap||!coords)return;
+   if(!isMl()){
+     if(navMapProvider!=='leaflet'&&navMapProvider!=='google')return;
+     navClearOverlay(S.fullFallbackOverlay);S.fullFallbackOverlay=null;
+     try{if(navMapProvider==='google')S.fullFallbackOverlay=new google.maps.Polyline({map:navMap,path:coords.map(c=>({lat:c[1],lng:c[0]})),strokeColor:navRouteColor(),strokeOpacity:.78,strokeWeight:5,zIndex:4});
+       else S.fullFallbackOverlay=L.polyline(coords.map(c=>[c[1],c[0]]),{color:navRouteColor(),weight:5,opacity:.78,lineCap:'round',lineJoin:'round',interactive:false}).addTo(navMap);
+       S.fullRouteKey=fullRouteSignature(r)}catch(e){console.warn('Tüm rota yedek harita çizgisi',e)}return;
+   }
+   removeSourceLayer('rd8516-full-route');
+   try{navMap.addSource('rd8516-full-route',{type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:coords}}});navMap.addLayer({id:'rd8516-full-route',type:'line',source:'rd8516-full-route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':navRouteColor(),'line-width':5,'line-opacity':.80}});S.fullRouteKey=fullRouteSignature(r)}catch(e){console.warn('Tüm rota harita çizgisi',e)}
+ }
+ function ensureFullNavigationLine(r){if(!navMap||!r||r._direct||(r.stopIds||[]).length<2)return;const key=fullRouteSignature(r);if(S.fullRouteKey===key&&(isMl()?navMap.getLayer('rd8516-full-route'):S.fullFallbackOverlay))return;const known=fullRouteGeometry(r);if(known){drawFullNavigationLine(r);return}if(S.fullRoutePending===key)return;S.fullRoutePending=key;const token=++S.fullRouteToken;const stops=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(s=>s&&finite(s.lat)&&finite(s.lng));if(stops.length<2){S.fullRoutePending=null;return}fetchOsrmRoute(stops).then(result=>{if(token!==S.fullRouteToken||!navMap||currentRouteId!==r.id||fullRouteSignature(r)!==key)return;if(!fullRouteGeometry(result))return;r.geometry=result.geometry;drawFullNavigationLine(r)}).catch(e=>console.warn('Tüm yol güzergâhı alınamadı',e)).finally(()=>{if(S.fullRoutePending===key)S.fullRoutePending=null})}
  function setRouteLine(points,dashed=false){
    if(!isMl())return;
    const pts=(points||[]).filter(p=>finite(p?.lat)&&finite(p?.lng));
@@ -2812,8 +2828,8 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    try{if(typeof x.remove==='function')x.remove();else if(x._mlLayer)removeSourceLayer(x._mlLayer)}catch(_){}
  };
  window.destroyNavigationMap=function(){
-   if(navMapProvider&&navMapProvider!=='maplibre')return BASE.destroy?.apply(this,arguments);
-   S.routeSeq++;clearStops();clearUser();S.routeCoords=[];S.filtered=null;S.lastRaw=null;S.lastBearing=null;navPolyline=null;navApproachPolyline=null;
+   if(navMapProvider&&navMapProvider!=='maplibre'){S.fullRouteToken++;S.fullRoutePending=null;S.fullRouteKey=null;navClearOverlay(S.fullFallbackOverlay);S.fullFallbackOverlay=null;return BASE.destroy?.apply(this,arguments)}
+   S.routeSeq++;S.fullRouteToken++;S.fullRoutePending=null;S.fullRouteKey=null;clearStops();clearUser();S.routeCoords=[];S.filtered=null;S.lastRaw=null;S.lastBearing=null;navPolyline=null;navApproachPolyline=null;
    try{navMap?.remove?.()}catch(_){}
    const h=host();if(h)h.innerHTML='';navMap=null;navMapProvider=null;
  };
@@ -2833,11 +2849,12 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
  };
 
  window.drawNavigationRoute=function(r){
-   if(!isMl())return BASE.draw?.(r);if(!r)return;
+   if(!isMl()){const result=BASE.draw?.(r);if(r)ensureFullNavigationLine(r);return result}if(!r)return;
    clearStops();const done=new Set(r.completedStopIds||[]),skip=new Set(r.skippedStopIds||[]);
    const pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);
    pts.forEach((st,i)=>{const state=done.has(st.id)?'done':skip.has(st.id)?'skipped':'';const mk=new maplibregl.Marker({element:stopElement(i,state,i===navIndex,st.name),anchor:'center'}).setLngLat([Number(st.lng),Number(st.lat)]).addTo(navMap);S.stopMarkers.push(mk)});
    navStopMarkers=S.stopMarkers;
+   ensureFullNavigationLine(r);
  };
  window.setArrowHeading=function(deg){
    if(!finite(deg))return;V66.heading=norm(deg);
@@ -2939,7 +2956,7 @@ button.rd-iconized{align-items:center!important;justify-content:center!important
    if(!r)return;
    try{await loadMapLibre()}catch(e){console.warn('WebGL harita yüklenemedi; güvenli harita kullanılıyor',e);return BASE.init?.(r)}
    ensureV66Settings();const hadWatch=navWatchId!==null;
-   window.destroyNavigationMap();V66.approachTargetId=null;S.follow=true;S.manual=false;S.routeCoords=[];S.filtered=null;S.lastRaw=null;S.lastBearing=null;S.lastGpsCallbackAt=0;navTracking=true;
+   window.destroyNavigationMap();V66.approachTargetId=null;S.follow=true;S.manual=false;S.routeCoords=[];S.filtered=null;S.lastRaw=null;S.lastBearing=null;S.lastGpsCallbackAt=0;S.fullRouteKey=null;S.fullRoutePending=null;navTracking=true;
    document.getElementById('navigationPage')?.classList.toggle('rd-direct-nav',!!r._direct);
    const pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);if(!pts.length)return;
    const target=currentTarget(r)||pts[0],center=V66.lastPos?{lat:Number(V66.lastPos.lat),lng:Number(V66.lastPos.lng)}:{lat:Number(target.lat),lng:Number(target.lng)},h=host();if(!h)return;h.innerHTML='';
