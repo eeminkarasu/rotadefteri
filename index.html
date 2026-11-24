@@ -2,13 +2,14 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="rd-build" content="v9.0-maplibre-osm-free">
+<meta name="rd-build" content="v9.3-top-actions-today-ui">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="theme-color" content="#07101a">
+<meta name="theme-color" content="#020b16">
+<meta name="color-scheme" content="dark">
 <meta name="description" content="RotaDefteri — kullanıcıya özel durak, rota ve canlı navigasyon yönetimi">
 <meta name="format-detection" content="telephone=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Karasu Hava Yolları">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -19,7 +20,7 @@
 <link rel="dns-prefetch" href="//routing.openstreetmap.de">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.19.0/dist/maplibre-gl.css">
 <script type="module" src="js/rd-v9-maplibre.mjs"></script>
-<title>RotaDefteri v9.0 — MapLibre Navigasyon</title>
+<title>RotaDefteri v9.3 — MapLibre Navigasyon</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <style>
@@ -453,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v8.3";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v9.3";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -539,6 +540,7 @@ body.nav-active::after{display:none}
 <section id="routes" class="view khy-page rd-routes-page">
   <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('home')" aria-label="Geri">‹</button><div class="rd-head-copy"><span class="eyebrow">PLANLAMA</span><h2>Rotalarım</h2><p class="rd-page-sub">Güzergâh, ilerleme ve tahmini saatler tek bakışta.</p></div><div class="head-tools"><button class="circle-btn" onclick="showView('settings')" title="Ayarlar">⚙</button><button class="circle-btn rd-plus" onclick="openRouteBuilder()" title="Yeni rota">＋</button></div></div>
   <button class="route-action-card rd-route-cta" onclick="openRouteBuilder()"><div><b>Yolu Hesapla ve Git</b><span>Başlangıç saatini belirle, durakları ☷ tutamacından sürükleyerek sırala ve yeni rota oluştur.</span></div><strong>→</strong></button>
+  <div class="rd-route-quick-row"><button class="rd-today-route-btn" onclick="openTodayRoute()" title="Bugünün rotasını aç"><span>◷</span><b>Bugünün Rotası</b></button></div>
   <div class="rd-filter-row"><div class="filter-bar"><span>⌕</span><input id="routeFilter" placeholder="Rota ara..." oninput="renderRoutes()"></div><select id="routeSort" class="rd-sort" onchange="renderRoutes()"><option value="newest">En yeni</option><option value="oldest">En eski</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="distance">Mesafe</option></select></div>
   <div id="routeList" class="list khy-route-list"></div>
 </section>
@@ -1916,6 +1918,128 @@ body:not(.theme-dark) .rd-route-compact,body:not(.theme-dark) .rd-stop-compact{b
   const stopSub=document.querySelector('#contacts .rd-stops-title p');if(stopSub)stopSub.textContent='Durak adı, il/ilçe ve hızlı işlemler.';
   try{renderRoutes();renderStops()}catch(e){console.warn('v9.2 liste yenileme ertelendi',e)}
   window.addEventListener('pageshow',()=>{try{renderRoutes();renderStops()}catch(e){}});
+})();
+</script>
+
+
+<style id="rd-v93-top-actions-style">
+/* v9.3 UI-only patch: no map/navigation engine changes */
+html{background:#020b16!important;color-scheme:dark}
+html,body,.app{background-color:#020b16!important}
+body{min-height:100dvh!important;overscroll-behavior-y:none}
+.app{min-height:100dvh!important}
+
+/* Shared icon buttons: same geometry/visual language anywhere an action repeats. */
+.rd-app-icon-btn,
+.rd-google-action,
+.rd-google-route-action{
+  width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
+  padding:0!important;margin:0!important;border-radius:12px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border:1px solid rgba(86,157,221,.30)!important;background:rgba(8,39,65,.78)!important;
+  color:#74d7ff!important;font-size:18px!important;line-height:1!important;font-weight:850!important;
+  box-shadow:none!important;white-space:nowrap;overflow:hidden;
+}
+.rd-app-icon-btn.google,.rd-google-action,.rd-google-route-action{
+  color:#ffd86b!important;border-color:rgba(255,205,73,.36)!important;background:rgba(111,79,0,.16)!important;
+}
+.rd-app-icon-btn.danger{color:#ff9aaa!important;border-color:rgba(255,88,108,.36)!important;background:rgba(117,18,38,.22)!important}
+.rd-app-icon-btn.ok{color:#8cf0be!important;border-color:rgba(43,211,132,.34)!important;background:rgba(10,108,68,.20)!important}
+.rd-app-icon-btn.nav{color:#fff!important;border-color:rgba(39,153,255,.62)!important;background:linear-gradient(180deg,#249dff,#1475ed)!important}
+.rd-app-icon-btn.plan{color:#ffd24c!important;border-color:rgba(255,198,51,.34)!important;background:rgba(110,78,0,.16)!important}
+.rd-app-icon-btn:active{transform:scale(.95)!important}
+/* Normalize any older injected Google buttons if a stale DOM survives a page restore. */
+.rd-google-action,.rd-google-route-action{font-size:0!important}
+.rd-google-action::before,.rd-google-route-action::before{content:"↗";font-size:18px!important}
+
+/* Route detail controls now live at the top; no long text tool rows at the bottom. */
+.rd-route-overview-compact{padding:13px!important}
+.rd-route-overview-top{display:block!important}
+.rd-route-mini-info{margin-bottom:9px!important}
+.rd-route-top-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:nowrap;width:100%;overflow:visible}
+.rd-route-top-actions .rd-route-count-pill{min-width:58px!important;height:40px!important;padding:4px 7px!important;border-radius:12px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center}
+.rd-route-top-actions .rd-route-count-pill b{font-size:16px!important;line-height:1!important}
+.rd-route-top-actions .rd-route-count-pill small{font-size:7.5px!important;margin-top:3px!important}
+#routeDetailContent>.rd-detail-tools{display:none!important}
+
+/* Today's Route shortcut */
+.rd-route-quick-row{display:flex;justify-content:flex-end;margin:-2px 0 10px}
+.rd-today-route-btn{height:40px;border-radius:13px;border:1px solid rgba(67,168,234,.28);background:rgba(10,47,78,.58);color:#dff5ff;padding:0 12px;display:inline-flex;align-items:center;gap:7px;font-weight:850}
+.rd-today-route-btn span{color:#51c9ff;font-size:18px}.rd-today-route-btn b{font-size:12px}
+
+/* Route and stop list action buttons use the same shared button system. */
+.rd-route-compact-right,.rd-stop-compact-actions{align-items:center!important}
+.rd-route-compact-right .rd-app-icon-btn,.rd-stop-compact-actions .rd-app-icon-btn{flex:none!important}
+
+@media(max-width:600px){
+  .rd-app-icon-btn,.rd-google-action,.rd-google-route-action{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;border-radius:11px!important;font-size:17px!important}
+  .rd-route-top-actions{gap:4px;justify-content:space-between}
+  .rd-route-top-actions .rd-route-count-pill{min-width:54px!important;height:38px!important}
+  .rd-route-overview-compact{padding:11px!important}
+  .rd-route-quick-row{margin-top:-4px}
+  .rd-today-route-btn{height:38px;padding:0 10px}
+}
+@media(max-width:380px){
+  .rd-app-icon-btn,.rd-google-action,.rd-google-route-action{width:35px!important;height:35px!important;min-width:35px!important;min-height:35px!important;font-size:16px!important}
+  .rd-route-top-actions .rd-route-count-pill{min-width:49px!important;height:35px!important}
+}
+</style>
+<script id="rd-v93-top-actions-runtime">
+(function(){
+  window.RD_BUILD='9.3.0-top-actions-today-ui';
+  document.body.dataset.build=window.RD_BUILD;
+
+  function localYmd(d=new Date()){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  window.openTodayRoute=function(){
+    const today=localYmd();
+    const matches=(db.routes||[]).filter(r=>String(r.date||'')===today).sort((a,b)=>{
+      if(!!a.completed!==!!b.completed)return a.completed?1:-1;
+      return String(b.createdAt||b.updatedAt||'').localeCompare(String(a.createdAt||a.updatedAt||''));
+    });
+    if(!matches.length)return toast('Bugün için kayıtlı rota bulunamadı');
+    viewRoute(matches[0].id);
+    if(matches.length>1)setTimeout(()=>toast('Bugün '+matches.length+' rota var • ilk aktif rota açıldı'),120);
+  };
+
+  // Canonical compact route detail. Map/navigation functions are only called; never replaced here.
+  window.renderRouteDetailPage=function(id){
+    ensureV66Settings();const r=db.routes.find(x=>x.id===id);if(!r)return;
+    currentRouteId=id;document.getElementById('routeDetailTitle').textContent=r.name;
+    const done=new Set(r.completedStopIds||[]),skipped=new Set(r.skippedStopIds||[]),total=r.stopIds.length,finished=routeFinishedCount(r),remain=routeRemainingScheduled(r),pct=total?Math.round(finished/total*100):0,showDone=!!V66.showCompletedByRoute[id],pendingIds=r.stopIds.filter(sid=>!done.has(sid)),doneIds=r.stopIds.filter(sid=>done.has(sid));
+    const pendingHtml=pendingIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('')||'<div class="empty">Tamamlanmamış durak kalmadı.</div>';
+    const doneHtml=doneIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('');
+    document.getElementById('routeDetailContent').innerHTML=`<div class="route-detail-card rd-route-overview-compact"><div class="rd-route-overview-top"><div class="rd-route-mini-info"><div><small>TOPLAM</small><strong>${r.distance?formatDistance(r.distance):'—'}</strong></div><div><small>KALAN</small><strong>${r.completed?'0 km':formatDistance(remain.distance||0)}</strong></div><div><small>BAŞLANGIÇ</small><strong>${r.startTime||'08:30'}</strong></div><div><small>VARIŞ</small><strong>${routeArrival(r)}</strong></div></div><div class="rd-route-top-actions"><div class="rd-route-count-pill"><b>${finished}/${total}</b><small>İŞLENDİ</small></div><button class="rd-app-icon-btn plan" title="Planla" aria-label="Rotayı planla" onclick="openRoutePlanner('${r.id}')">⚡</button><button class="rd-app-icon-btn nav" title="Navigasyon" aria-label="Navigasyonu aç" onclick="openNavigation('${r.id}')">➤</button><button class="rd-app-icon-btn" title="Sırayı düzenle" aria-label="Sırayı düzenle" onclick="editRouteOrder('${r.id}')">☷</button><button class="rd-app-icon-btn" title="Güzergâhı güncelle" aria-label="Güzergâhı güncelle" onclick="recalculateRoute('${r.id}')">↻</button><button class="rd-app-icon-btn google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openGoogleMapsNavigation('${r.id}')">↗</button><button class="rd-app-icon-btn danger" title="Rotayı sil" aria-label="Rotayı sil" onclick="deleteRouteFromDetail('${r.id}')">⌫</button></div></div><div class="route-progress"><div style="width:${pct}%"></div></div></div><div class="route-detail-card rd-route-detail-list"><div class="builder-title rd-stop-list-head"><div><b>Duraklar</b><span>Tamamlanmamış duraklar üstte tutulur</span></div>${doneIds.length?`<button class="rd-completed-toggle" onclick="toggleCompletedStops('${r.id}')">${showDone?'Tamamlananları gizle':'Tamamlananları göster'} (${doneIds.length})</button>`:''}</div>${pendingHtml}${doneIds.length&&showDone?`<div class="rd-completed-section"><div class="rd-completed-section-title"><span>TAMAMLANAN DURAKLAR</span><span>${doneIds.length}</span></div>${doneHtml}</div>`:''}</div>`;
+  };
+
+  // Keep compact lists, but make their repeated actions visually identical.
+  window.renderRoutes=function(){
+    ensureV66Settings();
+    const el=document.getElementById('routeList');if(!el)return;
+    const q=(document.getElementById('routeFilter')?.value||'').trim().toLocaleLowerCase('tr-TR');
+    const sort=document.getElementById('routeSort')?.value||'newest';
+    let arr=db.routes.filter(r=>!q||(String(r.name||'')+' '+String(r.date||'')).toLocaleLowerCase('tr-TR').includes(q));
+    arr=[...arr].sort((a,b)=>sort==='oldest'?String(a.createdAt||a.date||'').localeCompare(String(b.createdAt||b.date||'')):sort==='az'?String(a.name||'').localeCompare(String(b.name||''),'tr'):sort==='za'?String(b.name||'').localeCompare(String(a.name||''),'tr'):sort==='distance'?(Number(b.distance)||0)-(Number(a.distance)||0):String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||'')));
+    if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen rota yok.':'Henüz rota oluşturulmadı.')+'</div>';return}
+    el.innerHTML=arr.map(r=>{const total=r.stopIds?.length||0,finished=routeFinishedCount(r),date=r.date?new Date(r.date+'T00:00:00').toLocaleDateString('tr-TR'):'';return `<article class="card rd-route-compact ${r.completed?'completed':''}" onclick="viewRoute('${r.id}')"><div class="rd-route-compact-copy"><h3>${esc(r.name||'İsimsiz rota')}</h3><small>${date?esc(date)+' • ':''}${total} durak</small></div><div class="rd-route-compact-right" onclick="event.stopPropagation()"><div class="rd-route-count-mini"><b>${finished}/${total}</b><small>İŞLENDİ</small></div><button class="rd-app-icon-btn google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openGoogleMapsNavigation('${r.id}')">↗</button><button class="rd-app-icon-btn danger" title="Rotayı sil" aria-label="Rotayı sil" onclick="deleteRoute('${r.id}')">⌫</button><span class="rd-route-open-chevron" onclick="viewRoute('${r.id}')">›</span></div></article>`}).join('');
+  };
+
+  window.renderStops=function(){
+    ensureV66Settings();
+    const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR'),sort=document.getElementById('stopSort')?.value||'az',today=stopTodaySet();
+    let arr=db.stops.filter(s=>(String(s.name||'')+' '+String(s.address||'')+' '+String(s.contactName||'')+' '+String(s.contactPhone||'')+' '+String(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));
+    const counts={stopCountAll:arr.length,stopCountToday:arr.filter(s=>today.has(s.id)).length,stopCountDone:0,stopCountPending:0};Object.entries(counts).forEach(([x,v])=>{const n=document.getElementById(x);if(n)n.textContent=v});
+    if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id));else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
+    arr=[...arr].sort((a,b)=>sort==='za'?String(b.name||'').localeCompare(String(a.name||''),'tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):String(a.name||'').localeCompare(String(b.name||''),'tr'));
+    const el=document.getElementById('stopList');if(!el)return;if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';return}
+    el.innerHTML=arr.map(s=>{const region=stopRegionLabel(s);return `<article class="item rd-stop-compact"><div class="rd-stop-compact-copy"><h3>${esc(s.name||'İsimsiz durak')}</h3><small>⌖ ${esc(region||'Konum bilgisi yok')}</small></div><div class="rd-stop-compact-actions"><button class="rd-app-icon-btn" title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="rd-app-icon-btn danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')">⌫</button><button class="rd-app-icon-btn google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openStopInGoogleMaps('${s.id}')">↗</button><button class="rd-app-icon-btn nav" title="Git" aria-label="Git" onclick="navigateDirectToStop('${s.id}')">➤</button></div></article>`}).join('');
+    if(map)refreshMainMapMarkers();
+  };
+
+  function refreshV93(){try{renderRoutes();renderStops();if(document.body.dataset.view==='routeDetailPage'&&currentRouteId)renderRouteDetailPage(currentRouteId)}catch(e){console.warn('v9.3 UI refresh',e)}}
+  setTimeout(refreshV93,0);
+  window.addEventListener('pageshow',()=>setTimeout(refreshV93,30));
 })();
 </script>
 
