@@ -454,7 +454,7 @@ body{background:radial-gradient(circle at 60% 0%,#123865 0,#071729 35%,#050e19 1
 /* Compact consistent controls */
 button{font-family:inherit}.btn,.dark-btn,.red-btn,.start-route-btn,.rd-secondary-btn{transition:transform .12s ease,opacity .12s ease}button:active{transform:scale(.985)}
 /* Version badge hidden but useful for diagnostics */
-body::after{content:"v9.3";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
+body::after{content:"v9.5";position:fixed;right:5px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:2;font-size:8px;color:rgba(160,198,230,.18);pointer-events:none}
 body.nav-active::after{display:none}
 @media(max-width:600px){.modal:not(.rd-sheet-modal){padding:0!important;align-items:flex-end!important}.modal:not(.rd-sheet-modal) .modal-box{width:100%!important;max-height:94dvh!important;border-radius:26px 26px 0 0!important;padding:16px!important}.modal:not(.rd-sheet-modal) .modal-head{top:-16px;margin:-16px -16px 12px;padding:16px 16px 11px}}
 </style>
@@ -582,31 +582,64 @@ body.nav-active::after{display:none}
     <div class="setting-row danger-row"><div><b>⚠ Tüm verileri sil</b><small>Bu işlem geri alınamaz.</small></div><button class="red-outline" onclick="clearAll()">Sil</button></div>
   </div>
 </section>
-<section id="routeBuilderPage" class="view khy-page full-page rd-builder-page">
-  <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="cancelRouteBuilder()" aria-label="Geri ve vazgeç">‹</button><div class="rd-head-copy"><span class="eyebrow">YENİ ROTA</span><h2>Yolu Hesapla ve Git</h2><p class="rd-page-sub">Durakları seç, Planla ile otomatik sırala veya ☷ tutamacını sürükleyerek manuel düzenle.</p></div><button class="rd-head-cancel" type="button" onclick="cancelRouteBuilder()">Vazgeç</button></div>
-  <div class="rd-planner-steps"><span class="active">1 <b>Bilgiler</b></span><i></i><span class="active">2 <b>Duraklar</b></span><i></i><span>3 <b>Navigasyon</b></span></div>
-  <div class="builder-card">
-    <div class="rd-form-grid"><div><label>Rota adı</label><input id="pageRouteName" placeholder="Boş bırakılırsa tarih atanır"></div><div><label>Başlangıç saati</label><input id="pageRouteStart" type="time" value="08:30" oninput="updateBuilderSummary()"></div></div>
-    <div class="builder-title"><b>Durakları seç</b><span>Yeni rotada seçim boş başlar</span></div>
-    <input id="pageRouteSearch" class="builder-search" placeholder="Durak ara..." oninput="renderPageRouteChoices()">
-    <div class="builder-select-actions"><button type="button" onclick="selectAllActiveStops()">Tüm durakları seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
-    <div id="pageRouteChoices" class="builder-choices"></div>
+<section id="routeBuilderPage" class="view khy-page full-page rd-builder-page rd-wizard-page">
+  <div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="routeWizardBack()" aria-label="Geri">‹</button><div class="rd-head-copy"><span class="eyebrow">ROTA OLUŞTUR</span><h2 id="routeWizardTitle">Rota Bilgileri</h2><p class="rd-page-sub" id="routeWizardSubtitle">Rota adını, tarihini ve başlangıç saatini belirle.</p></div><button class="rd-head-cancel" type="button" onclick="cancelRouteBuilder()">Vazgeç</button></div>
 
-    <div class="rd-auto-plan-card">
-      <div class="builder-title"><b>Planla</b><span>Seçili durakları konuma göre otomatik sırala</span></div>
-      <div class="rd-plan-grid">
-        <label><span>Planlama yöntemi</span><select id="routePlanMode" onchange="updatePlanControls()"><option value="current" selected>Mevcut konumdan yakından uzağa (Varsayılan)</option><option value="start">Başlangıç durağına göre</option><option value="end">Bitiş durağına göre</option><option value="start_end">Başlangıç + bitişe göre</option><option value="manual">Manuel sıralama</option></select></label>
-        <label id="routePlanStartField"><span>Başlangıç durağı</span><select id="routePlanStart"></select></label>
-        <label id="routePlanEndField"><span>Bitiş durağı</span><select id="routePlanEnd"></select></label>
-        <button type="button" class="rd-plan-btn" onclick="planRouteStops()">⚡ Planla</button>
+  <div class="rd-route-wizard-progress" id="routeWizardProgress" aria-label="Rota oluşturma adımları">
+    <button type="button" data-wstep="1" onclick="routeWizardGo(1)"><span>1</span><b>Rota</b></button><i></i>
+    <button type="button" data-wstep="2" onclick="routeWizardGo(2)"><span>2</span><b>Duraklar</b></button><i></i>
+    <button type="button" data-wstep="3" onclick="routeWizardGo(3)"><span>3</span><b>Sıralama</b></button><i></i>
+    <button type="button" data-wstep="4" onclick="routeWizardGo(4)"><span>4</span><b>Onay</b></button>
+  </div>
+
+  <div class="builder-card rd-wizard-shell">
+    <section class="rd-wizard-panel" data-wpanel="1">
+      <div class="rd-wizard-section-title"><span>1</span><div><b>Rota bilgileri</b><small>Rota adı boş kalırsa seçtiğin tarih kullanılır.</small></div></div>
+      <div class="rd-form-grid rd-wizard-info-grid">
+        <div><label>Rota adı</label><input id="pageRouteName" placeholder="Örn. Sabah dağıtım rotası"></div>
+        <div><label>Rota tarihi</label><input id="pageRouteDate" type="date"></div>
+        <div><label>Başlangıç saati</label><input id="pageRouteStart" type="time" value="08:30" oninput="updateBuilderSummary()"></div>
       </div>
-      <div id="routePlanHint" class="rd-plan-hint">Telefonun mevcut konumu başlangıç referansı olur; en yakın duraktan başlanır.</div>
-    </div>
+      <div class="rd-wizard-footer"><span></span><button type="button" class="rd-wizard-primary" onclick="routeWizardNext()">Devam <b>›</b></button></div>
+    </section>
 
-    <div class="builder-title"><b>Durak sırası</b><span>☷ tutamaca dokun ve sürükle • mavi numaraya dokunarak sırayı elle değiştir</span></div>
-    <div id="pageRouteOrder" class="drag-list"></div>
-    <div class="builder-summary"><div><small>Toplam yol</small><b id="pageRouteDistance">—</b></div><div><small>Tahmini süre</small><b id="pageRouteDuration">—</b></div><div><small>Tahmini varış</small><b id="pageRouteArrival">—</b></div></div>
-    <div class="rd-save-cancel-row"><button type="button" class="rd-cancel-action" onclick="cancelRouteBuilder()">Vazgeç</button><button id="calculateRouteBtn" class="start-route-btn" onclick="calculatePageRoute()"><span>🧭</span> Rotayı Hesapla ve Git</button></div>
+    <section class="rd-wizard-panel" data-wpanel="2" hidden>
+      <div class="rd-wizard-section-title"><span>2</span><div><b>Durak seçimi</b><small>Rotaya girecek durakları işaretle.</small></div><strong id="routeWizardSelectedCount">0 seçili</strong></div>
+      <input id="pageRouteSearch" class="builder-search" placeholder="Durak adı, il/ilçe veya adres ara..." oninput="renderPageRouteChoices()">
+      <div class="builder-select-actions rd-wizard-select-actions"><button type="button" onclick="selectAllActiveStops()">Tümünü seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
+      <div id="pageRouteChoices" class="builder-choices rd-wizard-choices"></div>
+      <div class="rd-wizard-footer"><button type="button" class="rd-wizard-secondary" onclick="routeWizardBack()">‹ Geri</button><button type="button" class="rd-wizard-primary" onclick="routeWizardNext()">Sıralamaya geç <b>›</b></button></div>
+    </section>
+
+    <section class="rd-wizard-panel" data-wpanel="3" hidden>
+      <div class="rd-wizard-section-title"><span>3</span><div><b>Planlama ve sıralama</b><small>Otomatik planla veya ☷ tutamacından elle sırala.</small></div></div>
+      <div class="rd-auto-plan-card rd-wizard-plan-card">
+        <div class="rd-plan-grid">
+          <label><span>Planlama yöntemi</span><select id="routePlanMode" onchange="updatePlanControls()"><option value="current" selected>Mevcut konumdan yakından uzağa</option><option value="start">Başlangıç durağına göre</option><option value="end">Bitiş durağına göre</option><option value="start_end">Başlangıç + bitişe göre</option><option value="manual">Manuel sıralama</option></select></label>
+          <label id="routePlanStartField"><span>Başlangıç durağı</span><select id="routePlanStart"></select></label>
+          <label id="routePlanEndField"><span>Bitiş durağı</span><select id="routePlanEnd"></select></label>
+          <button type="button" class="rd-plan-btn" onclick="planRouteStops()">⚡ Planla</button>
+        </div>
+        <div id="routePlanHint" class="rd-plan-hint">Telefonun mevcut konumu başlangıç referansı olur; en yakın duraktan başlanır.</div>
+      </div>
+      <div class="builder-title rd-wizard-order-title"><b>Durak sırası</b><span>☷ sürükle • mavi numaraya dokunarak sıra numarasını elle gir</span></div>
+      <div id="pageRouteOrder" class="drag-list rd-wizard-order-list"></div>
+      <div class="builder-summary rd-wizard-summary"><div><small>Toplam yol</small><b id="pageRouteDistance">—</b></div><div><small>Tahmini süre</small><b id="pageRouteDuration">—</b></div><div><small>Tahmini varış</small><b id="pageRouteArrival">—</b></div></div>
+      <div class="rd-wizard-footer"><button type="button" class="rd-wizard-secondary" onclick="routeWizardBack()">‹ Geri</button><button id="routePreviewBtn" type="button" class="rd-wizard-primary" onclick="routeWizardNext()">Önizle <b>›</b></button></div>
+    </section>
+
+    <section class="rd-wizard-panel" data-wpanel="4" hidden>
+      <div class="rd-wizard-section-title"><span>4</span><div><b>Önizleme ve onay</b><small>Kaydetmeden önce rota bilgilerini son kez kontrol et.</small></div></div>
+      <div class="rd-wizard-preview-head">
+        <div><small>ROTA ADI</small><b id="routePreviewName">—</b><span id="routePreviewDate">—</span></div>
+        <div class="rd-wizard-preview-count"><strong id="routePreviewStopCount">0</strong><small>DURAK</small></div>
+      </div>
+      <div class="builder-summary rd-wizard-preview-summary"><div><small>Toplam yol</small><b id="routePreviewDistance">—</b></div><div><small>Tahmini süre</small><b id="routePreviewDuration">—</b></div><div><small>Tahmini varış</small><b id="routePreviewArrival">—</b></div></div>
+      <div class="builder-title rd-wizard-preview-list-title"><b>Rota sırası</b><span>Onaylandığında bu sıra kaydedilir</span></div>
+      <div id="routePreviewStops" class="rd-wizard-preview-stops"></div>
+      <div id="routePreviewWarning" class="rd-wizard-preview-warning" hidden></div>
+      <div class="rd-wizard-footer"><button type="button" class="rd-wizard-secondary" onclick="routeWizardBack()">‹ Düzenle</button><button id="routeConfirmBtn" type="button" class="rd-wizard-confirm" onclick="confirmRouteWizard()"><span>✓</span> Rotayı Onayla</button></div>
+    </section>
   </div>
 </section>
 <section id="routeDetailPage" class="view khy-page full-page rd-route-detail-page"><div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('routes')" aria-label="Geri">‹</button><div><span class="eyebrow">ROTA DETAY</span><h2 id="routeDetailTitle">Rota</h2><p class="rd-page-sub">Durak durumu, teslimat notu, km ve tahmini varış.</p></div></div><div id="routeDetailContent"></div></section>
@@ -2112,6 +2145,60 @@ body{min-height:100dvh!important;overscroll-behavior-y:none}
   document.addEventListener('pointerdown',e=>{const {popup,toggle}=navPopupElements();if(!popup?.classList.contains('open'))return;if(popup.contains(e.target)||toggle?.contains(e.target))return;closeNavStopsPopup()},{capture:true});
   setTimeout(()=>{decorateGoogleButtons();try{renderNavStopsPopup()}catch(_){}},0);
   window.addEventListener('pageshow',()=>setTimeout(()=>decorateGoogleButtons(),30));
+})();
+</script>
+
+<style id="rd-v95-route-wizard-style">
+/* v9.5 — Eski çok adımlı rota oluşturma akışı geri getirildi. Harita/navigasyon motoru değişmez. */
+.rd-wizard-page .builder-card{padding:14px!important}
+.rd-route-wizard-progress{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto;align-items:center;gap:6px;margin:2px 0 13px;padding:0 4px}
+.rd-route-wizard-progress>i{height:2px;background:rgba(91,141,187,.22);border-radius:999px;transition:.18s}
+.rd-route-wizard-progress>button{appearance:none;border:0;background:none;color:#7189a5;display:flex;align-items:center;gap:5px;padding:3px 0;min-width:0;font:inherit}
+.rd-route-wizard-progress>button span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(94,151,205,.30);background:#0d1b2b;color:#8aa3bd;font-size:11px;font-weight:900;flex:none}
+.rd-route-wizard-progress>button b{font-size:10px;white-space:nowrap}
+.rd-route-wizard-progress>button.done span{background:rgba(18,151,93,.20);border-color:rgba(55,219,142,.34);color:#80efba}.rd-route-wizard-progress>button.done{color:#9bcdb7}
+.rd-route-wizard-progress>button.active span{background:linear-gradient(180deg,#30a7ff,#1678ee);border-color:#55b8ff;color:#fff;box-shadow:0 0 0 4px rgba(28,146,255,.10)}.rd-route-wizard-progress>button.active{color:#eaf7ff}
+.rd-route-wizard-progress>i.done{background:#178eef}
+.rd-wizard-shell{overflow:visible!important}
+.rd-wizard-panel[hidden]{display:none!important}.rd-wizard-panel{animation:rdWizardIn .16s ease}
+@keyframes rdWizardIn{from{opacity:.35;transform:translateX(5px)}to{opacity:1;transform:none}}
+.rd-wizard-section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px}.rd-wizard-section-title>span{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(28,146,255,.16);border:1px solid rgba(53,169,255,.28);color:#6bd2ff;font-size:15px;font-weight:950;flex:none}.rd-wizard-section-title>div{min-width:0;flex:1}.rd-wizard-section-title b,.rd-wizard-section-title small{display:block}.rd-wizard-section-title b{font-size:16px;color:#fff}.rd-wizard-section-title small{font-size:10.5px;color:#8da9c5;margin-top:3px}.rd-wizard-section-title>strong{font-size:10px;color:#6fd4ff;border:1px solid rgba(71,174,239,.25);background:rgba(13,82,128,.16);border-radius:999px;padding:6px 8px;white-space:nowrap}
+.rd-wizard-info-grid{grid-template-columns:1.5fr 1fr 1fr!important;gap:10px!important}.rd-wizard-info-grid label{display:block;color:#8ca7c2;font-size:10px;font-weight:800;margin:0 0 6px}.rd-wizard-info-grid input{min-height:45px!important}
+.rd-wizard-choices{max-height:48vh!important;min-height:180px}.rd-wizard-select-actions{margin-bottom:9px!important}.rd-wizard-select-actions button{min-height:39px}
+.rd-wizard-plan-card{margin:0 0 12px!important}.rd-wizard-order-title{margin-top:10px!important}.rd-wizard-order-list{max-height:44vh;overflow:auto;padding-right:2px;-webkit-overflow-scrolling:touch}.rd-wizard-summary{margin-bottom:0!important}
+.rd-wizard-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(91,142,190,.14)}
+.rd-wizard-primary,.rd-wizard-secondary,.rd-wizard-confirm{min-height:44px;border-radius:13px;padding:0 15px;font-weight:900;font-family:inherit}.rd-wizard-primary{border:1px solid rgba(62,168,255,.55);background:linear-gradient(180deg,#28a3ff,#1678ed);color:#fff;display:inline-flex;align-items:center;gap:8px}.rd-wizard-primary b{font-size:20px;line-height:1}.rd-wizard-secondary{border:1px solid rgba(107,153,199,.24);background:#142439;color:#dbeeff}.rd-wizard-confirm{border:1px solid rgba(57,220,143,.38);background:linear-gradient(180deg,#18b96b,#0d8e50);color:#fff;display:inline-flex;align-items:center;gap:8px}.rd-wizard-confirm span{font-size:18px}.rd-wizard-primary:disabled,.rd-wizard-confirm:disabled{opacity:.52;pointer-events:none}
+.rd-wizard-preview-head{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid rgba(66,162,235,.18);background:rgba(9,31,51,.62);border-radius:16px;padding:13px;margin-bottom:10px}.rd-wizard-preview-head small,.rd-wizard-preview-head b,.rd-wizard-preview-head span{display:block}.rd-wizard-preview-head small{font-size:8px;letter-spacing:.16em;color:#7698b6}.rd-wizard-preview-head b{font-size:18px;color:#fff;margin-top:3px}.rd-wizard-preview-head span{font-size:10px;color:#8fb1cf;margin-top:4px}.rd-wizard-preview-count{min-width:62px;text-align:center;border-left:1px solid rgba(104,154,201,.16);padding-left:12px}.rd-wizard-preview-count strong{display:block!important;font-size:25px;color:#56c9ff}.rd-wizard-preview-count small{letter-spacing:.08em!important;margin-top:1px}
+.rd-wizard-preview-summary{margin:0 0 12px!important}.rd-wizard-preview-list-title{margin:8px 0!important}.rd-wizard-preview-stops{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;-webkit-overflow-scrolling:touch}.rd-wizard-preview-stop{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:52px;padding:8px 10px;border-radius:12px;border:1px solid rgba(80,139,190,.16);background:rgba(13,31,50,.58)}.rd-wizard-preview-stop>span{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(27,148,248,.17);color:#6bd3ff;font-weight:950}.rd-wizard-preview-stop b,.rd-wizard-preview-stop small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-wizard-preview-stop b{font-size:13px;color:#fff}.rd-wizard-preview-stop small{font-size:9.5px;color:#829fba;margin-top:2px}.rd-wizard-preview-stop em{font-style:normal;color:#84a9c7;font-size:9px;white-space:nowrap}.rd-wizard-preview-warning{margin-top:10px;padding:9px 11px;border-radius:11px;border:1px solid rgba(255,185,64,.26);background:rgba(111,71,0,.15);color:#ffd98a;font-size:10px;line-height:1.4}
+@media(max-width:600px){.rd-route-wizard-progress{gap:3px}.rd-route-wizard-progress>button{gap:3px}.rd-route-wizard-progress>button b{font-size:8.5px}.rd-route-wizard-progress>button span{width:24px;height:24px}.rd-wizard-info-grid{grid-template-columns:1fr 1fr!important}.rd-wizard-info-grid>div:first-child{grid-column:1/-1}.rd-wizard-page .builder-card{padding:12px!important}.rd-wizard-order-list{max-height:47vh}.rd-wizard-choices{max-height:52vh}.rd-wizard-footer{position:sticky;bottom:calc(88px + env(safe-area-inset-bottom));z-index:8;margin-left:-12px;margin-right:-12px;padding:10px 12px;background:linear-gradient(180deg,rgba(7,18,31,.20),rgba(7,18,31,.98) 24%);border-top-color:rgba(86,143,193,.16)}}
+@media(max-width:370px){.rd-route-wizard-progress>button b{display:none}.rd-route-wizard-progress{grid-template-columns:auto 1fr auto 1fr auto 1fr auto}.rd-wizard-primary,.rd-wizard-secondary,.rd-wizard-confirm{padding:0 11px;font-size:12px}}
+</style>
+<script id="rd-v95-route-wizard-runtime">
+(function(){
+  window.RD_BUILD='9.5.0-route-wizard-restored';document.body.dataset.build=window.RD_BUILD;
+  const W={step:1,preview:null,previewKey:'',previewWarning:'',busy:false};
+  function ymd(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function prettyDate(v){if(!v)return '—';try{return new Date(v+'T00:00:00').toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(_){return v}}
+  function currentPreviewKey(){return JSON.stringify({name:document.getElementById('pageRouteName')?.value||'',date:document.getElementById('pageRouteDate')?.value||'',start:document.getElementById('pageRouteStart')?.value||'',stops:[...(currentRouteStops||[])]})}
+  function wizardCopy(step){return ({1:['Rota Bilgileri','Rota adını, tarihini ve başlangıç saatini belirle.'],2:['Durak Seçimi','Rotaya girecek durakları seç.'],3:['Planlama ve Sıralama','Durak sırasını otomatik planla veya elle düzenle.'],4:['Önizleme ve Onay','Kaydetmeden önce rotayı son kez kontrol et.']})[step]}
+  function refreshSelectedCount(){const el=document.getElementById('routeWizardSelectedCount');if(el)el.textContent=(currentRouteStops?.length||0)+' seçili'}
+  function setStep(step,force=false){step=Math.max(1,Math.min(4,Number(step)||1));if(!force&&step>W.step+1)return;W.step=step;document.querySelectorAll('#routeBuilderPage [data-wpanel]').forEach(p=>p.hidden=Number(p.dataset.wpanel)!==step);document.querySelectorAll('#routeWizardProgress [data-wstep]').forEach(b=>{const n=Number(b.dataset.wstep);b.classList.toggle('active',n===step);b.classList.toggle('done',n<step);b.disabled=n>step});document.querySelectorAll('#routeWizardProgress>i').forEach((i,idx)=>i.classList.toggle('done',idx<step-1));const c=wizardCopy(step);const t=document.getElementById('routeWizardTitle'),s=document.getElementById('routeWizardSubtitle');if(t)t.textContent=c[0];if(s)s.textContent=c[1];refreshSelectedCount();if(step===2)renderPageRouteChoices();if(step===3){renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors();updatePlanControls()}if(step===4)renderPreview();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}))}
+  window.routeWizardGo=function(step){step=Number(step);if(step<W.step)setStep(step,true)};
+  window.routeWizardBack=function(){if(W.busy)return;if(W.step>1){setStep(W.step-1,true);return}cancelRouteBuilder()};
+  async function buildPreview(){normalizeCurrentRouteStops();if(currentRouteStops.length<2){toast('Önizleme için en az 2 durak seçin');return false}const btn=document.getElementById('routePreviewBtn');if(btn){btn.disabled=true;btn.textContent='Rota hesaplanıyor…'}W.busy=true;let result,warning='';try{const stops=currentRouteStops.map(id=>db.stops.find(s=>s.id===id)).filter(Boolean);result=await fetchOsrmRoute(stops)}catch(e){console.warn('Rota önizleme hesabı',e);const f=routeFallbackMetrics(currentRouteStops),m=legMetrics({stopIds:currentRouteStops,duration:f.duration});result={geometry:null,...f,legDistances:m.distances,legDurations:m.durations};warning='Yol servisine ulaşılamadı; önizlemede yaklaşık değerler kullanıldı.'}finally{W.busy=false;if(btn){btn.disabled=false;btn.innerHTML='Önizle <b>›</b>'}}W.preview=result;W.previewKey=currentPreviewKey();W.previewWarning=warning;return true}
+  window.routeWizardNext=async function(){if(W.busy)return;if(W.step===1){const d=document.getElementById('pageRouteDate');if(d&&!d.value)d.value=ymd();setStep(2,true);return}if(W.step===2){normalizeCurrentRouteStops();if(currentRouteStops.length<2)return toast('Rota için en az 2 durak seçin');setStep(3,true);return}if(W.step===3){if(!(await buildPreview()))return;setStep(4,true);return}};
+  function previewRoute(){const p=W.preview||{},start=document.getElementById('pageRouteStart')?.value||'08:30';return {stopIds:[...(currentRouteStops||[])],distance:Number(p.distance)||0,duration:Number(p.duration)||0,legDistances:p.legDistances||[],legDurations:p.legDurations||[],startTime:start}}
+  function renderPreview(){refreshSelectedCount();const date=document.getElementById('pageRouteDate')?.value||ymd(),name=document.getElementById('pageRouteName')?.value.trim()||prettyDate(date),r=previewRoute();const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};set('routePreviewName',name);set('routePreviewDate',prettyDate(date)+' • '+(r.startTime||'08:30'));set('routePreviewStopCount',String(currentRouteStops.length));set('routePreviewDistance',r.distance?formatDistance(r.distance):(document.getElementById('pageRouteDistance')?.textContent||'—'));set('routePreviewDuration',r.duration?formatDuration(r.duration):(document.getElementById('pageRouteDuration')?.textContent||'—'));set('routePreviewArrival',r.duration?clockAfter(r.startTime,r.duration):(document.getElementById('pageRouteArrival')?.textContent||'—'));const list=document.getElementById('routePreviewStops');if(list)list.innerHTML=currentRouteStops.map((id,i)=>{const st=db.stops.find(s=>s.id===id);if(!st)return '';const seg=i?segmentToStop(r,i):{distance:0,duration:0};const region=typeof stopRegionLabel==='function'?stopRegionLabel(st):(st.address||'');return `<div class="rd-wizard-preview-stop"><span>${i+1}</span><div><b>${esc(st.name||'İsimsiz durak')}</b><small>${esc(region||'Konum bilgisi yok')}</small></div><em>${i?formatDistance(seg.distance||0):'Başlangıç'}</em></div>`}).join('');const w=document.getElementById('routePreviewWarning');if(w){w.hidden=!W.previewWarning;w.textContent=W.previewWarning||''}}
+  window.confirmRouteWizard=async function(){if(W.busy)return;normalizeCurrentRouteStops();if(currentRouteStops.length<2)return toast('En az 2 durak seçin');if(!W.preview||W.previewKey!==currentPreviewKey()){if(!(await buildPreview()))return;renderPreview()}W.busy=true;const btn=document.getElementById('routeConfirmBtn');if(btn){btn.disabled=true;btn.textContent='Kaydediliyor…'};try{const now=new Date().toISOString(),date=document.getElementById('pageRouteDate')?.value||ymd(),name=document.getElementById('pageRouteName')?.value.trim()||prettyDate(date),start=document.getElementById('pageRouteStart')?.value||'08:30',result=W.preview;let route;if(V66.editRouteId){route=db.routes.find(x=>x.id===V66.editRouteId);if(!route)throw new Error('Düzenlenecek rota bulunamadı');route.name=name;route.date=date;route.startTime=start;route.stopIds=[...currentRouteStops];route.completedStopIds=(route.completedStopIds||[]).filter(id=>route.stopIds.includes(id));route.skippedStopIds=(route.skippedStopIds||[]).filter(id=>route.stopIds.includes(id));route.stopNotes=Object.fromEntries(Object.entries(route.stopNotes||{}).filter(([id])=>route.stopIds.includes(id)));Object.assign(route,{geometry:result.geometry,distance:result.distance,duration:result.duration,legDistances:result.legDistances||[],legDurations:result.legDurations||[],completed:routeFinishedCount(route)===route.stopIds.length&&route.stopIds.length>0,updatedAt:now});V66.editRouteId=null}else{route={id:crypto.randomUUID(),name,date,startTime:start,stopIds:[...currentRouteStops],completedStopIds:[],skippedStopIds:[],stopNotes:{},completed:false,geometry:result.geometry,distance:result.distance,duration:result.duration,legDistances:result.legDistances||[],legDurations:result.legDurations||[],createdAt:now,updatedAt:now};db.routes.unshift(route)}persist();renderRoutes();currentRouteId=route.id;V66.builderSnapshot=null;W.preview=null;W.previewKey='';toast('Rota kaydedildi');showView('routeDetailPage');renderRouteDetailPage(route.id)}catch(e){console.error(e);toast('Rota kaydedilemedi: '+(e.message||'bilinmeyen hata'))}finally{W.busy=false;if(btn){btn.disabled=false;btn.innerHTML='<span>✓</span> Rotayı Onayla'}}};
+  const oldToggle=window.togglePageRouteStop;if(typeof oldToggle==='function')window.togglePageRouteStop=function(){const out=oldToggle.apply(this,arguments);refreshSelectedCount();W.preview=null;W.previewKey='';return out};
+  const oldSelectAll=window.selectAllActiveStops;if(typeof oldSelectAll==='function')window.selectAllActiveStops=function(){const out=oldSelectAll.apply(this,arguments);refreshSelectedCount();W.preview=null;W.previewKey='';return out};
+  const oldClear=window.clearRouteStops;if(typeof oldClear==='function')window.clearRouteStops=function(){const out=oldClear.apply(this,arguments);refreshSelectedCount();W.preview=null;W.previewKey='';return out};
+  const oldPlan=window.planRouteStops;if(typeof oldPlan==='function')window.planRouteStops=async function(){const out=await oldPlan.apply(this,arguments);W.preview=null;W.previewKey='';refreshSelectedCount();return out};
+  const oldManual=window.setManualRoutePosition;if(typeof oldManual==='function')window.setManualRoutePosition=function(){const out=oldManual.apply(this,arguments);W.preview=null;W.previewKey='';return out};
+  const oldOpen=window.openRouteBuilder;window.openRouteBuilder=function(){const out=oldOpen.apply(this,arguments);setTimeout(()=>{const d=document.getElementById('pageRouteDate');if(d)d.value=ymd();W.preview=null;W.previewKey='';W.previewWarning='';setStep(1,true)},0);return out};
+  const oldEdit=window.editRouteOrder;window.editRouteOrder=function(rid){const out=oldEdit.apply(this,arguments);setTimeout(()=>{const r=db.routes.find(x=>x.id===rid),d=document.getElementById('pageRouteDate');if(d)d.value=r?.date||ymd();W.preview=null;W.previewKey='';W.previewWarning='';setStep(3,true)},0);return out};
+  window.openRouteBuilderWithStop=function(id){window.openRouteBuilder();setTimeout(()=>{currentRouteStops=[id];renderPageRouteChoices();renderPageRouteOrder();updateBuilderSummary();refreshPlanSelectors();updatePlanControls();refreshSelectedCount();setStep(2,true)},80)};
+  document.addEventListener('input',e=>{if(['pageRouteName','pageRouteDate','pageRouteStart'].includes(e.target?.id)){W.preview=null;W.previewKey=''}});
 })();
 </script>
 

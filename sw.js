@@ -1,4 +1,4 @@
-const BUILD='v9-4-google-icon-nav-stops-popup';
+const BUILD='v9-5-route-wizard-restored';
 const SHELL_CACHE='rotadefteri-shell-'+BUILD;
 const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
 const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg','./icons/google-maps.svg','./js/rd-v9-maplibre.mjs'];
