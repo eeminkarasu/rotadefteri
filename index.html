@@ -1452,7 +1452,7 @@ setTimeout(()=>{if(document.getElementById('authGate')?.classList.contains('open
 </script>
 
 <script id="rd-v75-runtime-guard">
-window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';
+window.RD_BUILD='9.1.0-restore-actions';
 document.body.dataset.build=window.RD_BUILD;
 (function(){
   // Legacy modals may survive in a stale DOM snapshot; force-close them.
@@ -1497,7 +1497,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </style>
 <script id="rd-v82-runtime">
 (function(){
- window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';document.body.dataset.build=window.RD_BUILD;
+ window.RD_BUILD='9.1.0-restore-actions';document.body.dataset.build=window.RD_BUILD;
  window.V71=window.V71||{};if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
  const V82=window.V82=window.V82||{appWatchId:null,dragging:false,leadRoad:null,leadFetch:null,lastBuilderPaint:0};
  function trackingEnabled(){return !!navigator.geolocation&&db?.settings?.liveTracking!==false}
@@ -1583,7 +1583,7 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 </style>
 <script id="rd-v83-runtime">
 (function(){
-  window.RD_BUILD='8.3.0-nav-picker-compact-mapfix';document.body.dataset.build=window.RD_BUILD;
+  window.RD_BUILD='9.1.0-restore-actions';document.body.dataset.build=window.RD_BUILD;
 
   function validRoutes(){return (db.routes||[]).filter(r=>Array.isArray(r.stopIds)&&r.stopIds.some(id=>db.stops.some(s=>s.id===id)))}
   window.openNavRoutePicker=function(){
@@ -1656,7 +1656,6 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 <style id="rd-v9-maplibre-style">
 /* v9: Google bağımsız MapLibre navigasyon çekirdeği */
 .rd-v9-map-note{border:1px solid rgba(40,185,255,.18)!important;background:rgba(12,72,110,.10)!important}
-button[onclick^="openGoogleMapsNavigation"]{display:none!important}
 #navMap .maplibregl-map{position:absolute;inset:0}
 .navigation-view .maplibregl-ctrl-bottom-right{bottom:calc(158px + env(safe-area-inset-bottom))!important;right:8px!important;z-index:30!important}
 .navigation-view .maplibregl-ctrl-attrib{font-size:9px!important;background:rgba(5,14,25,.74)!important;color:#d5e5f5!important;border-radius:7px!important}
@@ -1676,7 +1675,7 @@ button[onclick^="openGoogleMapsNavigation"]{display:none!important}
 </style>
 <script id="rd-v9-map-runtime">
 (function(){
-  window.RD_BUILD='9.0.0-maplibre-osm-free';document.body.dataset.build=window.RD_BUILD;
+  window.RD_BUILD='9.1.0-restore-actions';document.body.dataset.build=window.RD_BUILD;
   const RD9=window.RD9=window.RD9||{maplibrePromise:null,routeQueue:Promise.resolve(),lastRouteAt:0,routeCache:new Map(),routeDrawToken:0,approachCoords:[],approachMetrics:null,maneuver:null,userEl:null,engineBadge:null,nomQueue:Promise.resolve(),lastNomAt:0};
   const LEGACY={draw:window.drawNavigationRoute,animate:window.animateNavMarker,setView:window.navSetView,flyTo:window.navFlyTo,fitAll:window.navFitAll,approach:window.updateApproachRoute,refresh:window.refreshNavVisual,destroy:window.destroyNavigationMap};
   const ROUTERS=['https://routing.openstreetmap.de/routed-car/route/v1/driving/','https://router.project-osrm.org/route/v1/driving/'];
@@ -1760,9 +1759,88 @@ button[onclick^="openGoogleMapsNavigation"]{display:none!important}
 
   // Genel rota detayında harita motoru metnini Google bağımsız hale getir.
   const v9OldRenderDetail=window.renderRouteDetailPage;
-  window.renderRouteDetailPage=function(id){v9OldRenderDetail(id);document.querySelectorAll('#routeDetailContent button[onclick^="openGoogleMapsNavigation"]').forEach(b=>b.remove())};
+  window.renderRouteDetailPage=function(id){v9OldRenderDetail(id)};
 
   setTimeout(()=>{forceMapSetting();const s=document.getElementById('mapSelect');if(s)s.value='rotadefteri';warmMapEngine()},50);
+})();
+</script>
+
+
+<style id="rd-v91-restore-actions-style">
+/* v9.1: MapLibre navigasyon korunurken önceki pratik aksiyonlar geri getirildi. */
+.rd-plus,.rd-add-stop{display:inline-grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.rd-stop-expanded-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.rd-stop-expanded-actions .rd-google-action{color:#ffd86b!important;border-color:rgba(255,204,73,.48)!important;background:rgba(112,83,0,.18)!important}
+.rd-detail-tools .rd-google-route-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important}
+.rd-route-quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.rd-route-quick-row button{min-height:42px;border:1px solid rgba(84,166,230,.22);border-radius:13px;background:rgba(255,255,255,.045);color:#dcecff;padding:8px 11px;font-weight:800}
+@media(min-width:700px){.rd-stop-expanded-actions{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+</style>
+<script id="rd-v91-restore-actions-runtime">
+(function(){
+  window.RD_BUILD='9.1.0-restore-actions';
+  document.body.dataset.build=window.RD_BUILD;
+
+  function validStop(s){return s&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng))}
+  function googleStopUrl(s){return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(Number(s.lat)+','+Number(s.lng))+'&travelmode=driving'}
+  window.openStopInGoogleMaps=function(stopId){
+    const s=db.stops.find(x=>x.id===stopId);
+    if(!validStop(s))return toast('Durak konumu bulunamadı');
+    window.open(googleStopUrl(s),'_blank','noopener');
+  };
+
+  // External Google Maps route export remains available; this does NOT change the in-app MapLibre engine.
+  window.openGoogleMapsNavigation=function(routeId){
+    const r=db.routes.find(x=>x.id===routeId);if(!r)return toast('Rota bulunamadı');
+    const pts=(r.stopIds||[]).map(id=>db.stops.find(s=>s.id===id)).filter(validStop);
+    if(!pts.length)return toast('Rotada geçerli durak bulunamadı');
+    if(pts.length===1)return openStopInGoogleMaps(pts[0].id);
+    const origin=Number(pts[0].lat)+','+Number(pts[0].lng);
+    const destination=Number(pts[pts.length-1].lat)+','+Number(pts[pts.length-1].lng);
+    const waypoints=pts.slice(1,-1).map(s=>Number(s.lat)+','+Number(s.lng)).join('|');
+    let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(destination)+'&travelmode=driving';
+    if(waypoints)url+='&waypoints='+encodeURIComponent(waypoints);
+    window.open(url,'_blank','noopener');
+  };
+
+  // Keep all route/stop creation buttons alive even if a stale v9 DOM/CSS snapshot is present.
+  function repairCreationButtons(){
+    document.querySelectorAll('.rd-plus').forEach(b=>{b.hidden=false;b.disabled=false;b.style.removeProperty('display');b.onclick=()=>openRouteBuilder()});
+    document.querySelectorAll('.rd-add-stop').forEach(b=>{b.hidden=false;b.disabled=false;b.style.removeProperty('display');b.onclick=()=>openStopModal()});
+    document.querySelectorAll('.rd-route-cta').forEach(b=>{b.disabled=false;b.onclick=()=>openRouteBuilder()});
+  }
+
+  const previousRenderStops=window.renderStops;
+  window.renderStops=function(){
+    previousRenderStops();
+    const list=document.getElementById('stopList');if(!list)return;
+    list.querySelectorAll('.rd-stop-v71').forEach(card=>{
+      const edit=card.querySelector('.rd-stop-quick-btn[title="Düzenle"]');
+      const m=(edit?.getAttribute('onclick')||'').match(/editStop\('([^']+)'\)/);
+      const id=m?.[1];if(!id)return;
+      const actions=card.querySelector('.rd-stop-expanded-actions');if(!actions||actions.querySelector('.rd-google-action'))return;
+      const btn=document.createElement('button');btn.className='rd-google-action';btn.type='button';btn.innerHTML='↗ Google Haritalar';btn.onclick=e=>{e.stopPropagation();openStopInGoogleMaps(id)};
+      actions.appendChild(btn);
+    });
+    repairCreationButtons();
+  };
+
+  const previousRenderDetail=window.renderRouteDetailPage;
+  window.renderRouteDetailPage=function(id){
+    previousRenderDetail(id);
+    const tools=document.querySelector('#routeDetailContent .rd-detail-tools');
+    if(tools&&!tools.querySelector('.rd-google-route-action')){
+      const del=tools.querySelector('.rd-delete-inline');
+      const b=document.createElement('button');b.type='button';b.className='rd-google-route-action';b.innerHTML='↗ Google Haritalar';b.onclick=()=>openGoogleMapsNavigation(id);
+      if(del)tools.insertBefore(b,del);else tools.appendChild(b);
+    }
+  };
+
+  // Public helper for exporting all selected route stops to Google Maps from anywhere in the app.
+  window.openRouteInGoogleMaps=window.openGoogleMapsNavigation;
+  repairCreationButtons();
+  setTimeout(()=>{repairCreationButtons();try{renderStops()}catch(e){}},120);
+  window.addEventListener('pageshow',()=>setTimeout(repairCreationButtons,60));
 })();
 </script>
 
