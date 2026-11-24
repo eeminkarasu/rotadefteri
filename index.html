@@ -612,9 +612,11 @@ body.nav-active::after{display:none}
 <section id="routeDetailPage" class="view khy-page full-page rd-route-detail-page"><div class="page-head rd-page-head-nav"><button class="back-btn rd-visible-back" onclick="goBackView('routes')" aria-label="Geri">‹</button><div><span class="eyebrow">ROTA DETAY</span><h2 id="routeDetailTitle">Rota</h2><p class="rd-page-sub">Durak durumu, teslimat notu, km ve tahmini varış.</p></div></div><div id="routeDetailContent"></div></section>
 <section id="navigationPage" class="view navigation-view rd-navigation-view rd-nav-clean rd-nav-v71">
   <div id="navMap"></div>
-  <div class="rd-nav-instruction-v71"><button class="rd-nav-exit-v71" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button><span class="rd-big-turn" id="navTurnIcon">➤</span><div class="rd-nav-instruction-copy"><strong id="navNextDistance">—</strong><b id="navNextName">—</b><small id="navNextMeta">—</small><div class="rd-nav-stop-state"><button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button><button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button></div></div></div>
+  <div class="rd-nav-instruction-v71"><button class="rd-nav-exit-v71" onclick="exitNavigation()" aria-label="Navigasyondan çık">‹</button><span class="rd-big-turn" id="navTurnIcon">➤</span><div class="rd-nav-instruction-copy"><strong id="navNextDistance">—</strong><b id="navNextName">—</b><small id="navNextMeta">—</small><div class="rd-nav-stop-state"><button id="navDoneBtn" class="done" onclick="navMarkCurrent('done')" title="Gidildi" aria-label="Durağı gidildi olarak işaretle">✓</button><button id="navSkipBtn" class="skip" onclick="navMarkCurrent('skipped')" title="Gidilmedi" aria-label="Durağı gidilmedi olarak işaretle">×</button></div></div><button id="navStopsToggle" class="rd-nav-stops-toggle-v94" type="button" onclick="toggleNavStopsPopup(event)" title="Sıradaki durakları göster" aria-label="Sıradaki durakları göster" aria-expanded="false">⌄</button></div>
+  <div id="navStopsPopup" class="rd-nav-stops-popup-v94" aria-hidden="true"><div class="rd-nav-stops-popup-head"><b>Sıradaki duraklar</b><button type="button" onclick="closeNavStopsPopup()" aria-label="Kapat">×</button></div><div id="navStopsPopupList" class="rd-nav-stops-popup-list"></div></div>
   <div class="rd-nav-speed-card-v71" id="navSpeedGauge"><div class="rd-speed-ring"><div><b id="navSpeed">0</b><span>km/sa</span></div></div></div>
   <button class="rd-nav-call-card-v71" onclick="openCallPanel()" title="Durağı ara" aria-label="Durağın irtibat kişisini ara"><span>☎</span></button>
+  <button class="rd-nav-google-card-v94" onclick="openNavigationTargetInGoogleMaps()" title="Google Haritalar'da aç" aria-label="Mevcut durağı Google Haritalar'da aç"><img src="./icons/google-maps.svg" alt=""></button>
   <div class="rd-nav-route-chip"><span>●</span><div><b id="navRouteName">Navigasyon</b><small id="navStopCounter">1 / 1</small></div></div>
   <div class="rd-nav-progress-clean rd-nav-progress-v71"><span id="navProgressText">0 / 0</span><i><b id="navProgressBar"></b></i></div>
   <div class="rd-nav-bottom-v71"><div class="rd-nav-stats-v71"><div><span>⌁</span><b id="navTotalKm">—</b><small>Toplam Mesafe</small></div><div><span>⌖</span><b id="navRemainKm">—</b><small>Kalan Mesafe</small></div><div><span>◷</span><b id="navRemainTime">—</b><small>Kalan Süre</small></div><div><span>⚑</span><b id="navEta">—</b><small>Varış Saati</small></div></div><div class="rd-nav-controls-v71"><button onclick="navigateStop(-1)">‹ <span>Önceki Durak</span></button><button class="primary" onclick="centerNavigation()">◎ <span>Konumu Ortala</span></button><button onclick="navigateStop(1)"><span>Sonraki Durak</span> ›</button></div></div>
@@ -2040,6 +2042,76 @@ body{min-height:100dvh!important;overscroll-behavior-y:none}
   function refreshV93(){try{renderRoutes();renderStops();if(document.body.dataset.view==='routeDetailPage'&&currentRouteId)renderRouteDetailPage(currentRouteId)}catch(e){console.warn('v9.3 UI refresh',e)}}
   setTimeout(refreshV93,0);
   window.addEventListener('pageshow',()=>setTimeout(refreshV93,30));
+})();
+</script>
+
+
+<style id="rd-v94-google-nav-popup-style">
+/* v9.4 — Yalnızca arayüz: Google Maps marka ikonu + navigasyonda sıradaki duraklar açılır listesi. Harita motoruna dokunmaz. */
+.rd-google-maps-logo{width:21px;height:21px;display:block;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.rd-app-icon-btn.google,.rd-list-icon-btn.google,.rd-google-action,.rd-google-route-action{color:inherit!important}
+.rd-app-icon-btn.google .rd-google-maps-logo,.rd-list-icon-btn.google .rd-google-maps-logo{width:21px;height:21px}
+.rd-google-action .rd-google-maps-logo,.rd-google-route-action .rd-google-maps-logo{width:22px;height:22px}
+
+.rd-nav-v71 .rd-nav-instruction-v71{overflow:visible!important}
+.rd-nav-stops-toggle-v94{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);z-index:4;width:44px;height:24px;padding:0;border-radius:0 0 13px 13px;border:1px solid rgba(65,166,239,.34);border-top:0;background:rgba(4,20,36,.92);color:#6fd0ff;font-size:20px;font-weight:900;display:grid;place-items:center;line-height:1;box-shadow:0 5px 12px rgba(0,0,0,.22);touch-action:manipulation}
+.rd-nav-stops-toggle-v94.open{color:#fff;background:rgba(10,73,120,.95)}
+.rd-nav-stops-popup-v94{position:absolute;z-index:1098;top:calc(env(safe-area-inset-top) + 88px);left:8px;right:8px;max-height:min(44vh,380px);overflow:hidden;border:1px solid rgba(65,166,239,.36);border-radius:16px;background:rgba(4,20,36,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 36px rgba(0,0,0,.38);opacity:0;transform:translateY(-8px) scale(.985);pointer-events:none;transition:opacity .16s ease,transform .16s ease}
+.rd-nav-stops-popup-v94.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.rd-nav-stops-popup-head{height:42px;padding:0 10px 0 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(87,148,202,.18)}
+.rd-nav-stops-popup-head b{font-size:12px;color:#dff4ff;letter-spacing:.03em}.rd-nav-stops-popup-head button{width:30px;height:30px;padding:0;border:0;border-radius:9px;background:rgba(255,255,255,.06);color:#b8d8ef;font-size:20px;display:grid;place-items:center}
+.rd-nav-stops-popup-list{max-height:calc(min(44vh,380px) - 42px);overflow:auto;padding:6px;-webkit-overflow-scrolling:touch}
+.rd-nav-upcoming-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:48px;padding:8px 9px;border-radius:11px;border:1px solid transparent}
+.rd-nav-upcoming-row+.rd-nav-upcoming-row{margin-top:4px}.rd-nav-upcoming-row.current{background:rgba(21,143,255,.12);border-color:rgba(49,162,255,.27)}
+.rd-nav-upcoming-copy{min-width:0}.rd-nav-upcoming-copy b,.rd-nav-upcoming-copy small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-nav-upcoming-copy b{font-size:12px;color:#f3fbff}.rd-nav-upcoming-copy small{font-size:9.5px;color:#87a7c2;margin-top:3px}
+.rd-nav-upcoming-badge{padding:5px 7px;border-radius:8px;background:rgba(255,255,255,.055);color:#9bc7e4;font-size:8px;font-weight:900;white-space:nowrap}.rd-nav-upcoming-row.current .rd-nav-upcoming-badge{background:rgba(24,148,255,.18);color:#63caff}
+.rd-nav-upcoming-empty{padding:18px;text-align:center;color:#8fa9c0;font-size:11px}
+.rd-nav-google-card-v94{position:absolute;z-index:1100;left:59px;top:calc(env(safe-area-inset-top) + 153px);width:44px;height:44px;min-height:44px;padding:0;border:1px solid rgba(47,158,245,.35);border-radius:14px;background:rgba(4,20,36,.66);display:grid;place-items:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.rd-nav-google-card-v94 img{width:25px;height:25px;display:block;pointer-events:none}
+#navigationPage.rd-direct-nav .rd-nav-stops-toggle-v94,#navigationPage.rd-direct-nav .rd-nav-stops-popup-v94{display:none!important}
+@media(max-width:420px){.rd-nav-stops-popup-v94{top:calc(env(safe-area-inset-top) + 82px)}.rd-nav-google-card-v94{left:54px;top:calc(env(safe-area-inset-top) + 147px);width:40px;height:40px;min-height:40px;border-radius:13px}.rd-nav-google-card-v94 img{width:23px;height:23px}.rd-nav-stops-toggle-v94{width:40px;height:22px;bottom:-11px;font-size:18px}}
+</style>
+<script id="rd-v94-google-nav-popup-runtime">
+(function(){
+  window.RD_BUILD='9.4.0-google-icon-nav-stops-popup';
+  document.body.dataset.build=window.RD_BUILD;
+  const GM_ICON='<img class="rd-google-maps-logo" src="./icons/google-maps.svg" alt="">';
+
+  function decorateGoogleButtons(root=document){
+    root.querySelectorAll('.rd-app-icon-btn.google,.rd-list-icon-btn.google,.rd-google-action,.rd-google-route-action').forEach(btn=>{
+      if(!btn.querySelector('.rd-google-maps-logo'))btn.innerHTML=GM_ICON;
+      btn.title='Google Haritalar';btn.setAttribute('aria-label','Google Haritalar');
+    });
+  }
+  window.decorateGoogleButtons=decorateGoogleButtons;
+
+  const rr=window.renderRoutes;if(typeof rr==='function')window.renderRoutes=function(){const out=rr.apply(this,arguments);decorateGoogleButtons(document.getElementById('routeList')||document);return out};
+  const rs=window.renderStops;if(typeof rs==='function')window.renderStops=function(){const out=rs.apply(this,arguments);decorateGoogleButtons(document.getElementById('stopList')||document);return out};
+  const rd=window.renderRouteDetailPage;if(typeof rd==='function')window.renderRouteDetailPage=function(){const out=rd.apply(this,arguments);decorateGoogleButtons(document.getElementById('routeDetailContent')||document);return out};
+
+  function navPopupElements(){return {popup:document.getElementById('navStopsPopup'),toggle:document.getElementById('navStopsToggle'),list:document.getElementById('navStopsPopupList')}}
+  function currentNavStop(){const r=typeof currentNavRoute==='function'?currentNavRoute():null;if(!r)return null;return db.stops.find(s=>s.id===r.stopIds?.[navIndex])||null}
+  window.openNavigationTargetInGoogleMaps=function(){const s=currentNavStop();if(!s)return toast('Mevcut durak bulunamadı');openStopInGoogleMaps(s.id)};
+
+  function navRegion(s){if(typeof stopRegionLabel==='function')return stopRegionLabel(s);const a=String(s?.address||'').split(',').map(x=>x.trim()).filter(Boolean);return a.slice(-2).join(' • ')||'Konum bilgisi yok'}
+  window.renderNavStopsPopup=function(r){
+    const {list,toggle,popup}=navPopupElements();if(!list||!toggle)return;
+    r=r||(typeof currentNavRoute==='function'?currentNavRoute():null);
+    if(!r||r._direct||(r.stopIds?.length||0)<=1){toggle.hidden=true;popup?.classList.remove('open');return}
+    toggle.hidden=false;
+    const done=new Set(r.completedStopIds||[]),skip=new Set(r.skippedStopIds||[]);
+    const rows=[];
+    (r.stopIds||[]).forEach((sid,i)=>{if(done.has(sid)||skip.has(sid)||i<navIndex)return;const s=db.stops.find(x=>x.id===sid);if(!s)return;rows.push(`<div class="rd-nav-upcoming-row ${i===navIndex?'current':''}"><div class="rd-nav-upcoming-copy"><b>${esc(s.name||'İsimsiz durak')}</b><small>${esc(navRegion(s))}</small></div><span class="rd-nav-upcoming-badge">${i===navIndex?'ŞİMDİ':'SIRADA'}</span></div>`)});
+    list.innerHTML=rows.join('')||'<div class="rd-nav-upcoming-empty">Sırada başka durak yok.</div>';
+  };
+  window.toggleNavStopsPopup=function(e){e?.stopPropagation?.();const {popup,toggle}=navPopupElements();if(!popup||!toggle)return;renderNavStopsPopup();const open=!popup.classList.contains('open');popup.classList.toggle('open',open);toggle.classList.toggle('open',open);toggle.setAttribute('aria-expanded',String(open));popup.setAttribute('aria-hidden',String(!open));toggle.textContent=open?'⌃':'⌄'};
+  window.closeNavStopsPopup=function(){const {popup,toggle}=navPopupElements();if(!popup||!toggle)return;popup.classList.remove('open');toggle.classList.remove('open');toggle.setAttribute('aria-expanded','false');popup.setAttribute('aria-hidden','true');toggle.textContent='⌄'};
+
+  const up=window.updateNavPanel;if(typeof up==='function')window.updateNavPanel=function(){const out=up.apply(this,arguments);try{renderNavStopsPopup(arguments[0])}catch(e){console.warn('Durak açılır listesi',e)}return out};
+  const ex=window.exitNavigation;if(typeof ex==='function')window.exitNavigation=function(){closeNavStopsPopup();return ex.apply(this,arguments)};
+  document.addEventListener('pointerdown',e=>{const {popup,toggle}=navPopupElements();if(!popup?.classList.contains('open'))return;if(popup.contains(e.target)||toggle?.contains(e.target))return;closeNavStopsPopup()},{capture:true});
+  setTimeout(()=>{decorateGoogleButtons();try{renderNavStopsPopup()}catch(_){}},0);
+  window.addEventListener('pageshow',()=>setTimeout(()=>decorateGoogleButtons(),30));
 })();
 </script>
 

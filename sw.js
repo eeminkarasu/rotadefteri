@@ -1,7 +1,7 @@
-const BUILD='v9-3-top-actions-today-ui';
+const BUILD='v9-4-google-icon-nav-stops-popup';
 const SHELL_CACHE='rotadefteri-shell-'+BUILD;
 const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
-const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg','./js/rd-v9-maplibre.mjs'];
+const SHELL=['./','./index.html','./firebase-config.js','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg','./icons/google-maps.svg','./js/rd-v9-maplibre.mjs'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(SHELL_CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('rotadefteri-')&&![SHELL_CACHE,RUNTIME_CACHE].includes(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
