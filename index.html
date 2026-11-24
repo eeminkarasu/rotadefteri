@@ -1844,5 +1844,80 @@ html.rd-route-sorting,html.rd-route-sorting body,html.rd-route-sorting .drag-lis
 })();
 </script>
 
+
+<style id="rd-v92-compact-lists-style">
+/* v9.2 — Rotalarım ve Duraklar tekrar sade/kompakt liste görünümünde. */
+#routes .rd-route-cta{display:none!important}
+#routes .rd-filter-row{margin:8px 0 12px!important}
+#routeList{gap:8px!important}
+.rd-route-compact{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 12px!important;min-height:62px;border-radius:16px!important;background:linear-gradient(180deg,rgba(12,34,56,.92),rgba(7,22,39,.96))!important;border:1px solid rgba(72,137,199,.20)!important;box-shadow:none!important;cursor:pointer;position:relative;overflow:hidden}
+.rd-route-compact::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:99px;background:#1ba6ff}
+.rd-route-compact.completed::before{background:#24d27c}
+.rd-route-compact-copy{min-width:0;padding-left:3px}.rd-route-compact-copy h3{margin:0;color:#fff;font-size:15px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-route-compact-copy small{display:block;margin-top:4px;color:#8399b6;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-route-compact-right{display:flex;align-items:center;gap:6px}.rd-route-count-mini{min-width:54px;padding:6px 8px;border-radius:11px;background:rgba(24,169,255,.09);border:1px solid rgba(24,169,255,.22);text-align:center;color:#dff5ff}.rd-route-count-mini b{display:block;font-size:12px;line-height:1}.rd-route-count-mini small{display:block;font-size:7px;color:#7fcfff;margin-top:2px;letter-spacing:.06em}
+.rd-list-icon-btn{width:34px;height:34px;padding:0!important;border-radius:11px!important;border:1px solid rgba(88,153,214,.25)!important;background:rgba(255,255,255,.045)!important;color:#bfe6ff!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:16px!important;line-height:1!important}.rd-list-icon-btn.google{color:#ffd86b!important;border-color:rgba(255,204,73,.30)!important}.rd-list-icon-btn.danger{color:#ff9faf!important;border-color:rgba(255,88,108,.30)!important}.rd-route-open-chevron{font-size:20px;color:#74bde9;margin-left:1px}
+
+#contacts .rd-stop-filter-chips [data-stop-filter="done"],#contacts .rd-stop-filter-chips [data-stop-filter="pending"]{display:none!important}
+#contacts .rd-stop-filter-chips{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:10px 0 12px!important}
+#contacts .rd-stop-filter-chips button{min-height:40px!important;border-radius:13px!important;font-size:12px!important}
+#stopList{gap:7px!important}
+.rd-stop-compact{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px 11px!important;min-height:58px;border-radius:15px!important;background:linear-gradient(180deg,rgba(12,34,56,.92),rgba(7,22,39,.96))!important;border:1px solid rgba(72,137,199,.20)!important;box-shadow:none!important}
+.rd-stop-compact-copy{min-width:0}.rd-stop-compact-copy h3{margin:0;color:#fff;font-size:14px;line-height:1.22;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-stop-compact-copy small{display:block;margin-top:4px;color:#86a0bd;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-stop-compact-actions{display:flex;align-items:center;gap:5px}.rd-stop-compact-actions button{width:34px;height:34px;min-width:34px;padding:0!important;border-radius:11px;border:1px solid rgba(68,154,221,.30);background:rgba(5,40,67,.72);color:#56c6ff;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center}.rd-stop-compact-actions .google{color:#ffd86b;border-color:rgba(255,204,73,.32);background:rgba(112,83,0,.13)}.rd-stop-compact-actions .go{color:#7ee8ff;border-color:rgba(43,190,255,.38)}.rd-stop-compact-actions .danger{color:#ff9faf;border-color:rgba(255,88,108,.32);background:rgba(117,18,38,.18)}
+body:not(.theme-dark) .rd-route-compact,body:not(.theme-dark) .rd-stop-compact{background:#fff!important;border-color:#d9e3ef!important}.theme-light .rd-route-compact-copy h3,.theme-light .rd-stop-compact-copy h3,body:not(.theme-dark) .rd-route-compact-copy h3,body:not(.theme-dark) .rd-stop-compact-copy h3{color:#172033!important}
+@media(max-width:600px){
+  #routes .rd-filter-row{grid-template-columns:1fr 104px!important}.rd-route-compact{padding:9px 9px!important;min-height:57px}.rd-route-compact-copy h3{font-size:14px}.rd-route-compact-copy small{font-size:9.5px}.rd-route-count-mini{min-width:48px;padding:5px 6px}.rd-list-icon-btn{width:31px;height:31px;font-size:14px}.rd-route-compact-right{gap:4px}
+  .rd-stop-compact{padding:9px!important;min-height:54px;gap:6px}.rd-stop-compact-copy h3{font-size:13.5px}.rd-stop-compact-copy small{font-size:9.5px}.rd-stop-compact-actions{gap:4px}.rd-stop-compact-actions button{width:31px;height:31px;min-width:31px;font-size:14px;border-radius:10px}
+}
+</style>
+<script id="rd-v92-compact-lists-runtime">
+(function(){
+  window.RD_BUILD='9.2.0-compact-lists';
+  document.body.dataset.build=window.RD_BUILD;
+  window.V71=window.V71||{};
+  if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
+
+  window.renderRoutes=function(){
+    ensureV66Settings();
+    const el=document.getElementById('routeList');if(!el)return;
+    const q=(document.getElementById('routeFilter')?.value||'').trim().toLocaleLowerCase('tr-TR');
+    const sort=document.getElementById('routeSort')?.value||'newest';
+    let arr=db.routes.filter(r=>!q||(String(r.name||'')+' '+String(r.date||'')).toLocaleLowerCase('tr-TR').includes(q));
+    arr=[...arr].sort((a,b)=>sort==='oldest'?String(a.createdAt||a.date||'').localeCompare(String(b.createdAt||b.date||'')):sort==='az'?String(a.name||'').localeCompare(String(b.name||''),'tr'):sort==='za'?String(b.name||'').localeCompare(String(a.name||''),'tr'):sort==='distance'?(Number(b.distance)||0)-(Number(a.distance)||0):String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||'')));
+    if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen rota yok.':'Henüz rota oluşturulmadı.')+'</div>';return}
+    el.innerHTML=arr.map(r=>{
+      const total=r.stopIds?.length||0,finished=routeFinishedCount(r),date=r.date?new Date(r.date+'T00:00:00').toLocaleDateString('tr-TR'):'';
+      return `<article class="card rd-route-compact ${r.completed?'completed':''}" onclick="viewRoute('${r.id}')"><div class="rd-route-compact-copy"><h3>${esc(r.name||'İsimsiz rota')}</h3><small>${date?esc(date)+' • ':''}${total} durak</small></div><div class="rd-route-compact-right" onclick="event.stopPropagation()"><div class="rd-route-count-mini"><b>${finished}/${total}</b><small>İŞLENDİ</small></div><button class="rd-list-icon-btn google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openGoogleMapsNavigation('${r.id}')">↗</button><button class="rd-list-icon-btn danger" title="Rotayı sil" aria-label="Rotayı sil" onclick="deleteRoute('${r.id}')">⌫</button><span class="rd-route-open-chevron" onclick="viewRoute('${r.id}')">›</span></div></article>`;
+    }).join('');
+  };
+
+  window.renderStops=function(){
+    ensureV66Settings();
+    const q=(document.getElementById('stopSearch')?.value||'').toLocaleLowerCase('tr-TR');
+    const sort=document.getElementById('stopSort')?.value||'az';
+    const today=stopTodaySet();
+    let arr=db.stops.filter(s=>(String(s.name||'')+' '+String(s.address||'')+' '+String(s.contactName||'')+' '+String(s.contactPhone||'')+' '+String(s.note||'')).toLocaleLowerCase('tr-TR').includes(q));
+    const all=arr.length,todayCount=arr.filter(s=>today.has(s.id)).length;
+    const counts={stopCountAll:all,stopCountToday:todayCount,stopCountDone:0,stopCountPending:0};
+    Object.entries(counts).forEach(([id,v])=>{const n=document.getElementById(id);if(n)n.textContent=v});
+    if(V71.stopFilter==='today')arr=arr.filter(s=>today.has(s.id));else if(['done','pending'].includes(V71.stopFilter))V71.stopFilter='all';
+    arr=[...arr].sort((a,b)=>sort==='za'?String(b.name||'').localeCompare(String(a.name||''),'tr'):sort==='newest'?String(b.createdAt||'').localeCompare(String(a.createdAt||'')):sort==='oldest'?String(a.createdAt||'').localeCompare(String(b.createdAt||'')):String(a.name||'').localeCompare(String(b.name||''),'tr'));
+    const el=document.getElementById('stopList');if(!el)return;
+    if(!arr.length){el.innerHTML='<div class="empty">'+(q?'Aramanızla eşleşen durak yok.':'Bu filtrede durak bulunamadı.')+'</div>';return}
+    el.innerHTML=arr.map(s=>{
+      const region=stopRegionLabel(s);
+      return `<article class="item rd-stop-compact"><div class="rd-stop-compact-copy"><h3>${esc(s.name||'İsimsiz durak')}</h3><small>⌖ ${esc(region||'Konum bilgisi yok')}</small></div><div class="rd-stop-compact-actions"><button title="Düzenle" aria-label="Düzenle" onclick="editStop('${s.id}')">✎</button><button class="danger" title="Sil" aria-label="Sil" onclick="deleteStop('${s.id}')">⌫</button><button class="google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openStopInGoogleMaps('${s.id}')">↗</button><button class="go" title="Git" aria-label="Git" onclick="navigateDirectToStop('${s.id}')">➤</button></div></article>`;
+    }).join('');
+    if(map)refreshMainMapMarkers();
+  };
+
+  // Başlık açıklamalarını sade liste görünümüyle uyumlu yap.
+  const routeSub=document.querySelector('#routes .rd-page-sub');if(routeSub)routeSub.textContent='Kayıtlı rotalarını hızlıca görüntüle ve yönet.';
+  const stopSub=document.querySelector('#contacts .rd-stops-title p');if(stopSub)stopSub.textContent='Durak adı, il/ilçe ve hızlı işlemler.';
+  try{renderRoutes();renderStops()}catch(e){console.warn('v9.2 liste yenileme ertelendi',e)}
+  window.addEventListener('pageshow',()=>{try{renderRoutes();renderStops()}catch(e){}});
+})();
+</script>
+
 </body>
 </html>
