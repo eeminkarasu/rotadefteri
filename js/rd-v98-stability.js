@@ -28,9 +28,9 @@ function syncChip(text,cls=''){
   el.className='rd-sync-indicator '+cls;el.textContent=text;S.lastSyncText=text;
 }
 const oldSetStatus=window.setStatus;
-if(typeof oldSetStatus==='function')window.setStatus=function(msg){const out=oldSetStatus.apply(this,arguments);const t=String(msg||'');if(!navigator.onLine)syncChip('● Çevrimdışı','warn');else if(/hazır|senkronizasyon hazır/i.test(t))syncChip('✓ Senkronize','ok');else if(/kaydediliyor|kontrol ediliyor|yükleniyor|arka planda/i.test(t))syncChip('↻ Senkronize ediliyor','warn');else if(/misafir|yalnızca bu cihazda/i.test(t))syncChip('● Yalnızca cihaz','');else if(/başarısız|hata|ulaşılamıyor|reddedildi/i.test(t))syncChip('! Senkron hatası','bad');return out};
+if(typeof oldSetStatus==='function')window.setStatus=function(msg){const out=oldSetStatus.apply(this,arguments);const t=String(msg||'');if(!navigator.onLine)syncChip('● Çevrimdışı','warn');else if(/hazır|senkronizasyon hazır/i.test(t))syncChip('✓ Bulutta','ok');else if(/kaydediliyor|kontrol ediliyor|yükleniyor|arka planda/i.test(t))syncChip('↻ Buluta kaydediliyor','warn');else if(/misafir|yalnızca bu cihazda/i.test(t))syncChip('● Cihazda','');else if(/başarısız|hata|ulaşılamıyor|reddedildi/i.test(t))syncChip('! Bulut hatası','bad');return out};
 window.addEventListener('offline',()=>syncChip('● Çevrimdışı','warn'));
-window.addEventListener('online',()=>{syncChip('↻ Bağlandı','warn');setTimeout(()=>window.rdSyncNow?.().then(()=>syncChip('✓ Senkronize','ok')).catch(()=>syncChip('! Senkron hatası','bad')),450)});
+window.addEventListener('online',()=>{syncChip('↻ Bulut kontrolü','warn');setTimeout(()=>window.rdSyncNow?.().then(()=>syncChip('✓ Bulutta','ok')).catch(()=>syncChip('! Bulut hatası','bad')),450)});
 if(!navigator.onLine)syncChip('● Çevrimdışı','warn');
 
 function ensureSettings(){
