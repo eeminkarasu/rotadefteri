@@ -1,4 +1,4 @@
-const BUILD='v9-10-sync-safe-local-first';
+const BUILD='v9-11-local-classic-plan-map-fix';
 const SHELL_CACHE='rotadefteri-shell-'+BUILD;
 const RUNTIME_CACHE='rotadefteri-runtime-'+BUILD;
 const SHELL=['./','./index.html','./rotadefteri.html','./firebase-config.js','./manifest.webmanifest','./js/rd-v9-maplibre.mjs','./js/rd-v98-stability.js','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/brand-mark.svg','./icons/nav-arrow.svg','./icons/phone.svg','./icons/note.svg','./icons/google-maps.svg'];
