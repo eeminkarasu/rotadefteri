@@ -1,15 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Google Maps">
-  <defs>
-    <clipPath id="pinClip">
-      <path d="M24 2.5C13.65 2.5 5.25 10.9 5.25 21.25c0 13.45 18.75 24.25 18.75 24.25s18.75-10.8 18.75-24.25C42.75 10.9 34.35 2.5 24 2.5z"/>
-    </clipPath>
-  </defs>
-  <g clip-path="url(#pinClip)">
-    <rect x="0" y="0" width="48" height="48" fill="#4285F4"/>
-    <path d="M22.6 0H48v22.5L28.6 28.9 17 17.3z" fill="#EA4335"/>
-    <path d="M48 19.5V48H19.1l8.1-20.4z" fill="#34A853"/>
-    <path d="M48 12.8v10.1L29.1 29.3 23 23.2z" fill="#FBBC04"/>
-  </g>
-  <circle cx="24" cy="20.8" r="8.3" fill="#fff"/>
-  <circle cx="24" cy="20.8" r="3.9" fill="#4285F4"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#34A853" d="M24 3C14.6 3 7 10.6 7 20c0 12.3 15.2 24 16.1 24.7.5.4 1.3.4 1.8 0C25.8 44 41 32.3 41 20 41 10.6 33.4 3 24 3z"/><path fill="#4285F4" d="M24 3C14.6 3 7 10.6 7 20c0 5.3 2.8 10.5 6.3 14.8L24 24V3z"/><path fill="#FBBC04" d="M24 24l-10.7 10.8c2.7 3.3 5.7 6.1 8.7 8.7L31 24h-7z"/><path fill="#EA4335" d="M24 3v21h7l9.1-9.1C37.9 8 31.5 3 24 3z"/><circle cx="24" cy="20" r="7" fill="#fff"/><circle cx="24" cy="20" r="4.2" fill="#4285F4"/></svg>
