@@ -607,6 +607,7 @@ body.nav-active::after{display:none}
       <div class="rd-wizard-section-title"><span>2</span><div><b>Durak seçimi</b><small>Rotaya girecek durakları işaretle.</small></div><strong id="routeWizardSelectedCount">0 seçili</strong></div>
       <input id="pageRouteSearch" class="builder-search" placeholder="Durak adı, il/ilçe veya adres ara..." oninput="renderPageRouteChoices()">
       <div class="builder-select-actions rd-wizard-select-actions"><button type="button" onclick="selectAllActiveStops()">Tümünü seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
+      <div id="routeBuilderSelectionMap" class="rd-wizard-select-map" aria-label="Seçilen durak haritası"></div>
       <div id="pageRouteChoices" class="builder-choices rd-wizard-choices"></div>
       <div class="rd-wizard-footer"><button type="button" class="rd-wizard-secondary" onclick="routeWizardBack()">‹ Geri</button><button type="button" class="rd-wizard-primary" onclick="routeWizardNext()">Sıralamaya geç <b>›</b></button></div>
     </section>
@@ -2251,6 +2252,108 @@ body{min-height:100dvh!important;overscroll-behavior-y:none}
   const prevUpdate=window.updateNavPanel;if(typeof prevUpdate==='function')window.updateNavPanel=function(){const out=prevUpdate.apply(this,arguments);try{setSimpleNavHeader(arguments[0]);renderNavStopsPopup(arguments[0])}catch(e){console.warn('v9.6 navigasyon başlığı',e)}return out};
   const prevInit=window.initNavigation;if(typeof prevInit==='function')window.initNavigation=async function(){const out=await prevInit.apply(this,arguments);document.querySelectorAll('.rd-v9-engine-badge').forEach(el=>el.remove());setSimpleNavHeader(arguments[0]);return out};
   document.querySelectorAll('.rd-v9-engine-badge').forEach(el=>el.remove());setTimeout(()=>{setSimpleNavHeader();try{renderNavStopsPopup()}catch(_){}},0);
+})();
+</script>
+
+
+<style id="rd-v97-builder-map-style">
+.rd-wizard-select-map{height:220px;margin:12px 0 14px;border-radius:18px;overflow:hidden;border:1px solid rgba(102,157,211,.18);background:rgba(8,22,36,.9);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+.rd-wizard-select-map .leaflet-control-attribution,.rd-wizard-select-map .maplibregl-ctrl-attrib{display:none!important}
+.rd-wizard-select-map .leaflet-control-zoom{margin:10px!important}
+.rd-route-overview-top .rd-route-top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.rd-app-icon-btn.today{color:#ffd766;border-color:rgba(255,215,102,.38)!important;background:rgba(168,123,13,.14)!important}
+.rd-app-icon-btn.plus{color:#8fe7ff;border-color:rgba(91,198,255,.30)!important;background:rgba(17,88,140,.12)!important}
+.rd-app-icon-btn.google img{width:22px;height:22px;display:block}
+.rd-route-top-actions .rd-route-count-pill{margin-right:2px}
+.rd-order-minimal .drag-item{display:grid;grid-template-columns:34px 42px minmax(0,1fr) 42px;align-items:center;gap:12px}
+.rd-order-minimal .drag-main{min-width:0}.rd-order-minimal .drag-main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-order-minimal .drag-tools{justify-self:end}.rd-order-minimal .drag-tools .remove{width:40px;height:40px}
+.rd-order-minimal .rd-leg-chip{display:none!important}
+@media(max-width:600px){.rd-wizard-select-map{height:200px}.rd-order-minimal .drag-item{grid-template-columns:30px 40px minmax(0,1fr) 40px;gap:10px}}
+</style>
+<script id="rd-v97-builder-map-runtime">
+(function(){
+  window.RD_BUILD='9.7.0-top-actions-builder-map';
+  document.body.dataset.build=window.RD_BUILD;
+  const inlineGoogleIcon='<img src="./icons/google-maps.svg" alt="">';
+  let builderSelMap=null,builderSelMarkers=null,builderSelLine=null;
+  function todayStr(){return typeof ymd==='function'?ymd():new Date().toISOString().slice(0,10)}
+  function getSelectedStops(){return (window.currentRouteStops||[]).map(id=>db.stops.find(s=>s.id===id)).filter(s=>s&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)))}
+  function ensureBuilderSelectionMap(){
+    const host=document.getElementById('routeBuilderSelectionMap');
+    if(!host||typeof L==='undefined')return null;
+    if(!builderSelMap){
+      builderSelMap=makeMap('routeBuilderSelectionMap',[40.195,29.06],10);
+      builderSelMarkers=L.layerGroup().addTo(builderSelMap);
+      builderSelLine=L.polyline([],{color:'#1ea7ff',weight:4,opacity:.95}).addTo(builderSelMap);
+    }
+    setTimeout(()=>builderSelMap.invalidateSize?.(),40);
+    return builderSelMap;
+  }
+  window.renderRouteBuilderSelectionMap=function(){
+    const host=document.getElementById('routeBuilderSelectionMap');
+    if(!host)return;
+    const map=ensureBuilderSelectionMap();
+    if(!map||!builderSelMarkers||!builderSelLine)return;
+    const pts=getSelectedStops();
+    builderSelMarkers.clearLayers();
+    const latlngs=pts.map(s=>[Number(s.lat),Number(s.lng)]);
+    builderSelLine.setLatLngs(latlngs);
+    pts.forEach((s,idx)=>{
+      const ll=[Number(s.lat),Number(s.lng)];
+      const marker=L.circleMarker(ll,{radius:11,color:'#ffffff',weight:2,fillColor:'#1ea7ff',fillOpacity:1}).addTo(builderSelMarkers);
+      marker.bindTooltip((idx+1)+'. '+(s.name||'Durak'),{direction:'top',offset:[0,-10],opacity:.96});
+      marker.on('click',()=>marker.openTooltip());
+      const num=L.marker(ll,{interactive:false,icon:L.divIcon({className:'rd-builder-map-num',html:'<div style="width:22px;height:22px;border-radius:50%;background:#1ea7ff;color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;border:2px solid #fff;box-shadow:0 5px 14px rgba(0,0,0,.28)">'+(idx+1)+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(builderSelMarkers);
+    });
+    if(latlngs.length===1){map.setView(latlngs[0],14)}
+    else if(latlngs.length>1){try{map.fitBounds(L.latLngBounds(latlngs).pad(0.18),{maxZoom:15})}catch(_){}}
+    else map.setView([40.195,29.06],9);
+  };
+  function refreshBuilderMapSoon(){setTimeout(()=>{try{window.renderRouteBuilderSelectionMap?.()}catch(e){console.warn('Seçim haritası',e)}},30)}
+  const _renderChoices=window.renderPageRouteChoices;
+  if(typeof _renderChoices==='function')window.renderPageRouteChoices=function(){const out=_renderChoices.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _toggle=window.togglePageRouteStop;
+  if(typeof _toggle==='function')window.togglePageRouteStop=function(){const out=_toggle.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _selectAll=window.selectAllActiveStops;
+  if(typeof _selectAll==='function')window.selectAllActiveStops=function(){const out=_selectAll.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _clear=window.clearRouteStops;
+  if(typeof _clear==='function')window.clearRouteStops=function(){const out=_clear.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _plan=window.planRouteStops;
+  if(typeof _plan==='function')window.planRouteStops=async function(){const out=await _plan.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _setManual=window.setManualRoutePosition;
+  if(typeof _setManual==='function')window.setManualRoutePosition=function(){const out=_setManual.apply(this,arguments);refreshBuilderMapSoon();return out};
+  window.renderPageRouteOrder=function(){
+    normalizeCurrentRouteStops();
+    const el=document.getElementById('pageRouteOrder');
+    if(!el)return;
+    el.classList.add('rd-order-minimal');
+    if(!currentRouteStops.length){el.innerHTML='<div class="empty">Henüz durak seçilmedi. Rota için en az 2 durak seçin.</div>';refreshPlanSelectors();refreshBuilderMapSoon();return}
+    el.innerHTML=currentRouteStops.map((id,i)=>{const s=db.stops.find(x=>x.id===id);if(!s)return '';return `<div class="drag-item" data-id="${s.id}"><span class="drag-handle" role="button" aria-label="${i+1}. durağı sürükle" title="Dokun ve sürükle">☷</span><button type="button" class="drag-num rd-order-number" title="Sıra numarasını elle değiştir" aria-label="${i+1}. sıra; değiştirmek için dokun" onclick="event.stopPropagation();setManualRoutePosition('${s.id}')">${i+1}</button><div class="drag-main"><b>${esc(s.name)}</b><small>${esc(s.address||stopRegionLabel(s)||'')}</small></div><div class="drag-tools"><button class="remove" title="Rotadan çıkar" aria-label="Rotadan çıkar" onclick="event.stopPropagation();togglePageRouteStop('${s.id}',false);renderPageRouteChoices()">×</button></div></div>`}).join('');
+    bindPointerSort(el);refreshPlanSelectors();refreshBuilderMapSoon();
+  };
+  const _setStep=window.routeWizardGo;
+  if(typeof _setStep==='function')window.routeWizardGo=function(){const out=_setStep.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _openBuilder=window.openRouteBuilder;
+  if(typeof _openBuilder==='function')window.openRouteBuilder=function(){const out=_openBuilder.apply(this,arguments);refreshBuilderMapSoon();return out};
+  const _editOrder=window.editRouteOrder;
+  if(typeof _editOrder==='function')window.editRouteOrder=function(){const out=_editOrder.apply(this,arguments);refreshBuilderMapSoon();return out};
+  window.setRouteAsToday=function(rid){const r=db.routes.find(x=>x.id===rid);if(!r)return;const today=todayStr();r.date=today;r.updatedAt=new Date().toISOString();persist();renderRoutes();if(currentRouteId===rid)renderRouteDetailPage(rid);toast('Rota bugünün rotası olarak ayarlandı')};
+  window.openRouteBuilderAddStops=function(rid){editRouteOrder(rid);setTimeout(()=>window.routeWizardGo?.(2),70)};
+  window.openRouteBuilderSort=function(rid){editRouteOrder(rid);setTimeout(()=>window.routeWizardGo?.(3),70)};
+  const _detail=window.renderRouteDetailPage;
+  if(typeof _detail==='function')window.renderRouteDetailPage=function(id){
+    ensureV66Settings();
+    const r=db.routes.find(x=>x.id===id);if(!r)return;currentRouteId=id;
+    const done=new Set(r.completedStopIds||[]),skipped=new Set(r.skippedStopIds||[]),total=r.stopIds.length,finished=routeFinishedCount(r),remain=routeRemainingScheduled(r),pct=total?Math.round(finished/total*100):0,showDone=!!V66.showCompletedByRoute[id],pendingIds=r.stopIds.filter(sid=>!done.has(sid)),doneIds=r.stopIds.filter(sid=>done.has(sid));
+    const pendingHtml=pendingIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('')||'<div class="empty">Tamamlanmamış durak kalmadı.</div>';
+    const doneHtml=doneIds.map(sid=>renderRouteStopCompact(r,sid,r.stopIds.indexOf(sid),done,skipped)).join('');
+    const googleBtn='<button class="rd-app-icon-btn google" title="Google Haritalar" aria-label="Google Haritalar" onclick="openGoogleMapsNavigation(\''+r.id+'\')">'+inlineGoogleIcon+'</button>';
+    document.getElementById('routeDetailTitle').textContent=r.name;
+    document.getElementById('routeDetailContent').innerHTML=`<div class="route-detail-card rd-route-overview-compact"><div class="rd-route-overview-top"><div class="rd-route-mini-info"><div><small>TOPLAM</small><strong>${r.distance?formatDistance(r.distance):'—'}</strong></div><div><small>KALAN</small><strong>${r.completed?'0 km':formatDistance(remain.distance||0)}</strong></div><div><small>BAŞLANGIÇ</small><strong>${r.startTime||'08:30'}</strong></div><div><small>VARIŞ</small><strong>${routeArrival(r)}</strong></div></div><div class="rd-route-top-actions"><div class="rd-route-count-pill"><b>${finished}/${total}</b><small>İŞLENDİ</small></div><button class="rd-app-icon-btn today" title="Bugünün rotası" aria-label="Bugünün rotası" onclick="setRouteAsToday('${r.id}')">★</button><button class="rd-app-icon-btn plus" title="Rota ekleme ekranı" aria-label="Rota ekleme ekranı" onclick="openRouteBuilderAddStops('${r.id}')">＋</button><button class="rd-app-icon-btn" title="Sıralama" aria-label="Sıralama" onclick="openRouteBuilderSort('${r.id}')">☷</button>${googleBtn}<button class="rd-app-icon-btn danger" title="Rotayı sil" aria-label="Rotayı sil" onclick="deleteRouteFromDetail('${r.id}')">⌫</button></div></div><div class="route-progress"><div style="width:${pct}%"></div></div></div><div class="route-detail-card rd-route-detail-list"><div class="builder-title rd-stop-list-head"><div><b>Duraklar</b><span>Tamamlanmamış duraklar üstte tutulur</span></div>${doneIds.length?`<button class="rd-completed-toggle" onclick="toggleCompletedStops('${r.id}')">${showDone?'Tamamlananları gizle':'Tamamlananları göster'} (${doneIds.length})</button>`:''}</div>${pendingHtml}${doneIds.length&&showDone?`<div class="rd-completed-section"><div class="rd-completed-section-title"><span>TAMAMLANAN DURAKLAR</span><span>${doneIds.length}</span></div>${doneHtml}</div>`:''}</div>`;
+    try{decorateGoogleButtons(document.getElementById('routeDetailContent')||document)}catch(_){ }
+  };
+  refreshBuilderMapSoon();
 })();
 </script>
 
