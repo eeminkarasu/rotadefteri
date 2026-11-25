@@ -608,7 +608,6 @@ body.nav-active::after{display:none}
       <div class="rd-wizard-section-title"><span>2</span><div><b>Durak seçimi</b><small>Rotaya girecek durakları işaretle.</small></div><strong id="routeWizardSelectedCount">0 seçili</strong></div>
       <input id="pageRouteSearch" class="builder-search" placeholder="Durak adı, il/ilçe veya adres ara..." oninput="renderPageRouteChoices()">
       <div class="builder-select-actions rd-wizard-select-actions"><button type="button" onclick="selectAllActiveStops()">Tümünü seç</button><button type="button" onclick="clearRouteStops()">Seçimi temizle</button></div>
-      <div id="routeBuilderSelectionMap" class="rd-wizard-select-map" aria-label="Seçilen durak haritası"></div>
       <div id="pageRouteChoices" class="builder-choices rd-wizard-choices"></div>
       <div class="rd-wizard-footer"><button type="button" class="rd-wizard-secondary" onclick="routeWizardBack()">‹ Geri</button><button type="button" class="rd-wizard-primary" onclick="routeWizardNext()">Sıralamaya geç <b>›</b></button></div>
     </section>
@@ -624,6 +623,8 @@ body.nav-active::after{display:none}
         </div>
         <div id="routePlanHint" class="rd-plan-hint">Telefonun mevcut konumu başlangıç referansı olur; en yakın duraktan başlanır.</div>
       </div>
+      <div class="rd-manual-map-head"><div><b>Güzergâh haritası</b><small>Numaraya dokununca durak adı görünür. Sıralama değişince yol yeniden çizilir.</small></div><span id="rdBuilderMapState">Hazır</span></div>
+      <div id="routeBuilderSelectionMap" class="rd-wizard-select-map rd-wizard-plan-map" aria-label="Seçilen durakların yol güzergâhı"></div>
       <div class="builder-title rd-wizard-order-title"><b>Durak sırası</b><span>☷ sürükle • mavi numaraya dokunarak sıra numarasını elle gir</span></div>
       <div id="pageRouteOrder" class="drag-list rd-wizard-order-list"></div>
       <div class="builder-summary rd-wizard-summary"><div><small>Toplam yol</small><b id="pageRouteDistance">—</b></div><div><small>Tahmini süre</small><b id="pageRouteDuration">—</b></div><div><small>Tahmini varış</small><b id="pageRouteArrival">—</b></div></div>
@@ -2361,5 +2362,56 @@ body{min-height:100dvh!important;overscroll-behavior-y:none}
 
 <div id="rdSyncIndicator" class="rd-sync-indicator" aria-live="polite">● Yerel</div>
 <script src="./js/rd-v98-stability.js"></script>
+
+<style id="rd-v99-manual-plan-map-style">
+/* v9.9 — Harita sadece Planla/Sırala adımında; navigasyon haritasının aynı MapLibre+OSM görünümü. */
+#routeBuilderPage [data-wpanel="2"] #routeBuilderSelectionMap{display:none!important}
+.rd-manual-map-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 8px}
+.rd-manual-map-head>div{min-width:0}.rd-manual-map-head b{display:block;color:#f5fbff;font-size:15px}.rd-manual-map-head small{display:block;color:#7f9ab7;font-size:10px;line-height:1.35;margin-top:3px}
+#rdBuilderMapState{flex:0 0 auto;color:#68d4ff;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border:1px solid rgba(85,180,235,.20);border-radius:999px;background:rgba(10,78,119,.13)}
+.rd-wizard-plan-map{height:290px!important;margin:0 0 14px!important;border-radius:20px!important;position:relative!important;background:#07121f!important;border:1px solid rgba(85,169,222,.22)!important;box-shadow:0 12px 30px rgba(0,0,0,.20),inset 0 0 0 1px rgba(255,255,255,.015)!important}
+.rd-wizard-plan-map .maplibregl-canvas{outline:none}.rd-wizard-plan-map .maplibregl-ctrl-bottom-right,.rd-wizard-plan-map .maplibregl-ctrl-bottom-left{display:none!important}
+.rd-builder-stop-marker-v99{appearance:none;width:28px;height:28px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;background:#168cff;color:#fff;font:900 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-shadow:0 5px 16px rgba(0,0,0,.38);padding:0;cursor:pointer;transform:translateZ(0)}
+.rd-builder-stop-marker-v99:first-child{background:#168cff}.rd-builder-stop-marker-v99:active{transform:scale(.94)}
+.rd-builder-map-popup-v99 .maplibregl-popup-content{padding:6px 9px!important;border-radius:9px!important;background:rgba(6,22,37,.95)!important;color:#fff!important;border:1px solid rgba(95,190,245,.28)!important;box-shadow:0 8px 22px rgba(0,0,0,.28)!important;font-size:10px!important;font-weight:750!important;line-height:1.25!important;max-width:170px!important}
+.rd-builder-map-popup-v99 .maplibregl-popup-tip{border-top-color:rgba(6,22,37,.95)!important;border-bottom-color:rgba(6,22,37,.95)!important}
+.rd-builder-map-popup-v99 .maplibregl-popup-close-button{display:none!important}
+.rd-builder-map-empty-v99{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:#7992ab;font-size:11px;pointer-events:none;z-index:2;background:linear-gradient(180deg,rgba(7,18,31,.32),rgba(7,18,31,.05))}
+@media(max-width:600px){.rd-wizard-plan-map{height:260px!important}.rd-manual-map-head{align-items:center}.rd-manual-map-head small{max-width:260px}}
+</style>
+<script id="rd-v99-manual-plan-map-runtime">
+(function(){
+  window.RD_BUILD='9.9.0-manual-plan-map';document.body.dataset.build=window.RD_BUILD;
+  const S=window.RD99=window.RD99||{map:null,markers:[],popup:null,token:0,key:'',timer:0,ready:false};
+  const TILE='https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  function panel3Active(){const p=document.querySelector('#routeBuilderPage [data-wpanel="3"]');return !!p&&!p.hidden&&document.getElementById('routeBuilderPage')?.classList.contains('active')}
+  function selected(){const ids=(typeof currentRouteStops!=='undefined'&&Array.isArray(currentRouteStops))?currentRouteStops:[];return ids.map(id=>db.stops.find(s=>s.id===id)).filter(s=>s&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)))}
+  function state(t){const e=document.getElementById('rdBuilderMapState');if(e)e.textContent=t||''}
+  function emptyFC(){return {type:'FeatureCollection',features:[]}}
+  function lineFC(coords){return coords?.length>1?{type:'FeatureCollection',features:[{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:coords}}]}:emptyFC()}
+  function styleSpec(){return {version:8,sources:{osm:{type:'raster',tiles:[TILE],tileSize:256,maxzoom:19,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm',minzoom:0,maxzoom:22}]}}
+  function clearMarkers(){for(const m of S.markers){try{m.remove()}catch(_){}}S.markers=[];try{S.popup?.remove()}catch(_){}S.popup=null}
+  function ensureLayers(){const m=S.map;if(!m||!m.isStyleLoaded?.())return;if(!m.getSource('rd-builder-route'))m.addSource('rd-builder-route',{type:'geojson',data:emptyFC()});if(!m.getLayer('rd-builder-route-case'))m.addLayer({id:'rd-builder-route-case',type:'line',source:'rd-builder-route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#06345a','line-width':11,'line-opacity':.72}});if(!m.getLayer('rd-builder-route-line'))m.addLayer({id:'rd-builder-route-line',type:'line',source:'rd-builder-route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#12a8ff','line-width':7,'line-opacity':.97}})}
+  function setLine(coords){ensureLayers();try{S.map?.getSource('rd-builder-route')?.setData(lineFC(coords))}catch(e){console.warn('Plan haritası çizgi',e)}}
+  function fit(stops,routeCoords){const m=S.map;if(!m)return;const pts=(routeCoords?.length?routeCoords:stops.map(s=>[Number(s.lng),Number(s.lat)])).filter(c=>Number.isFinite(c[0])&&Number.isFinite(c[1]));if(!pts.length){m.jumpTo({center:[29.06,40.195],zoom:9});return}if(pts.length===1){m.easeTo({center:pts[0],zoom:15,duration:260});return}try{const b=new maplibregl.LngLatBounds();pts.forEach(c=>b.extend(c));m.fitBounds(b,{padding:{top:32,bottom:32,left:32,right:32},maxZoom:16,duration:350})}catch(_){}
+  }
+  function addMarkers(stops){clearMarkers();if(!S.map)return;stops.forEach((s,i)=>{const el=document.createElement('button');el.type='button';el.className='rd-builder-stop-marker-v99';el.textContent=String(i+1);el.title=(i+1)+'. '+(s.name||'Durak');el.setAttribute('aria-label',(i+1)+'. durak '+(s.name||''));el.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();try{S.popup?.remove()}catch(_){}const box=document.createElement('div');box.textContent=s.name||'Durak';S.popup=new maplibregl.Popup({closeButton:false,closeOnClick:true,offset:18,className:'rd-builder-map-popup-v99',maxWidth:'180px'}).setLngLat([Number(s.lng),Number(s.lat)]).setDOMContent(box).addTo(S.map)});const mk=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([Number(s.lng),Number(s.lat)]).addTo(S.map);S.markers.push(mk)})}
+  async function ensureMap(){const host=document.getElementById('routeBuilderSelectionMap');if(!host)return null;if(S.map)return S.map;try{state('Harita açılıyor');await window.loadRDMapLibre?.();if(!window.maplibregl)throw new Error('MapLibre hazır değil');host.innerHTML='';S.map=new maplibregl.Map({container:host,style:styleSpec(),center:[29.06,40.195],zoom:9,pitch:0,bearing:0,attributionControl:false,dragRotate:false,touchPitch:false,maxZoom:19});await new Promise((resolve,reject)=>{if(S.map.loaded())return resolve();const t=setTimeout(()=>reject(new Error('Harita zaman aşımı')),9000);S.map.once('load',()=>{clearTimeout(t);resolve()});S.map.once('error',e=>console.warn('Plan MapLibre',e?.error||e))});ensureLayers();S.ready=true;state('Hazır');return S.map}catch(e){console.warn('Planlama haritası açılamadı',e);state('Harita açılamadı');return null}}
+  async function draw(){if(!panel3Active())return;const host=document.getElementById('routeBuilderSelectionMap');if(!host)return;const stops=selected(),key=stops.map(s=>s.id).join('|');const map=await ensureMap();if(!map)return;map.resize();addMarkers(stops);if(!stops.length){setLine([]);fit([],[]);state('Durak seçilmedi');return}if(stops.length===1){setLine([]);fit(stops,[]);state('1 durak');return}const token=++S.token;state('Yol çiziliyor');setLine(stops.map(s=>[Number(s.lng),Number(s.lat)]));fit(stops,[]);try{const res=await fetchOsrmRoute(stops);if(token!==S.token)return;const coords=res?.geometry?.coordinates||[];setLine(coords);fit(stops,coords);S.key=key;state(stops.length+' durak')}catch(e){if(token!==S.token)return;console.warn('Plan haritası yol hesabı',e);setLine(stops.map(s=>[Number(s.lng),Number(s.lat)]));fit(stops,[]);state('Yaklaşık çizgi')}}
+  window.renderRouteBuilderSelectionMap=function(){clearTimeout(S.timer);S.timer=setTimeout(draw,180)};
+  function refresh(){window.renderRouteBuilderSelectionMap?.()}
+  // Sürükle-bırak bittikten sonra yeni sırayı gerçek yol çizgisine uygula.
+  const oldSync=window.syncRouteOrderFromDom;if(typeof oldSync==='function')window.syncRouteOrderFromDom=function(){const out=oldSync.apply(this,arguments);refresh();return out};
+  const oldManual=window.setManualRoutePosition;if(typeof oldManual==='function')window.setManualRoutePosition=function(){const out=oldManual.apply(this,arguments);refresh();return out};
+  const oldPlan=window.planRouteStops;if(typeof oldPlan==='function')window.planRouteStops=async function(){const out=await oldPlan.apply(this,arguments);refresh();return out};
+  const oldRenderOrder=window.renderPageRouteOrder;if(typeof oldRenderOrder==='function')window.renderPageRouteOrder=function(){const out=oldRenderOrder.apply(this,arguments);refresh();return out};
+  const oldWizardGo=window.routeWizardGo;if(typeof oldWizardGo==='function')window.routeWizardGo=function(){const out=oldWizardGo.apply(this,arguments);refresh();return out};
+  const oldNext=window.routeWizardNext;if(typeof oldNext==='function')window.routeWizardNext=async function(){const out=await oldNext.apply(this,arguments);refresh();return out};
+  window.addEventListener('resize',()=>{if(panel3Active()){try{S.map?.resize()}catch(_){}}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&panel3Active())refresh()});
+  setTimeout(refresh,60);
+})();
+</script>
+
 </body>
 </html>
